@@ -1,0 +1,52 @@
+<svg>
+  
+  <image x="5" y="5" width="25" height="25" href="img/steps.png" load="sync" />
+  <image x="5" y="37" width="25" height="25" href="img/heart.png" load="sync" />
+
+  <text id="steps" class="monitorText" x="35" y="28" ></text>
+  <text id="heartrate" class="monitorText" x="35" y="60" ></text>
+  
+  <text id="time" class="timeText" x="100%" y="30" ></text>
+  
+  <text id="sgv" class="sgvText" x="50%+20" y="50%-36" >---</text>
+  <text id="dirArrow" class="dirText" x="50%+20" y="50%-18" >-</text>  
+  
+  <text id="age" class="ageText" x="0" y="134" >- mins ago</text>
+  <text id="delta" class="deltaText" x="100%" y="134" >-? mg/dl</text>
+
+  
+  <text id="scale1" class="scaleText" x="30" y="164"></text>
+  <text id="scale2" class="scaleText" x="30" y="196"></text>
+  <text id="scale3" class="scaleText" x="30" y="228"></text>
+  <text id="scale4" class="scaleText" x="30" y="260"></text>
+  
+  <use href="#graph" id="docGraph" x="36" y="156" width="250" height="100" />
+  
+  <!-- Alert -->
+      <svg id="popup" display="none" >
+        <!-- Black background -->
+        <rect class="full-size" fill="fb-black" />
+
+        <!-- Title and text -->
+        <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white" id="alertHeader">
+          <set href="#top-padding" attributeName="display" to="none" />
+          <set href="#header/text" attributeName="text-buffer"  to="---" />
+          <set href="#header/text" attributeName="fill" to="fb-magenta"/>
+          <set href="#copy/text" attributeName="text-buffer" to="Check BG!" />
+          <set href="#bottom-padding" attributeName="display" to="none" />
+        </use>
+
+        <!-- Left button -->
+        <use id="btnLeft" class="dialog-half-button-left" href="#square-button-neutral">
+           <set href="#text" attributeName="text-buffer" to="Mute" /> <!--Change this to be 15 when you add the 15 min mute code in -->
+          <set href="#text" attributeName="text-anchor" to="middle" />
+        </use>
+
+        <!-- Right button -->
+        <use id="btnRight" class="dialog-half-button-right" href="#square-button-negative">
+          <set href="#text" attributeName="text-buffer" to="Snooze" />
+          <set href="#text" attributeName="text-anchor" to="middle" />
+        </use>
+      </svg>
+  
+</svg>

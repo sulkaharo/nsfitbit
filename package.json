@@ -1,0 +1,44 @@
+{
+  "name": "NSFitbit",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@fitbit/sdk": "~3.1.2",
+    "@fitbit/sdk-cli": "^1.6.3",
+    "babel-eslint": "^10.0.2",
+    "jshint": "^2.10.2"
+  },
+  "fitbit": {
+    "appUUID": "cda2d567-f528-406c-93d4-df6f877073f7",
+    "appType": "clockface",
+    "appDisplayName": "NSFitbit",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "#3f51b5",
+    "requestedPermissions": [
+      "access_internet",
+      "run_background",
+      "access_activity",
+      "access_heart_rate",
+      "access_user_profile"
+    ],
+    "buildTargets": [
+      "higgs",
+      "meson",
+      "gemini"
+    ],
+    "i18n": {
+      "en": {
+        "name": "NSFitbit2"
+      }
+    },
+    "defaultLanguage": "en-US"
+  },
+  "scripts": {
+    "build": "fitbit-build",
+    "debug": "fitbit"
+  },
+  "dependencies": {
+    "eslint": "^6.1.0"
+  }
+}

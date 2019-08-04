@@ -1,0 +1,67 @@
+.timeText {
+  font-size: 40;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 8;
+  text-anchor: end;
+  fill: white;
+}
+
+.monitorText {
+  font-size: 30;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 8;
+  text-anchor: start;
+  fill: white;
+}
+
+.sgvText {
+  font-size: 60;
+  font-family: Colfax;
+  font-weight: regular;
+  text-length: 6;
+  text-anchor: end;
+  fill: white;
+}
+
+.dirText {
+  font-size: 120;
+  font-family: Fabrikat;
+  font-weight: regular;
+  text-length: 4;
+  text-anchor: start;
+  fill: white;
+}
+
+.ageText {
+  font-size: 16;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 16;
+  text-anchor: start;
+  fill: green; 
+}
+
+.deltaText {
+  font-size: 16;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 6;
+  text-anchor: end;
+  fill: white;
+}
+
+.scaleText {
+  font-size: 16;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 6;
+  text-anchor: end;
+  fill: white;
+}
+
+
+.gval {
+  fill: green;
+}
