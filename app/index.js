@@ -30,11 +30,11 @@ let arrowIcon = {
 };
 let minsAgo = 0;
 let minsAgoText = "mins ago";
-let showAlertModal = true;
+
+const MINUTES_10 = 1000 * 60 * 10; // Snooze length
 
 let lastUpdateTime = 0;
 let muted = false;
-let snoozeTimer = Date.now();
 let alarming = false;
 
 // Handles to GUI Elements
@@ -184,11 +184,6 @@ function readSGVFile (filename) {
 
   settings = data.settings;
 
-  if (settings.units == 'mmol') {
-    settings.highThreshold = mgdl(settings.highThreshold);
-    settings.lowThreshold = mgdl(settings.lowThreshold);
-  }
-
   let lastEntry = data.BGD[data.BGD.length - 1];
 
   checkAlarms(lastEntry);
@@ -230,46 +225,45 @@ function readSGVFile (filename) {
 
 function checkAlarms (entry) {
 
-  if (entry.sgv < settings.highThreshold && entry.sgv > settings.lowThreshold) {
+  const sgv = entry.sgv;
+
+  if (alarming && sgv < settings.highThreshold && sgv > settings.lowThreshold) {
+    console.log('BG normal, clearing alarm mutes');
+
     stopVibration();
     muted = false;
-    snoozeTimer = Date.now();
     alarming = false;
+    clearTimeout(vibrationTimeout);
   }
 
-  if (alarming) return;
-  if (muted) return;
-  if (snoozeTimer > Date.now()) return;
-
-  const displayGlucose = settings.units === "mgdl" ? entry.sgv : mmol(entry.sgv);
-
-  if (entry.sgv >= settings.highThreshold) {
-    console.log('BG HIGH');
-    startVibration("nudge", 3000, displayGlucose);
+  if (alarming || muted) {
+    console.log('Alarming or muted, not checking alarms', alarming, muted);
+    return;
   }
 
-  if (entry.sgv <= settings.lowThreshold) {
-    console.log('BG LOW');
-    startVibration("nudge", 3000, displayGlucose);
+  const displayGlucose = settings.units === "mgdl" ? sgv : mmol(sgv);
+
+  if (sgv >= settings.highThreshold) {
+    console.log('BG HIGH, triggering alarm');
+    startVibration("nudge", displayGlucose);
+  }
+
+  if (sgv <= settings.lowThreshold) {
+    console.log('BG LOW, triggering alarm');
+    startVibration("nudge", displayGlucose);
   }
 }
 
-//----------------------------------------------------------
-//
-// Deals with Vibrations 
-//
-//----------------------------------------------------------
 let vibrationTimeout;
 
-function startVibration (type, length, message) {
+function startVibration (type, message) {
+  console.log('Showing alarm (new or unsnoozed)');
   alarming = true;
   showAlert(message);
   vibration.start(type);
-  /*if (length) {
-    vibrationTimeout = setTimeout(function() {
-      startVibration(type, length, message);
-    }, length);
-  }*/
+  vibrationTimeout = setTimeout(function() {
+    startVibration(type, message);
+  }, MINUTES_10);
 }
 
 function stopVibration () {
@@ -293,7 +287,6 @@ function showAlert (message) {
   console.log(message);
   alertHeader.text = message;
   myPopup.style.display = "inline";
-
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -303,15 +296,13 @@ btnLeft.onclick = function(evt) {
   myPopup.style.display = "none";
   muted = true;
   stopVibration();
-}
+};
 
 // eslint-disable-next-line no-unused-vars
 btnRight.onclick = function(evt) {
   console.log("Snooze");
   myPopup.style.display = "none";
-  snoozeTimer = Date.now() + 1000*60*10;
-  stopVibration();
-}
+};
 
 // The updater is used to update the screen every 1 SECONDS 
 function updateClock () {

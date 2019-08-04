@@ -50,8 +50,7 @@ function queryBGD() {
               direction: bg.direction,
               date: bg.date,
               delta,
-              timedelta: (currentBgDate - bg.date),
-              units_hint: ((bg.units_hint) ? bg.units_hint : 'mgdl')
+              timedelta: (currentBgDate - bg.date)
             });
 
             lastBG = bg.sgv;
@@ -159,16 +158,14 @@ function parseSettings() {
 
   settings.units = settingsStorage.getItem('usemgdl') === 'true' ? 'mgdl' : 'mmol';
 
-  let highDefault = 200;
-  let lowDefault = 70;
+  // thresholds are always mgdl
+  settings.highThreshold = Number(getSettings('highThreshold', 200));
+  settings.lowThreshold = Number(getSettings('lowThreshold', 70));
 
   if (settings.units == 'mmol') {
-    highDefault = mmol(highDefault);
-    lowDefault = mmol(lowDefault);
+    settings.highThreshold = mgdl(settings.highThreshold);
+    settings.lowThreshold = mgdl(settings.lowThreshold);
   }
-
-  settings.highThreshold = Number(getSettings('highThreshold', highDefault));
-  settings.lowThreshold = Number(getSettings('lowThreshold', lowDefault));
 
   settings.apiURL = getSgvURL();
   console.log('API URL set to', settings.apiURL);
