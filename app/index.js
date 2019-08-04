@@ -230,9 +230,7 @@ function readSGVFile (filename) {
 
 function checkAlarms (entry) {
 
-  var displayGlucose = entry.sgv; //settings.units === "mgdl" ? entry.sgv : mmol(entry.sgv);
-
-  if (displayGlucose < settings.highThreshold && displayGlucose > settings.lowThreshold) {
+  if (entry.sgv < settings.highThreshold && entry.sgv > settings.lowThreshold) {
     stopVibration();
     muted = false;
     snoozeTimer = Date.now();
@@ -243,12 +241,14 @@ function checkAlarms (entry) {
   if (muted) return;
   if (snoozeTimer > Date.now()) return;
 
-  if (displayGlucose >= settings.highThreshold) {
+  const displayGlucose = settings.units === "mgdl" ? entry.sgv : mmol(entry.sgv);
+
+  if (entry.sgv >= settings.highThreshold) {
     console.log('BG HIGH');
     startVibration("nudge", 3000, displayGlucose);
   }
 
-  if (displayGlucose <= settings.lowThreshold) {
+  if (entry.sgv <= settings.lowThreshold) {
     console.log('BG LOW');
     startVibration("nudge", 3000, displayGlucose);
   }
