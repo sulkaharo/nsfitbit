@@ -115,7 +115,7 @@ function updateDataFromCloud() {
 
 // Listen for messages from the device
 messaging.peerSocket.onmessage = function (evt) {
-  console.log('Got ping from device', evt.data);
+  console.log('Got ping from device', JSON.stringify(evt.data));
   if (evt.data) {
     instantiateInterval();
     //updateDataFromCloud();
@@ -129,6 +129,7 @@ function instantiateInterval() {
   const timeSinceLastFetch = dateNow - lastFetch;
 
   if (!intervalTimer || timeSinceLastFetch > 6*60*1000) {
+    console.log('Reinstantiating the timer');
     if (intervalTimer) clearInterval(intervalTimer);
     intervalTimer = setInterval(updateDataFromCloud, 15 * 1000);
     updateDataFromCloud();

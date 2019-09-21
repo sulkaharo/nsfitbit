@@ -174,6 +174,7 @@ inbox.onnewfile = () => {
 };
 
 let fileLastUpdated =  0;
+let latestGlucoseDate = 0;
 
 function readSGVFile (filename) {
 
@@ -199,6 +200,7 @@ function readSGVFile (filename) {
 
   checkAlarms(lastEntry);
   updateScreenWithLatestGlucose(lastEntry);
+  latestGlucoseDate = lastEntry.date;
 
   // Added by NiVZ    
   let ymin = 999;
@@ -361,20 +363,32 @@ function updateClock () {
 
 }
 
-/*
-// Listen for the onopen event - THIS NEVER SEEMS TO FIRE!!
+// Have clock ping the Compantion to keep it alive
+
 messaging.peerSocket.onopen = function() {
   console.log("Socket Open");
-  fetchCompanionData();
 };
-*/
+
+const dataPingInterval = 5 * 60 * 1000;
+let lastPinged = 0;
 
 function checkNeedForPing() {
-  const timeSinceLastFile = Date.now() - fileLastUpdated;
-  if (timeSinceLastFile > 6 * 60 * 1000) {
+  const now = Date.now();
+  const timeSinceLastGlucose = now - latestGlucoseDate; // fileLastUpdated;
+  const lastPingDelta = now - lastPinged;
+
+  //console.log('Checking if I need to ping companion');
+
+  if (lastPingDelta > 30 * 1000 && timeSinceLastGlucose > dataPingInterval) {
+    console.log('Pinging companion');
+    lastPinged = now;
     fetchCompanionData('wtf where is my file');
   }
 }
+
+setInterval(() => {
+  checkNeedForPing();
+}, 15000);
 
 // Update the clock every tick event
 clock.ontick = () => updateClock();
