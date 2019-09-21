@@ -38,25 +38,26 @@ let muted = false;
 let alarming = false;
 
 // Handles to GUI Elements
-let time = document.getElementById("time");
-let steps = document.getElementById("steps");
-let hrLabel = document.getElementById("heartrate");
+const time = document.getElementById("time");
+const date = document.getElementById('date');
+const steps = document.getElementById("steps");
+const hrLabel = document.getElementById("heartrate");
 
 hrLabel.text = "--";
 steps.text = "--";
 
-let sgv = document.getElementById("sgv");
-let dirArrow = document.getElementById("dirArrow");
+const sgv = document.getElementById("sgv");
+const dirArrow = document.getElementById("dirArrow");
 
-let delta = document.getElementById("delta");
-let age = document.getElementById("age");
+const delta = document.getElementById("delta");
+const age = document.getElementById("age");
 
-let scale1 = document.getElementById("scale1");
-let scale2 = document.getElementById("scale2");
-let scale3 = document.getElementById("scale3");
-let scale4 = document.getElementById("scale4");
+const scale1 = document.getElementById("scale1");
+const scale2 = document.getElementById("scale2");
+const scale3 = document.getElementById("scale3");
+const scale4 = document.getElementById("scale4");
 
-let docGraph = document.getElementById("docGraph");
+const docGraph = document.getElementById("docGraph");
 let myGraph = new Graph(docGraph);
 
 var settings = {};
@@ -109,6 +110,7 @@ function fetchCompanionData (cmd) {
   //setStatusImage('refresh.png')
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     // Send a command to the companion
+    console.log('Watch pinging the companion');
     messaging.peerSocket.send({
       command: cmd
     });
@@ -156,8 +158,6 @@ function updateScreenWithLatestGlucose (data) {
     sgv.style.fill = "red";
     dirArrow.text = '-';
     dirArrow.style.fill = "red";
-    // call function every 10 or 15 mins to check again and see if the data is there   
-    //setTimeout(fiveMinUpdater, 900000)    
   }
 }
 
@@ -173,10 +173,14 @@ inbox.onnewfile = () => {
   } while (fileName);
 };
 
+let fileLastUpdated =  0;
+
 function readSGVFile (filename) {
 
   // TODO: have a view that shows no data exists
   // Also WOOOT why is fileExists() not supported?
+
+  fileLastUpdated = Date.now();
 
   let data;
 
@@ -229,6 +233,7 @@ function readSGVFile (filename) {
   myGraph.update(data.BGD, settings.highThreshold, settings.lowThreshold);
 
 }
+
 
 function checkAlarms (entry) {
 
@@ -311,22 +316,29 @@ btnRight.onclick = function(evt) {
   myPopup.style.display = "none";
 };
 
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 // The updater is used to update the screen every 1 SECONDS 
 function updateClock () {
 
-  let nowDate = new Date();
-  let hours = nowDate.getHours();
-  let mins = nowDate.getMinutes();
+  const nowDate = new Date();
+  const hours = nowDate.getHours();
+  const mins = nowDate.getMinutes();
+  const month = monthNames[nowDate.getMonth()];
+  const day = nowDate.getDate();
+  
 
   if (mins < 10) { mins = `0${mins}`; }
 
-  let ampm = hours < 12 ? "AM" : "PM";
+  const ampm = hours < 12 ? "AM" : "PM";
 
   if (preferences.clockDisplay === "12h") {
     time.text = `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
   } else {
-    time.text = `${hours}:${mins}`;
+    time.text = `${hours} ${mins}`;
   }
+
+  date.text = `${month}:${day}`;
 
   steps.text = today.local.steps || 0;
 
@@ -340,8 +352,8 @@ function updateClock () {
 
   // Update from file if ...
 
-  let nowMoment = nowDate.getTime();
-  let timeDelta = nowMoment - lastUpdateTime;
+  const nowMoment = nowDate.getTime();
+  const timeDelta = nowMoment - lastUpdateTime;
 
   if (timeDelta > (1000 * 5)) {
     readSGVFile('file.txt');
@@ -349,11 +361,20 @@ function updateClock () {
 
 }
 
+/*
 // Listen for the onopen event - THIS NEVER SEEMS TO FIRE!!
 messaging.peerSocket.onopen = function() {
   console.log("Socket Open");
   fetchCompanionData();
 };
+*/
+
+function checkNeedForPing() {
+  const timeSinceLastFile = Date.now() - fileLastUpdated;
+  if (timeSinceLastFile > 6 * 60 * 1000) {
+    fetchCompanionData('wtf where is my file');
+  }
+}
 
 // Update the clock every tick event
 clock.ontick = () => updateClock();

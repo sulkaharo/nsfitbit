@@ -15,7 +15,7 @@ var settings = {};
 function queryBGD() {
   
   let url = settings.apiURL;
-  console.log(url);
+  console.log('Fetching from', url);
 
   return fetch(url)
     .then(function (response) {
@@ -37,7 +37,7 @@ function queryBGD() {
             lastKnownRecordDate = currentBgDate;
           }
 
-          let bloodSugars = [];
+          let bgData = [];
           let lastBG = null;
 
           data.forEach(function (bg) {
@@ -45,7 +45,7 @@ function queryBGD() {
             const last = lastBG || bg.sgv;
             const delta = bg.delta ? Math.round(bg.delta) : bg.sgv - last;
 
-            bloodSugars.push({
+            bgData.push({
               sgv: bg.sgv,
               direction: bg.direction,
               date: bg.date,
@@ -57,12 +57,14 @@ function queryBGD() {
 
           });
 
+          lastFetch = Date.now();
+
           // Send the data to the device
-          return bloodSugars.reverse();
+          return bgData.reverse();
         });
     })
     .catch(function (err) {
-      console.log("Error fetching bloodSugars: " + err);
+      console.log("Error fetching glucose data: " + err);
     });
 }
 
@@ -74,27 +76,27 @@ function returnData(data) {
   outbox.enqueue('file.txt', myFileInfo);
 }
 
-function formatReturnData() {
+const FIVE_MINUTES = 5 * 60 * 1000;
+const ONE_MINUTE = 60 * 1000;
+
+function updateDataFromCloud() {
 
   // Only do a fetch if 5 minutes and 10 seconds has passed
   // Only do one fetch / 60 seconds after that
 
-  let dateNow = (new Date()).getTime();
+  let dateNow = Date.now();
 
-  console.log("Checking if fetch is needed: " + dateNow);
-  console.log('lastKnownRecordDate: ' + lastKnownRecordDate);
-  console.log('lastFetch: ' + lastFetch);
+  console.log('Delta seconds between now and last record', Math.floor((dateNow - lastKnownRecordDate) / 1000));
+  console.log('Seconds since last fetch', Math.floor((dateNow - lastFetch) / 1000));
 
-  if ((dateNow - lastKnownRecordDate) < (5 * 60 * 1000 + 10000)) {
+  if ((dateNow - lastKnownRecordDate) < (FIVE_MINUTES + 10000)) {
     return;
   }
-  if ((dateNow - lastFetch) < (2 * 60 * 1000)) {
+  if ((dateNow - lastFetch) < (ONE_MINUTE)) {
     return;
   }
 
-  lastFetch = dateNow;
-
-  console.log("Fetching Data...");
+  console.log("Fetching Data");
 
   // eslint-disable-next-line no-unused-vars
   let BGDPromise = new Promise(function (resolve, reject) {
@@ -113,13 +115,27 @@ function formatReturnData() {
 
 // Listen for messages from the device
 messaging.peerSocket.onmessage = function (evt) {
+  console.log('Got ping from device', evt.data);
   if (evt.data) {
-    formatReturnData();
+    instantiateInterval();
+    //updateDataFromCloud();
   }
 };
 
+let intervalTimer = null;
 
-setInterval(formatReturnData, 15 * 1000);
+function instantiateInterval() {
+  const dateNow = Date.now();
+  const timeSinceLastFetch = dateNow - lastFetch;
+
+  if (!intervalTimer || timeSinceLastFetch > 6*60*1000) {
+    if (intervalTimer) clearInterval(intervalTimer);
+    intervalTimer = setInterval(updateDataFromCloud, 15 * 1000);
+    updateDataFromCloud();
+  }
+}
+
+instantiateInterval();
 
 // Listen for the onerror event
 messaging.peerSocket.onerror = function (err) {
@@ -151,7 +167,7 @@ parseSettings();
 settingsStorage.onchange = function (evt) {
   console.log('Setting changed', evt.key, getSettings(evt.key));
   parseSettings();
-  formatReturnData();
+  updateDataFromCloud();
 };
 
 function parseSettings() {
@@ -195,8 +211,8 @@ function getSgvURL() {
   if (url) {
     // eslint-disable-next-line no-useless-escape
     const parsed = url.match(/^(http|https|ftp)?(?:[\:\/]*)([a-z0-9\.-]*)(?:\:([0-9]+))?(\/[^?#]*)?(?:\?([^#]*))?(?:#(.*))?$/i);
-    const host = parsed[2];
-    url = 'https://' + host + '/api/v1/entries.json?count=40';
+    const host = parsed[2] + '';
+    url = 'https://' + host.toLowerCase() + '/api/v1/entries.json?count=40';
     console.log('Loading data from', url);
     return url;
   } else {

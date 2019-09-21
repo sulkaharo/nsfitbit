@@ -6,7 +6,8 @@
   <text id="steps" class="monitorText" x="35" y="28" ></text>
   <text id="heartrate" class="monitorText" x="35" y="60" ></text>
   
-  <text id="time" class="timeText" x="100%" y="30" ></text>
+  <text id="time" class="timeText" x="100%" y="28" ></text>
+  <text id="date" class="timeText" x="100%" y="60" ></text>
   
   <text id="sgv" class="sgvText" x="50%+20" y="50%-36" >---</text>
   <text id="dirArrow" class="dirText" x="50%+20" y="50%-18" >-</text>  
