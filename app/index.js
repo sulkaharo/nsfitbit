@@ -82,11 +82,18 @@ function mgdl (bg) {
 // Create a new instance of the HeartRateSensor object
 var hrm = new HeartRateSensor();
 
+const hrmUpdateInterval = 5000;
+let hrmLastUpdated = 0;
+
 // Declare a even handler that will be called every time a new HR value is received.
 hrm.onreading = function() {
   // Peek the current sensor values
-  console.log("Current heart rate: " + hrm.heartRate);
-  hrLabel.text = hrm.heartRate;
+  const now = Date.now();
+  if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
+      //console.log("Current heart rate: " + hrm.heartRate);
+      hrLabel.text = hrm.heartRate;
+      hrmLastUpdated = now;
+  }
 };
 
 // Begin monitoring the sensor
