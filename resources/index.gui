@@ -13,7 +13,7 @@
   <text id="battery" class="monitorText" x="35" y="92" ></text>
   
   <text id="time" class="timeText" x="100%" y="28" ></text>
-  <text id="date" class="timeText" x="100%" y="60" ></text>
+  <text id="iob" class="timeText" x="100%" y="60" ></text>
   
   <text id="sgv" class="sgvText" x="100%" y="46%" >---</text>
   

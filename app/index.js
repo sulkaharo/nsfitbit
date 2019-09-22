@@ -41,7 +41,7 @@ let alarming = false;
 
 // Handles to GUI Elements
 const time = document.getElementById('time');
-const date = document.getElementById('date');
+const iobLabel = document.getElementById('iob');
 const steps = document.getElementById("steps");
 const hrLabel = document.getElementById('heartrate');
 const batteryLabel = document.getElementById('battery');
@@ -239,6 +239,16 @@ function readSGVFile (filename) {
   scale3.text = mmol(Math.floor(ymin + ((ymax - ymin) * 0.33)));
   scale4.text = mmol(ymin);
 
+  const stateData = data.pebble.bgs[0];
+
+  if (stateData.iob) {
+    const iobString = "IOB " + stateData.iob;
+   // if (stateData.bwp) iobString += " BWP " + stateData.bwp;
+    iobLabel.text = iobString;
+  } else {
+    iobLabel.text = "";
+  }
+
   // Set the graph scale
   myGraph.setYRange(ymin, ymax);
   // Update the graph
@@ -343,15 +353,16 @@ function updateClock () {
 
   if (mins < 10) { mins = `0${mins}`; }
 
+  const dateText = `${month} ${day} `;
+
   const ampm = hours < 12 ? "AM" : "PM";
 
   if (preferences.clockDisplay === "12h") {
-    time.text = `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
+    time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
   } else {
-    time.text = `${hours}:${mins}`;
+    time.text = dateText + `${hours}:${mins}`;
   }
 
-  date.text = `${month} ${day}`;
   steps.text = today.local.steps || 0;
   batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
 

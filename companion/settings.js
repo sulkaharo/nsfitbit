@@ -54,6 +54,7 @@ _settings.parseSettings = function parseSettings() {
 
   settings.sgvURL = URLS.sgvURL;
   settings.treatmentURL = URLS.treatmentURL;
+  settings.pebbleURL = URLS.pebbleURL;
 
   settings.timeFormat = '24h';
   settings.bgColor = 'black';
@@ -72,8 +73,9 @@ _settings.getURLS = function getURLS() {
     const host = parsed[2] + '';
     const sgvURL = 'https://' + host.toLowerCase() + '/api/v1/entries.json?count=40';
     const treatmentURL = 'https://' + host.toLowerCase() + '/api/v1/treatments.json?count=20';
+    const pebbleURL = 'https://' + host.toLowerCase() + '/pebble';
     console.log('Loading data from', sgvURL, treatmentURL);
-    return {sgvURL, treatmentURL};
+    return {sgvURL, treatmentURL, pebbleURL};
   } else {
     // Default xDrip web service 
     return "http://127.0.0.1:17580/sgv.json";

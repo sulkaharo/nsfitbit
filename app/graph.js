@@ -100,6 +100,9 @@ export default class Graph {
       }
       bar.y = this._id.height - bar.height;
       bar.style.visibility = 'visible';
+
+      if (bar.x < 36) bar.style.visibility = 'hidden';
+
     }
 
   }

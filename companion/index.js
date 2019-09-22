@@ -131,6 +131,18 @@ function queryTreatments() {
     });
 }
 
+function queryPebbleAPI() {
+  return fetch(settings.pebbleURL)
+    .then(function (response) {
+      return response.json()
+        .then(function (data) {
+          return data;
+        });
+    })
+    .catch(function (err) {
+      console.log("Error fetching pebble data: " + err);
+    });
+}
 
 // Send the BG data to the device
 function returnData(data) {
@@ -170,10 +182,15 @@ function updateDataFromCloud() {
     resolve(queryTreatments());
   });
 
-  Promise.all([BGDPromise, TreatmentPromise]).then(function (values) {
+  let PebblePromise = new Promise(function (resolve, reject) {
+    resolve(queryPebbleAPI());
+  });
+
+  Promise.all([BGDPromise, TreatmentPromise, PebblePromise]).then(function (values) {
     let dataToSend = {
       'BGD': values[0],
       'treatments': values[1],
+      'pebble': values[2],
       'settings': settings
     };
     returnData(dataToSend);
