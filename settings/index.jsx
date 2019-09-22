@@ -5,6 +5,10 @@ function mySettings(props) {
           label="Api endpoint (if blank, defaults to local xDrip endpoint)"
           settingsKey="endpoint"
         />
+        <TextInput
+        label="API SECRET"
+        settingsKey="apiSecret"
+        />
         <Toggle
           settingsKey="usemgdl"
           label={`Units: ${props.settingsStorage.getItem('usemgdl')== 'true' ? 'mgdl' : 'mmol'}`}

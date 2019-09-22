@@ -32,6 +32,17 @@
       <circle class="gval" cx="88%" cy="50%" r="2" />
       <circle class="gval" cx="92%" cy="50%" r="2" />
       <circle class="gval" cx="96%" cy="50%" r="2" />
-      
+
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+      <rect fill='#00FF00' class="treatment" width='3' y="100%" height='20'></rect>
+
     </svg>
  </symbol>

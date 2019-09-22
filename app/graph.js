@@ -22,7 +22,8 @@ export default class Graph {
     this._bg = this._id.getElementById("bg");
 
     this._vals = this._id.getElementsByClassName("gval");
-
+    this._treatments = this._id.getElementsByClassName("treatment");
+    
     this._tHigh = 162;
     this._tLow = 72;
 
@@ -72,9 +73,40 @@ export default class Graph {
     this._bg.style.fill = c;
   }
 
+  updateTreatments(treatments) {
+    console.log("Updating treatment bars...");
+
+    const now = Date.now();
+
+    for (let i = 0; i < this._treatments.length; i++) {
+      this._treatments[i].style.visibility = 'hidden';
+    }
+
+    for (let i = 0; i < treatments.length; i++) {
+      if (!this._treatments[i]) continue;
+      const bar = this._treatments[i];
+      const t = treatments[i];
+      const timeDelta = (now - t.date) / (5 * 60 * 1000);
+
+      bar.x = this._id.width - ((this._id.width / 24) * timeDelta);
+
+      if (t.carbs) {
+        bar.height = 10 + (t.carbs / 2);
+        bar.style.fill = 'green';
+      }
+      if (t.insulin) {
+        bar.height = 10 + (t.insulin * 5);
+        bar.style.fill = 'red';
+      }
+      bar.y = this._id.height - bar.height;
+      bar.style.visibility = 'visible';
+    }
+
+  }
+
   update(v, highThreshold, lowThreshold) {
 
-    console.log("Updating Graph...");
+    console.log("Updating glucose dots...");
 
     //this._bg.style.fill = this._bgcolor;
 
@@ -86,7 +118,7 @@ export default class Graph {
     // 24 points total
     // 120 minutes
 
-    for (var index = 0; index < this._vals.length; index++) {
+    for (let index = 0; index < this._vals.length; index++) {
 
       //console.log(`V${index}: ${v[index].sgv}`);
       //console.log(this._vals[index]);

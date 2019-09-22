@@ -1,18 +1,19 @@
 {
-  "name": "NSFitbit",
-  "version": "0.1.0",
-  "private": true,
-  "license": "UNLICENSED",
+  "name": "NightscoutMonitor",
+  "version": "1.0.0",
+  "private": false,
+  "license": "AGPL",
   "devDependencies": {
     "@fitbit/sdk": "~3.1.2",
     "@fitbit/sdk-cli": "^1.6.3",
     "babel-eslint": "^10.0.2",
-    "jshint": "^2.10.2"
+    "jshint": "^2.10.2",
+    "eslint": "^6.1.0"
   },
   "fitbit": {
-    "appUUID": "cda2d567-f528-406c-93d4-df6f877073f7",
+    "appUUID": "eaed806d-9ff5-4aa9-a2c8-518f1f852f5a",
     "appType": "clockface",
-    "appDisplayName": "NSFitbit",
+    "appDisplayName": "NightscoutMonitor",
     "iconFile": "resources/icon.png",
     "wipeColor": "#3f51b5",
     "requestedPermissions": [
@@ -23,13 +24,12 @@
       "access_user_profile"
     ],
     "buildTargets": [
-      "higgs",
       "meson",
       "gemini"
     ],
     "i18n": {
       "en": {
-        "name": "NSFitbit2"
+        "name": "NightscoutMonitor"
       }
     },
     "defaultLanguage": "en-US"
@@ -37,8 +37,5 @@
   "scripts": {
     "build": "fitbit-build",
     "debug": "fitbit"
-  },
-  "dependencies": {
-    "eslint": "^6.1.0"
   }
 }

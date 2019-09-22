@@ -191,7 +191,6 @@ function readSGVFile (filename) {
     console.log('File read failed');
     return;
   }
-
   if (!data.BGD) return;
 
   settings = data.settings;
@@ -233,7 +232,9 @@ function readSGVFile (filename) {
   myGraph.setYRange(ymin, ymax);
   // Update the graph
   myGraph.update(data.BGD, settings.highThreshold, settings.lowThreshold);
-
+  if (data.treatments) {
+    myGraph.updateTreatments(data.treatments);
+  }
 }
 
 

@@ -2,22 +2,37 @@
 import * as messaging from "messaging";
 import { encode } from 'cbor';
 import { outbox } from "file-transfer";
-import { settingsStorage } from "settings";
 
-// // default URL pointing at xDrip Plus endpoint
-var URL = null;
+import Settings from './settings.js';
 
-var lastKnownRecordDate = 0;
-var lastFetch = 0;
+// Let's abuse some Globals
 
-var settings = {};
+let lastKnownRecordDate = 0;
+let lastFetch = 0;
+let settings = {};
+
+settings = Settings.parseSettings();
+
+function getRequesttOptions () {
+  const options = {};
+
+  if (settings.apiSecret) {
+    options.headers = new Headers({
+      'api-secret': settings.apiSecret
+    });
+    console.log('API-SECRET', settings.apiSecret);
+  }
+  return options;
+}
 
 function queryBGD() {
   
-  let url = settings.apiURL;
-  console.log('Fetching from', url);
+  const url = settings.sgvURL;
+  console.log('Fetching SGVs from', url);
 
-  return fetch(url)
+  const options = getRequesttOptions();
+
+  return fetch(url, options)
     .then(function (response) {
       return response.json()
         .then(function (data) {
@@ -69,6 +84,55 @@ function queryBGD() {
 }
 
 
+function queryTreatments() {
+  
+  const url = settings.treatmentURL;
+  console.log('Fetching treatments from', url);
+
+  return fetch(url)
+    .then(function (response) {
+      return response.json()
+        .then(function (data) {
+          console.log('treatment data0: ' + JSON.stringify(data[0]));
+
+          // throw out MBG entries and take the first 28 entries
+          data = data.filter(function (t) {
+
+            const carbs = isNaN(t.carbs) ? 0: Number(t.carbs);
+            const insulin = isNaN(t.insulin) ? 0: Number(t.insulin);
+
+            return !(carbs == 0 && insulin == 0);
+          }).slice(0, 10);
+
+          let currentBgDate = new Date(data[0].created_at).getTime();
+
+          const tData = [];
+
+          data.forEach(function (t) {
+
+            const carbs = isNaN(t.carbs) ? 0: Number(t.carbs);
+            const insulin = isNaN(t.insulin) ? 0: Number(t.insulin);
+            const d =  new Date(t.created_at).getTime();
+
+            tData.push({
+              insulin: insulin,
+              carbs: carbs,
+              date: d,
+              timedelta: (currentBgDate - d)
+            });
+
+          });
+
+          // Send the data to the device
+          return tData.reverse();
+        });
+    })
+    .catch(function (err) {
+      console.log("Error fetching treatment data: " + err);
+    });
+}
+
+
 // Send the BG data to the device
 function returnData(data) {
   console.log('Queued a file change');
@@ -103,9 +167,14 @@ function updateDataFromCloud() {
     resolve(queryBGD());
   });
 
-  Promise.all([BGDPromise]).then(function (values) {
+  let TreatmentPromise = new Promise(function (resolve, reject) {
+    resolve(queryTreatments());
+  });
+
+  Promise.all([BGDPromise, TreatmentPromise]).then(function (values) {
     let dataToSend = {
       'BGD': values[0],
+      'treatments': values[1],
       'settings': settings
     };
     returnData(dataToSend);
@@ -144,80 +213,3 @@ messaging.peerSocket.onerror = function (err) {
   console.log("Connection error: " + err.code + " - " + err.message);
 };
 
-
-// converts a mg/dL to mmoL
-function mmol(bg) {
-  let mmolBG = Math.round((0.0556 * bg) * 10) / 10;
-  return mmolBG;
-}
-
-// converts mmoL to  mg/dL 
-function mgdl(bg) {
-  let mgdlBG = Math.round((bg * 18) / 10) * 10;
-  return mgdlBG;
-}
-
-//----------------------------------------------------------
-//
-// This section deals with settings
-//
-//----------------------------------------------------------
-
-parseSettings();
-
-settingsStorage.onchange = function (evt) {
-  console.log('Setting changed', evt.key, getSettings(evt.key));
-  parseSettings();
-  updateDataFromCloud();
-};
-
-function parseSettings() {
-
-  settings.units = settingsStorage.getItem('usemgdl') === 'true' ? 'mgdl' : 'mmol';
-
-  // thresholds are always mgdl
-  settings.highThreshold = Number(getSettings('highThreshold', 200));
-  settings.lowThreshold = Number(getSettings('lowThreshold', 70));
-
-  if (settings.units == 'mmol') {
-    settings.highThreshold = mgdl(settings.highThreshold);
-    settings.lowThreshold = mgdl(settings.lowThreshold);
-  }
-
-  settings.apiURL = getSgvURL();
-  console.log('API URL set to', settings.apiURL);
-
-  settings.timeFormat = '24h';
-  settings.bgColor = 'black';
-
-}
-
-// getters 
-function getSettings(key, defvalue) {
-
-  const keyValue = settingsStorage.getItem(key);
-
-  if (keyValue) {
-    console.log(key, 'value is', keyValue);
-    const parsed = JSON.parse(keyValue);
-    return parsed.name;
-  } else {
-    console.log('Setting', key, 'not found, returning', defvalue);
-    return defvalue;
-  }
-}
-
-function getSgvURL() {
-  let url = getSettings('endpoint', null);
-  if (url) {
-    // eslint-disable-next-line no-useless-escape
-    const parsed = url.match(/^(http|https|ftp)?(?:[\:\/]*)([a-z0-9\.-]*)(?:\:([0-9]+))?(\/[^?#]*)?(?:\?([^#]*))?(?:#(.*))?$/i);
-    const host = parsed[2] + '';
-    url = 'https://' + host.toLowerCase() + '/api/v1/entries.json?count=40';
-    console.log('Loading data from', url);
-    return url;
-  } else {
-    // Default xDrip web service 
-    return "http://127.0.0.1:17580/sgv.json";
-  }
-}
