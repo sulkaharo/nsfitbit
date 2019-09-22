@@ -60,6 +60,7 @@ _settings.parseSettings = function parseSettings() {
   settings.bgColor = 'black';
 
   settings.displayOn = _settings.getSettings('alwaysOn', false);
+  settings.offOnNight = _settings.getSettings('offOnNight', false);
 
   return settings;
 

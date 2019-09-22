@@ -26,6 +26,11 @@ function mySettings(props) {
         label={`Display: ${props.settingsStorage.getItem('alwaysOn') === 'true' ? 'always on' : 'sleep is on'}`}
         onChange={value => props.settingsStorage.getItem('alwaysOn', value ? 'always on' : 'sleep is on')}
         />
+        <Toggle
+        settingsKey="offOnNight"
+        label={`Turn display off for the night (22-07): ${props.settingsStorage.getItem('offOnNight') === 'true' ? 'yes' : 'no'}`}
+        onChange={value => props.settingsStorage.getItem('offOnNight', value ? 'yes' : 'no')}
+        />
       <TextImageRow
         label="Fitbit NS watchface"
         sublabel="@Rytiggy / @nivz / @sulkaharo"

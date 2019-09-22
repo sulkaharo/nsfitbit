@@ -200,7 +200,10 @@ function readSGVFile (filename) {
 
   settings = data.settings;
 
-  if (settings.displayOn) {
+  const hour = new Date().getHours();
+  const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
+
+  if (settings.displayOn && !nightTimeOff) {
     display.autoOff = false;
     display.on = true;
   } else {
