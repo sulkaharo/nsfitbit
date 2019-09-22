@@ -21,6 +21,11 @@ function mySettings(props) {
         label="Low threshold"
         settingsKey="lowThreshold"
         />
+        <Toggle
+        settingsKey="alwaysOn"
+        label={`Display: ${props.settingsStorage.getItem('alwaysOn') === 'true' ? 'always on' : 'sleep is on'}`}
+        onChange={value => props.settingsStorage.getItem('alwaysOn', value ? 'always on' : 'sleep is on')}
+        />
       <TextImageRow
         label="Fitbit NS watchface"
         sublabel="@Rytiggy / @nivz / @sulkaharo"

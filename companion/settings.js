@@ -23,8 +23,9 @@ _settings.getSettings = function getSettings(key, defvalue) {
 
   if (keyValue) {
     console.log(key, 'value is', keyValue);
+    console.log(key, 'type is', typeof keyValue);
     const parsed = JSON.parse(keyValue);
-    if (!parsed.name || parsed.name == "") return defvalue;
+    if (!parsed.name) return parsed;
     return parsed.name;
   } else {
     console.log('Setting', key, 'not found, returning', defvalue);
@@ -56,6 +57,8 @@ _settings.parseSettings = function parseSettings() {
 
   settings.timeFormat = '24h';
   settings.bgColor = 'black';
+
+  settings.displayOn = _settings.getSettings('alwaysOn', false);
 
   return settings;
 

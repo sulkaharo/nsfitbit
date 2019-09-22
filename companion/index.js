@@ -93,7 +93,6 @@ function queryTreatments() {
     .then(function (response) {
       return response.json()
         .then(function (data) {
-          console.log('treatment data0: ' + JSON.stringify(data[0]));
 
           // throw out MBG entries and take the first 28 entries
           data = data.filter(function (t) {

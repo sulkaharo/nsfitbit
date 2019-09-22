@@ -1,4 +1,5 @@
 // Imports
+import { display } from "display";
 import clock from "clock";
 import * as messaging from "messaging";
 import document from "document";
@@ -8,6 +9,7 @@ import { vibration } from "haptics";
 import { preferences } from "user-settings";
 import { today } from "user-activity";
 import { HeartRateSensor } from "heart-rate";
+import { battery } from "power";
 
 import Graph from "./graph.js";
 
@@ -38,10 +40,11 @@ let muted = false;
 let alarming = false;
 
 // Handles to GUI Elements
-const time = document.getElementById("time");
+const time = document.getElementById('time');
 const date = document.getElementById('date');
 const steps = document.getElementById("steps");
-const hrLabel = document.getElementById("heartrate");
+const hrLabel = document.getElementById('heartrate');
+const batteryLabel = document.getElementById('battery');
 
 hrLabel.text = "--";
 steps.text = "--";
@@ -65,7 +68,7 @@ var settings = {};
 // converts a mg/dL to mmoL
 function mmol (bg) {
   let mmolBG = Math.round((0.0556 * bg) * 10) / 10;
-  return mmolBG;
+  return mmolBG.toFixed(1);
 }
 
 // converts mmoL to  mg/dL 
@@ -135,11 +138,11 @@ function updateScreenWithLatestGlucose (data) {
       tcolor = "green";
     }
 
-    sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv);
+    sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv) + "" + arrowIcon[data.direction];
     sgv.style.fill = tcolor;
 
-    dirArrow.text = arrowIcon[data.direction];
-    dirArrow.style.fill = tcolor;
+    //dirArrow.text = arrowIcon[data.direction];
+    //dirArrow.style.fill = tcolor;
 
     minsAgo = data.date;
     minsAgoText = Math.round((Date.now() - minsAgo) / 60000);
@@ -195,6 +198,14 @@ function readSGVFile (filename) {
 
   settings = data.settings;
 
+  if (settings.displayOn) {
+    display.autoOff = false;
+    display.on = true;
+  } else {
+    display.autoOff = true;
+    display.on = true;
+  }
+
   let lastEntry = data.BGD[data.BGD.length - 1];
 
   checkAlarms(lastEntry);
@@ -236,7 +247,6 @@ function readSGVFile (filename) {
     myGraph.updateTreatments(data.treatments);
   }
 }
-
 
 function checkAlarms (entry) {
 
@@ -338,12 +348,29 @@ function updateClock () {
   if (preferences.clockDisplay === "12h") {
     time.text = `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
   } else {
-    time.text = `${hours} ${mins}`;
+    time.text = `${hours}:${mins}`;
   }
 
-  date.text = `${month}:${day}`;
-
+  date.text = `${month} ${day}`;
   steps.text = today.local.steps || 0;
+  batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
+
+  // battery icon
+
+  let b = 0;
+  if (battery.chargeLevel > 25) b = 1;
+  if (battery.chargeLevel > 50) b = 2;
+  if (battery.chargeLevel > 75) b = 3;
+  if (battery.chargeLevel > 90) b = 3;
+
+  for (let i = 0; i < 5; i++) {
+    const bImage = document.getElementById('b'+ i);
+    if (i == b) {
+      bImage.style.visibility = 'visible';
+    } else {
+      bImage.style.visibility = 'hidden';
+    }
+  }
 
   // Update mins ago
   if (minsAgo > 0) {
@@ -358,7 +385,8 @@ function updateClock () {
   const nowMoment = nowDate.getTime();
   const timeDelta = nowMoment - lastUpdateTime;
 
-  if (timeDelta > (1000 * 5)) {
+  if (timeDelta > (1000 * 60)) {
+    console.log('Periodic display update');
     readSGVFile('file.txt');
   }
 
