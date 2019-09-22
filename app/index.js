@@ -42,6 +42,8 @@ let alarming = false;
 // Handles to GUI Elements
 const time = document.getElementById('time');
 const iobLabel = document.getElementById('iob');
+const bwpLabel = document.getElementById('bwp');
+
 const steps = document.getElementById("steps");
 const hrLabel = document.getElementById('heartrate');
 const batteryLabel = document.getElementById('battery');
@@ -242,11 +244,11 @@ function readSGVFile (filename) {
   const stateData = data.pebble.bgs[0];
 
   if (stateData.iob) {
-    const iobString = "IOB " + stateData.iob;
-   // if (stateData.bwp) iobString += " BWP " + stateData.bwp;
-    iobLabel.text = iobString;
+    iobLabel.text = "IOB " + stateData.iob;
+    if (stateData.bwp) bwpLabel.text = "BWP " + stateData.bwp;
   } else {
     iobLabel.text = "";
+    bwpLabel.text = "";
   }
 
   // Set the graph scale
