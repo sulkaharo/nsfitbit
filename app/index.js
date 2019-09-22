@@ -377,7 +377,7 @@ function updateClock () {
   if (battery.chargeLevel > 25) b = 1;
   if (battery.chargeLevel > 50) b = 2;
   if (battery.chargeLevel > 75) b = 3;
-  if (battery.chargeLevel > 90) b = 3;
+  if (battery.chargeLevel > 90) b = 4;
 
   for (let i = 0; i < 5; i++) {
     const bImage = document.getElementById('b'+ i);
