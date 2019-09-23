@@ -208,7 +208,6 @@ function readSGVFile (filename) {
     display.on = true;
   } else {
     display.autoOff = true;
-    display.on = true;
   }
 
   let lastEntry = data.BGD[data.BGD.length - 1];
