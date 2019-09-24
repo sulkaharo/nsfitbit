@@ -21,12 +21,12 @@
   <text id="age" class="ageText" x="0" y="140" >- mins ago</text>
   <text id="delta" class="deltaText" x="0" y="120" >-? mg/dl</text>
   
-  <text id="scale1" class="scaleText" x="30" y="204"></text>
-  <text id="scale2" class="scaleText" x="30" y="236"></text>
-  <text id="scale3" class="scaleText" x="30" y="268"></text>
-  <text id="scale4" class="scaleText" x="30" y="300"></text>
+  <text id="scale1" class="scaleText" x="30" y="184"></text>
+  <text id="scale2" class="scaleText" x="30" y="216"></text>
+  <text id="scale3" class="scaleText" x="30" y="248"></text>
+  <text id="scale4" class="scaleText" x="30" y="280"></text>
   
-  <use href="#graph" id="docGraph" x="36" y="200" width="264" height="100" />
+  <use href="#graph" id="docGraph" x="36" y="180" width="264" height="120" />
   
   <!-- Alert -->
       <svg id="popup" display="none" >

@@ -4,6 +4,7 @@ import { encode } from 'cbor';
 import { outbox } from "file-transfer";
 
 import Settings from './settings.js';
+import dataProcessor from './dataprocessing.js';
 
 // Let's abuse some Globals
 
@@ -38,10 +39,13 @@ function queryBGD() {
         .then(function (data) {
           console.log('data0: ' + JSON.stringify(data[0]));
 
-          // throw out MBG entries and take the first 28 entries
+          // throw out MBG entries
+
+          const dataCap = settings.cgmHours * (60/5);
+
           data = data.filter(function (bg) {
             return (bg.sgv && bg.type !== 'mbg' && bg.date);
-          }).slice(0, 24);
+          }).slice(0, dataCap);
 
           let currentBgDate = data[0].date;
 
@@ -64,8 +68,7 @@ function queryBGD() {
               sgv: bg.sgv,
               direction: bg.direction,
               date: bg.date,
-              delta,
-              timedelta: (currentBgDate - bg.date)
+              delta
             });
 
             lastBG = bg.sgv;
@@ -75,14 +78,13 @@ function queryBGD() {
           lastFetch = Date.now();
 
           // Send the data to the device
-          return bgData.reverse();
+          return bgData;
         });
     })
     .catch(function (err) {
       console.log("Error fetching glucose data: " + err);
     });
 }
-
 
 function queryTreatments() {
   
@@ -94,36 +96,38 @@ function queryTreatments() {
       return response.json()
         .then(function (data) {
 
-          // throw out MBG entries and take the first 28 entries
-          data = data.filter(function (t) {
+          const tempBasals = data.filter( function (t) {
+            return (t.eventType == 'Temp Basal');
+          });
 
-            const carbs = isNaN(t.carbs) ? 0: Number(t.carbs);
-            const insulin = isNaN(t.insulin) ? 0: Number(t.insulin);
-
-            return !(carbs == 0 && insulin == 0);
-          }).slice(0, 10);
-
-          let currentBgDate = new Date(data[0].created_at).getTime();
-
-          const tData = [];
+          const carbArray = [];
+          const bolusArray = [];
 
           data.forEach(function (t) {
+
+            if (t.eventType == 'Temp Basal') return;
 
             const carbs = isNaN(t.carbs) ? 0: Number(t.carbs);
             const insulin = isNaN(t.insulin) ? 0: Number(t.insulin);
             const d =  new Date(t.created_at).getTime();
 
-            tData.push({
-              insulin: insulin,
-              carbs: carbs,
-              date: d,
-              timedelta: (currentBgDate - d)
+            if (carbs) carbArray.push({
+                carbs,
+                date: d
+              });
+
+            if (insulin) bolusArray.push({
+              insulin,
+              date: d
             });
 
           });
 
-          // Send the data to the device
-          return tData.reverse();
+          return {
+            tempBasals: tempBasals.slice(0,40).reverse(),
+            carbs: carbArray.slice(0,40),
+            boluses: bolusArray.slice(0,40)
+          }
         });
     })
     .catch(function (err) {
@@ -131,8 +135,8 @@ function queryTreatments() {
     });
 }
 
-function queryPebbleAPI() {
-  return fetch(settings.pebbleURL)
+function queryJSONAPI(url) {
+  return fetch(url)
     .then(function (response) {
       return response.json()
         .then(function (data) {
@@ -140,9 +144,10 @@ function queryPebbleAPI() {
         });
     })
     .catch(function (err) {
-      console.log("Error fetching pebble data: " + err);
+      console.log("Error fetching data from url: ", url, err);
     });
 }
+
 
 // Send the BG data to the device
 function returnData(data) {
@@ -174,22 +179,46 @@ function updateDataFromCloud() {
   console.log("Fetching Data");
 
   // eslint-disable-next-line no-unused-vars
-  let BGDPromise = new Promise(function (resolve, reject) {
+  const BGDPromise = new Promise(function (resolve, reject) {
     resolve(queryBGD());
   });
 
-  let TreatmentPromise = new Promise(function (resolve, reject) {
+  const TreatmentPromise = new Promise(function (resolve, reject) {
     resolve(queryTreatments());
   });
 
-  let PebblePromise = new Promise(function (resolve, reject) {
-    resolve(queryPebbleAPI());
+  const PebblePromise = new Promise(function (resolve, reject) {
+    resolve(queryJSONAPI(settings.pebbleURL));
   });
 
-  Promise.all([BGDPromise, TreatmentPromise, PebblePromise]).then(function (values) {
+  const ProfilePromise = new Promise(function (resolve, reject) {
+    resolve(queryJSONAPI(settings.profileURL));
+  });
+
+  const V2ApiPromise = new Promise(function (resolve, reject) {
+    resolve(queryJSONAPI(settings.v2APIURL));
+  });
+
+  Promise.all([BGDPromise, TreatmentPromise, PebblePromise, ProfilePromise, V2ApiPromise]).then(function (values) {
+
+    console.log('All promises resolved');
+
+    const treatments = values[1];
+    const profile = values[3];
+    let processedBasals = [];
+
+    try {
+      processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals]);
+      console.log(JSON.stringify(processedBasals));
+    } catch (err) {
+      console.log(err);
+    }
+
     let dataToSend = {
       'BGD': values[0],
-      'treatments': values[1],
+      'carbs': treatments.carbs,
+      'boluses': treatments.boluses,
+      'basals': processedBasals.reverse(),
       'pebble': values[2],
       'settings': settings
     };

@@ -23,7 +23,8 @@ export default class Graph {
 
     this._vals = this._id.getElementsByClassName("gval");
     this._treatments = this._id.getElementsByClassName("treatment");
-    
+    this._basals = this._id.getElementsByClassName("basal");
+
     this._tHigh = 162;
     this._tLow = 72;
 
@@ -73,10 +74,66 @@ export default class Graph {
     this._bg.style.fill = c;
   }
 
-  updateTreatments(treatments) {
+  getRenderCoords(settings) {
+    const totalMinutes = (settings.cgmHours + settings.predictionHours) * 60;
+    const graphWidth = this._id.width;
+    const fiveMinWidth = graphWidth / (totalMinutes/5);
+    const zeroPoint = graphWidth * (settings.cgmHours / (settings.cgmHours + settings.predictionHours));
+    return {fiveMinWidth, zeroPoint};
+  }
+
+  updateBasals(basals, settings) {
+    console.log('Updating basals');
+    const now = Date.now();
+
+    const {fiveMinWidth, zeroPoint} = this.getRenderCoords(settings);
+
+    for (let i = 0; i < this._basals.length; i++) {
+      this._basals[i].style.visibility = 'hidden';
+    }
+
+    let totalWidth = 0;
+    let maxVal = 0;
+
+    for (let i = 0; i < basals.length; i++) {
+      const b = basals[i];
+      if (!b.absolute) continue;
+      const abs = Number(b.absolute);
+      if (abs > maxVal) maxVal = abs;
+    }
+
+    for (let i = 0; i < basals.length; i++) {
+      if (!this._basals[i]) continue;
+
+      const bar = this._basals[i];
+      const b = basals[i];
+
+      const d = b.duration / (5 * 60 * 1000);
+      
+      bar.width = (fiveMinWidth * d);
+      bar.x = this._id.width - totalWidth;
+
+      totalWidth += bar.width;
+      if (totalWidth >= this._id.width) break;
+      bar.style.visibility = 'visible';
+      if (bar.x < 36) bar.style.visibility = 'hidden';
+
+      const abs = Number(b.absolute) || 0;
+
+      bar.height = 30 * Math.max(0,(abs / maxVal));
+
+      bar.y = this._id.height - bar.height;
+
+    }
+
+  }
+
+  updateTreatments(treatments, settings) {
     console.log("Updating treatment bars...");
 
     const now = Date.now();
+
+    const {fiveMinWidth, zeroPoint} = this.getRenderCoords(settings);
 
     for (let i = 0; i < this._treatments.length; i++) {
       this._treatments[i].style.visibility = 'hidden';
@@ -88,7 +145,7 @@ export default class Graph {
       const t = treatments[i];
       const timeDelta = (now - t.date) / (5 * 60 * 1000);
 
-      bar.x = this._id.width - ((this._id.width / 24) * timeDelta);
+      bar.x = this._id.width - (fiveMinWidth * timeDelta);
 
       if (t.carbs) {
         bar.height = 10 + (t.carbs / 2);
@@ -98,7 +155,7 @@ export default class Graph {
         bar.height = 10 + (t.insulin * 5);
         bar.style.fill = 'red';
       }
-      bar.y = this._id.height - bar.height;
+      bar.y = this._id.height - bar.height -30;
       bar.style.visibility = 'visible';
 
       if (bar.x < 36) bar.style.visibility = 'hidden';
@@ -107,51 +164,46 @@ export default class Graph {
 
   }
 
-  update(v, highThreshold, lowThreshold) {
+  update(v, settings) {
 
     console.log("Updating glucose dots...");
 
-    //this._bg.style.fill = this._bgcolor;
+    const {fiveMinWidth, zeroPoint} = this.getRenderCoords(settings);
 
+    for (let i = 0; i < this._vals.length; i++) {
+      this._vals[i].style.visibility = 'hidden';
+    }
+
+    const now = Date.now();
+    const glucoseHeight = 100;
+
+    for (let i = 0; i < v.length; i++) {
+      if (!this._vals[i]) continue;
+      const dot = this._vals[i];
+      const sgv = v[i];
+
+      const timeDeltaMinutes = (now - sgv.date) / (60 * 1000);
+      if (timeDelta > settings.cgmHours*60) continue;
+
+      const timeDelta = timeDeltaMinutes / 5;
+      dot.cy =  Math.floor(glucoseHeight - ((sgv.sgv - this._ymin) / this._yscale));
+      dot.cx = Math.floor(this._id.width - (timeDelta * fiveMinWidth));
+
+      dot.style.fill = 'green';
+      if (sgv.sgv >= settings.highThreshold || sgv.sgv <= settings.lowThreshold) {
+        dot.style.fill = 'red';
+      }
+      dot.style.visibility = 'visible';
+
+    }
+
+    /*
     this._tHighLine.y1 = this._id.height - ((this._tHigh - this._ymin) / this._yscale);
     this._tHighLine.y2 = this._id.height - ((this._tHigh - this._ymin) / this._yscale);
     this._tLowLine.y1 = this._id.height - ((this._tLow - this._ymin) / this._yscale);
     this._tLowLine.y2 = this._id.height - ((this._tLow - this._ymin) / this._yscale);
 
-    // 24 points total
-    // 120 minutes
+    */
 
-    for (let index = 0; index < this._vals.length; index++) {
-
-      //console.log(`V${index}: ${v[index].sgv}`);
-      //console.log(this._vals[index]);
-
-      //console.log("SGV" + index + ": " + v[index].sgv + " TIME: " + v[index].date);
-      //this._vals[index].cx = this._width - ((v[index].date-this._xmin) / this._xscale);
-
-      if (!v[index]) continue;
-
-      let graphEntry = this._vals[index];
-
-      let sgv = v[index];
-
-      let timeDeltaMinutes = sgv.timedelta / (5 * 60 * 1000);
-
-      graphEntry.cy = this._id.height - ((sgv.sgv - this._ymin) / this._yscale);
-      // console.log('sgv.timedelta: ' + sgv.timedelta + 'sgv is ' + sgv.sgv);
-      // console.log('cx is: ' + graphEntry.cx + ' and setting it to '+ (this._id.width / 24) * timeDeltaMinutes);
-      const padding = this._id.width / 48;
-
-      graphEntry.cx = this._id.width - ((this._id.width / 24) * timeDeltaMinutes) - padding;
-
-      graphEntry.style.fill = 'green';
-      if (sgv.sgv >= highThreshold || sgv.sgv <= lowThreshold) {
-        graphEntry.style.fill = 'red';
-      }
-
-      //this._vals[index].cy = this._height - 20;
-      //this._vals[index].r = this._pointsize;
-
-    }
   }
 };

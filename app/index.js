@@ -210,11 +210,11 @@ function readSGVFile (filename) {
     display.autoOff = true;
   }
 
-  let lastEntry = data.BGD[data.BGD.length - 1];
+  const recentEntry = data.BGD[0];
 
-  checkAlarms(lastEntry);
-  updateScreenWithLatestGlucose(lastEntry);
-  latestGlucoseDate = lastEntry.date;
+  checkAlarms(recentEntry);
+  updateScreenWithLatestGlucose(recentEntry);
+  latestGlucoseDate = recentEntry.date;
 
   // Added by NiVZ    
   let ymin = 999;
@@ -256,9 +256,12 @@ function readSGVFile (filename) {
   // Set the graph scale
   myGraph.setYRange(ymin, ymax);
   // Update the graph
-  myGraph.update(data.BGD, settings.highThreshold, settings.lowThreshold);
-  if (data.treatments) {
-    myGraph.updateTreatments(data.treatments);
+  myGraph.update(data.BGD, settings);
+  if (data.boluses) {
+    myGraph.updateTreatments(data.boluses, settings);
+  }
+  if (data.basals) {
+    myGraph.updateBasals(data.basals, settings);
   }
 }
 
@@ -354,7 +357,6 @@ function updateClock () {
   const month = monthNames[nowDate.getMonth()];
   const day = nowDate.getDate();
   
-
   if (mins < 10) { mins = `0${mins}`; }
 
   const dateText = `${month} ${day} `;
