@@ -56,33 +56,45 @@ export default class Graph {
       this._basals[i].style.fill = '#3366CC';
     }
 
-    let totalWidth = 0;
     let maxVal = 0;
+    const maxAge = Math.floor(now - (settings.cgmHours * 60 * 60 * 1000));
+
+    let basalShortList = [];
 
     for (let i = 0; i < basals.length; i++) {
       const b = basals[i];
-      if (!b.absolute) continue;
+      if (isNaN(b.absolute)) continue;
+
       const abs = Number(b.absolute);
       if (abs > maxVal) maxVal = abs;
+      basalShortList.push(b);
+
+      //console.log('Basal at ' + (now-b.start)/60000 + ' min ago, rate ' + b.absolute);
+
+      if (b.start < maxAge) {
+        console.log('Found oldest needed basal');
+        b.duration = b.duration - (maxAge - b.start);
+        b.start = maxAge;
+        break;
+      }
     }
 
-    for (let i = 0; i < basals.length; i++) {
+    for (let i = 0; i < basalShortList.length; i++) {
       if (!this._basals[i]) continue;
 
       const bar = this._basals[i];
-      const b = basals[i];
+      const b = basalShortList[i];
 
       if (!b.duration) continue;  // Ok this is actually a problem
 
       const d = b.duration / (5 * 60 * 1000);
 
-      bar.width = (fiveMinWidth * d);
-      bar.x = zeroPoint - totalWidth;
+      bar.width = Math.max(1,(fiveMinWidth * d));
 
-      totalWidth += bar.width;
-      if (totalWidth >= zeroPoint) break;
+      const timeDelta = (now - b.start) / (5 * 60 * 1000);
+      bar.x = zeroPoint - (fiveMinWidth * timeDelta);
+
       bar.style.visibility = 'visible';
-      if (bar.x < 36) bar.style.visibility = 'hidden';
 
       const abs = Number(b.absolute) || 0;
 

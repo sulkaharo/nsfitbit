@@ -121,7 +121,7 @@ function fetchCompanionData (cmd) {
 }
 
 // Display the data received from the companion
-function updateScreenWithLatestGlucose (data) {
+function updateScreenWithLatestGlucose (data, prevEntry) {
   console.log("bg is: " + JSON.stringify(data));
 
   if (data) {
@@ -148,13 +148,27 @@ function updateScreenWithLatestGlucose (data) {
     minsAgoText = Math.round((Date.now() - minsAgo) / 60000);
     age.text = `${minsAgoText} mins ago`;
 
-    if (data.delta > 0) {
-      //console.log(`DELTA: +${data.delta} mg/dl`);
-      delta.text = `+${mmol(data.delta)} mmol`;
+    // calc the delta
+
+    let deltaString = "";
+    let deltaValue = 0;
+
+    if (settings.units == 'mgdl') {
+      deltaValue = data.sgv - prevEntry.sgv;
+      deltaString = deltaValue + ' mgdl';
     } else {
-      //console.log(`DELTA: ${data.delta} mg/dl`);
-      delta.text = `${mmol(data.delta)} mmol`;
+      // mmmol needs to be calculated from pre-rounded values to ensure the delta makes sense
+      const p = Math.round((0.0556 * prevEntry.sgv) * 10) / 10;
+      const n = Math.round((0.0556 * data.sgv) * 10) / 10;
+      deltaValue= n-p;
+      deltaString = deltaValue.toFixed(1) + ' mmol';
     }
+
+    if (deltaValue > 0) {
+      deltaString = '+' + deltaString;
+    } 
+    
+    delta.text = deltaString;
 
   } else {
     sgv.text = '???';
@@ -211,7 +225,7 @@ function readSGVFile (filename) {
   const recentEntry = data.BGD[0];
 
   checkAlarms(recentEntry);
-  updateScreenWithLatestGlucose(recentEntry);
+  updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
 
   /*

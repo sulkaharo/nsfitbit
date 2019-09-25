@@ -1,15 +1,17 @@
 <svg>
   
+  <use id="mixedtext" href="#mixed-text-center-top" x="0" height="30" font-size="28" fill="white">
+    <set href="#copy/text" attributeName="text-buffer" to="Header Text"/>
+    <set href="#copy/text" attributeName="text-length" to="32" />
+  </use>
+
+
   <image x="5" y="5" width="25" height="25" href="img/steps.png" load="sync" visibility='hidden'/>
   <image x="5" y="37" width="25" height="25" href="img/heart.png" load="sync" visibility='hidden'/>
 
   <text id="steps" class="monitorText" x="35" y="28" visibility='hidden' ></text>
   <text id="heartrate" class="monitorText" x="35" y="60" visibility='hidden'></text>
 
-   <use id="mixedtext" href="#mixed-text-center-top" height="30" font-size="28" fill="white">
-    <set href="#copy/text" attributeName="text-buffer" to="Header Text"/>
-    <set href="#copy/text" attributeName="text-length" to="32" />
-  </use>
 
    <textarea id='statusline1' x="0" y="44" width="100%" text-length="200" text-anchor="middle"
     font-family="System-Regular" fill="white" font-size="20"></textarea>

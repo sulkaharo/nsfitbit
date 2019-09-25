@@ -62,13 +62,11 @@ function queryBGD() {
           data.forEach(function (bg) {
 
             const last = lastBG || bg.sgv;
-            const delta = bg.delta ? Math.round(bg.delta) : bg.sgv - last;
 
             bgData.push({
               sgv: bg.sgv,
               direction: bg.direction,
-              date: bg.date,
-              delta
+              date: bg.date
             });
 
             lastBG = bg.sgv;
