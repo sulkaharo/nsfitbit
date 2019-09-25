@@ -11,13 +11,6 @@ export default class Graph {
   constructor(id) {
 
     this._id = id;
-    this._xscale = 0;
-    this._yscale = 0;
-    this._xmin = 0;
-    this._xmax = 0;
-    this._ymin = 0;
-    this._ymax = 0;
-    this._pointsize = 2;
 
     this._bg = this._id.getElementById("bg");
 
@@ -25,53 +18,9 @@ export default class Graph {
     this._treatments = this._id.getElementsByClassName("treatment");
     this._basals = this._id.getElementsByClassName("basal");
 
-    this._tHigh = 162;
-    this._tLow = 72;
-
     this._tHighLine = this._id.getElementById("tHigh");
     this._tLowLine = this._id.getElementById("tLow");
 
-    this._defaultYmin = 40;
-    this._defaultYmax = 400;
-
-  }
-
-  setPosition(x, y) {
-    this._id.x = x;
-    this._id.y = y;
-  }
-
-  setSize(w, h) {
-    this._width = w;
-    this._height = h;
-  }
-
-  setXRange(xmin, xmax) {
-    this._xmin = xmin;
-    this._xmax = xmax;
-    this._xscale = (xmax - xmin) / this._width;
-    //console.log("XSCALE: " + this._xscale);
-  }
-
-  setYRange(ymin, ymax) {
-
-    this._ymin = ymin;
-    this._ymax = ymax;
-    this._yscale = (ymax - ymin) / this._id.height;
-    //console.log("YSCALE: " + this._yscale);
-  }
-
-  getYmin() {
-    return this._ymin;
-  }
-
-  getYmax() {
-    return this._ymax;
-  }
-
-  setBGColor(c) {
-    this._bgcolor = c;
-    this._bg.style.fill = c;
   }
 
   getRenderCoords(settings) {
@@ -84,12 +33,16 @@ export default class Graph {
 
   updateBasals(basals, settings) {
     console.log('Updating basals');
+
+    const basalMaxHeight = 20;
+
     const now = Date.now();
 
     const {fiveMinWidth, zeroPoint} = this.getRenderCoords(settings);
 
     for (let i = 0; i < this._basals.length; i++) {
       this._basals[i].style.visibility = 'hidden';
+      this._basals[i].style.fill = '#3366CC';
     }
 
     let totalWidth = 0;
@@ -120,7 +73,7 @@ export default class Graph {
 
       const abs = Number(b.absolute) || 0;
 
-      bar.height = 30 * Math.max(0,(abs / maxVal));
+      bar.height = basalMaxHeight * Math.max(0,(abs / maxVal));
 
       bar.y = this._id.height - bar.height;
 
@@ -155,7 +108,7 @@ export default class Graph {
         bar.height = 10 + (t.insulin * 5);
         bar.style.fill = 'red';
       }
-      bar.y = this._id.height - bar.height -30;
+      bar.y = this._id.height - bar.height - 20;
       bar.style.visibility = 'visible';
 
       if (bar.x < 36) bar.style.visibility = 'hidden';
@@ -174,8 +127,27 @@ export default class Graph {
       this._vals[i].style.visibility = 'hidden';
     }
 
+    const sgvLow = 36;
+    let sgvHigh = 0;
+    const glucoseHeight = 98;
+
+    for (let i = 0; i < v.length; i++) {
+      const sgv = v[i];
+      if (sgv.sgv > sgvHigh) sgvHigh = sgv.sgv;
+    }
+
+    const yScale = (sgvHigh - sgvLow) / this._id.height;
+
+    const range = sgvHigh - sgvLow;
+
+
+    function getYFromSgv(sgv) {
+      const v = sgv-sgvLow;
+      const r = v/range;
+      return Math.floor(glucoseHeight * (1-r)) + 1;
+    }
+
     const now = Date.now();
-    const glucoseHeight = 100;
 
     for (let i = 0; i < v.length; i++) {
       if (!this._vals[i]) continue;
@@ -186,7 +158,7 @@ export default class Graph {
       if (timeDelta > settings.cgmHours*60) continue;
 
       const timeDelta = timeDeltaMinutes / 5;
-      dot.cy =  Math.floor(glucoseHeight - ((sgv.sgv - this._ymin) / this._yscale));
+      dot.cy = getYFromSgv(Number(sgv.sgv));
       dot.cx = Math.floor(this._id.width - (timeDelta * fiveMinWidth));
 
       dot.style.fill = 'green';
@@ -197,13 +169,17 @@ export default class Graph {
 
     }
 
-    /*
-    this._tHighLine.y1 = this._id.height - ((this._tHigh - this._ymin) / this._yscale);
-    this._tHighLine.y2 = this._id.height - ((this._tHigh - this._ymin) / this._yscale);
-    this._tLowLine.y1 = this._id.height - ((this._tLow - this._ymin) / this._yscale);
-    this._tLowLine.y2 = this._id.height - ((this._tLow - this._ymin) / this._yscale);
+    const highLineY = getYFromSgv(settings.highThreshold);
+    const lowLineY = getYFromSgv(settings.lowThreshold);
 
-    */
+    this._tHighLine.y1 = highLineY;
+    this._tHighLine.y2 = highLineY;
+    this._tLowLine.y1 = lowLineY;
+    this._tLowLine.y2 = lowLineY;
+
+    this._tHighLine.style.visibility = 'visible'; 
+
+    if (highLineY < 0) { this._tHighLine.style.visibility = 'hidden'; }
 
   }
 };

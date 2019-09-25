@@ -44,6 +44,9 @@ const time = document.getElementById('time');
 const iobLabel = document.getElementById('iob');
 const bwpLabel = document.getElementById('bwp');
 
+const statusLine1 = document.getElementById('statusline1');
+const statusLine2 = document.getElementById('statusline2');
+
 const steps = document.getElementById("steps");
 const hrLabel = document.getElementById('heartrate');
 const batteryLabel = document.getElementById('battery');
@@ -56,11 +59,6 @@ const dirArrow = document.getElementById("dirArrow");
 
 const delta = document.getElementById("delta");
 const age = document.getElementById("age");
-
-const scale1 = document.getElementById("scale1");
-const scale2 = document.getElementById("scale2");
-const scale3 = document.getElementById("scale3");
-const scale4 = document.getElementById("scale4");
 
 const docGraph = document.getElementById("docGraph");
 let myGraph = new Graph(docGraph);
@@ -216,45 +214,16 @@ function readSGVFile (filename) {
   updateScreenWithLatestGlucose(recentEntry);
   latestGlucoseDate = recentEntry.date;
 
-  // Added by NiVZ    
-  let ymin = 999;
-  let ymax = 0;
-
-  data.BGD.forEach(function(bg) {
-    if (bg.sgv < ymin) {
-      ymin = bg.sgv;
-    }
-    if (bg.sgv > ymax) {
-      ymax = bg.sgv;
-    }
-  });
-
-  ymin -= 20;
-  ymax += 20;
-
-  ymin = Math.floor((ymin / 10)) * 10;
-  ymax = Math.floor(((ymax + 9) / 10)) * 10;
-
-  ymin = ymin < 40 ? ymin : 40;
-  ymax = ymax < 180 ? 180 : ymax;
-
-  scale1.text = mmol(ymax);
-  scale2.text = mmol(Math.floor(ymin + ((ymax - ymin) * 0.66)));
-  scale3.text = mmol(Math.floor(ymin + ((ymax - ymin) * 0.33)));
-  scale4.text = mmol(ymin);
-
   const stateData = data.pebble.bgs[0];
 
   if (stateData.iob) {
-    iobLabel.text = "IOB " + stateData.iob;
-    if (stateData.bwp) bwpLabel.text = "BWP " + stateData.bwp;
+    statusLine1.text = "IOB " + stateData.iob;
+    if (stateData.bwp) statusLine2.text = "BWP " + stateData.bwp;
   } else {
-    iobLabel.text = "";
-    bwpLabel.text = "";
+    statusLine1.text = "";
+    statusLine2.text = "";
   }
 
-  // Set the graph scale
-  myGraph.setYRange(ymin, ymax);
   // Update the graph
   myGraph.update(data.BGD, settings);
   if (data.boluses) {
@@ -363,10 +332,13 @@ function updateClock () {
 
   const ampm = hours < 12 ? "AM" : "PM";
 
+  let mixedtext = document.getElementById("mixedtext");
+  let t = mixedtext.getElementById("copy");
+
   if (preferences.clockDisplay === "12h") {
-    time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
+    t.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
   } else {
-    time.text = dateText + `${hours}:${mins}`;
+    t.text = dateText + `${hours}:${mins}`;
   }
 
   steps.text = today.local.steps || 0;

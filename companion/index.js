@@ -209,7 +209,6 @@ function updateDataFromCloud() {
 
     try {
       processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals]);
-      console.log(JSON.stringify(processedBasals));
     } catch (err) {
       console.log(err);
     }

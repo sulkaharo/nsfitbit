@@ -17,7 +17,7 @@
 }
 
 .sgvText {
-  font-size: 90;
+  font-size: 80;
   font-family: Fabrikat;
   font-weight: regular;
   text-length: 12;
@@ -43,8 +43,17 @@
   fill: green; 
 }
 
-.deltaText {
+.batteryText {
   font-size: 16;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 6;
+  text-anchor: start;
+  fill: white;
+}
+
+.deltaText {
+  font-size: 22;
   font-family: Colfax;
   font-weight: bold;
   text-length: 6;
