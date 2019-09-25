@@ -213,15 +213,29 @@ function updateDataFromCloud() {
       console.log(err);
     }
 
+    let openAPSEnacted = {};
+    let openapsPreds = {};
+    const v2data = values[4];
+
+    console.log('v2data.openaps.lastEnacted', v2data.openaps.lastEnacted);
+
+    if (v2data.openaps && v2data.openaps.lastEnacted && v2data.openaps.lastSuggested) {
+      openAPSEnacted = v2data.openaps.lastEnacted;
+      openapsPreds = v2data.openaps.lastPredBGs;
+    }
+
     let dataToSend = {
       'BGD': values[0],
       'carbs': treatments.carbs,
       'boluses': treatments.boluses,
       'basals': processedBasals.reverse(),
       'pebble': values[2],
+      'openaps': openAPSEnacted,
+      'openapsPreds': openapsPreds,
       'settings': settings
     };
     returnData(dataToSend);
+    
   });
 }
 
@@ -231,7 +245,6 @@ messaging.peerSocket.onmessage = function (evt) {
   console.log('Got ping from device', JSON.stringify(evt.data));
   if (evt.data) {
     instantiateInterval();
-    //updateDataFromCloud();
   }
 };
 

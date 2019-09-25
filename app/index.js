@@ -214,6 +214,7 @@ function readSGVFile (filename) {
   updateScreenWithLatestGlucose(recentEntry);
   latestGlucoseDate = recentEntry.date;
 
+  /*
   const stateData = data.pebble.bgs[0];
 
   if (stateData.iob) {
@@ -222,10 +223,21 @@ function readSGVFile (filename) {
   } else {
     statusLine1.text = "";
     statusLine2.text = "";
+  }*/
+
+  if (data.openaps) {
+    const statusArray = data.openaps.reason.split(", ");
+
+    const a = statusArray.filter(function f(s) {
+      return (s.toLowerCase().indexOf('pred')<0);
+    });
+
+    statusLine1.text = a.join(', '); //data.openapsSuggested.reason;
   }
 
   // Update the graph
-  myGraph.update(data.BGD, settings);
+  myGraph.update(data, settings);
+
   if (data.boluses) {
     myGraph.updateTreatments(data.boluses, settings);
   }

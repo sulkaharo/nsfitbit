@@ -11,10 +11,10 @@
     <set href="#copy/text" attributeName="text-length" to="32" />
   </use>
 
-   <textarea id='statusline1' x="0" y="44" width="100%" text-length="100" text-anchor="middle"
-    font-family="System-Regular" fill="white" font-size="30"></textarea>
+   <textarea id='statusline1' x="0" y="44" width="100%" text-length="200" text-anchor="middle"
+    font-family="System-Regular" fill="white" font-size="20"></textarea>
 
-   <textarea id='statusline2' x="0" y="80" width="100%" text-length="100" text-anchor="middle"
+   <textarea id='statusline2' x="0" y="80" width="100%" text-length="100" text-anchor="middle" visibility="hidden"
     font-family="System-Regular" fill="white" font-size="30"></textarea>
 
   <text id="timex" class="timeText" x="0" y="28" width='300' text-anchor="middle"></text>

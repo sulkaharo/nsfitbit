@@ -65,7 +65,7 @@ _settings.parseSettings = function parseSettings() {
   settings.offOnNight = _settings.getSettings('offOnNight', false);
 
   settings.cgmHours = 3;
-  settings.predictionHours = 0;
+  settings.predictionHours = 2;
 
   return settings;
 
