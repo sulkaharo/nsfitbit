@@ -267,6 +267,18 @@ function readSGVFile (filename) {
   }
 }
 
+function canCancelAlarm() {
+  if (alarming && sgv < settings.highThreshold && sgv > settings.lowThreshold) {
+    console.log('BG normal, clearing alarm mutes');
+    stopAlarming();
+    muted = false;
+    alarming = false;
+    clearTimeout(vibrationTimeout);
+    return true;
+  }
+  return false;
+}
+
 function checkAlarms (entry, prevEntry) {
 
   if (!settings.enableAlarms) return;
@@ -275,13 +287,7 @@ function checkAlarms (entry, prevEntry) {
 
   console.log('Checking alarms');
 
-  if (alarming && sgv < settings.highThreshold && sgv > settings.lowThreshold) {
-    console.log('BG normal, clearing alarm mutes');
-    stopAlarming();
-    muted = false;
-    alarming = false;
-    clearTimeout(vibrationTimeout);
-  }
+  canCancelAlarm();
 
   if (alarming || muted) {
     console.log('Alarming or muted, not checking alarms', alarming, muted);
@@ -333,7 +339,7 @@ function startAlarming (type, message) {
   showAlert(message);
   vibration.start(type);
   vibrationTimeout = setTimeout(function() {
-    startAlarming(type, message);
+    if (!canCancelAlarm()) startAlarming(type, message);
   }, MINUTES_10);
 }
 

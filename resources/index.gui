@@ -1,6 +1,6 @@
 <svg>
   <textarea id='clock' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
-    font-family="System-Regular" fill="white" font-size="30"></textarea>
+    font-family="System-Regular" fill="white" font-size="35"></textarea>
 
   <image x="5" y="5" width="25" height="25" href="img/steps.png" load="sync" visibility='hidden'/>
   <image x="5" y="37" width="25" height="25" href="img/heart.png" load="sync" visibility='hidden'/>
