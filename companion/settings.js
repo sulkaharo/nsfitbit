@@ -86,8 +86,8 @@ _settings.parseSettings = function parseSettings() {
   settings.displayOn = _settings.getSettings('alwaysOn', false);
   settings.offOnNight = _settings.getSettings('offOnNight', false);
 
-  settings.cgmHours = 3;
-  settings.predictionHours = 2;
+  settings.cgmHours = Number(_settings.getSettings('cgmHours', 3));
+  settings.predictionHours =  Number(_settings.getSettings('cgmHours', 0));
 
   settings.enableAlarms = _settings.getSettings('enableAlarms', false);
 
@@ -117,7 +117,7 @@ _settings.getURLS = function getURLS() {
     const host = parsed[2] + '';
     const start = 'https://' + host.toLowerCase();
 
-    const entryCount = 3*60/5;
+    const entryCount = 4*60/5;
     const sgvURL = start + '/api/v1/entries.json?count=' + entryCount;
     const treatmentURL = start + '/api/v1/treatments.json?count=150';
     const pebbleURL = start + '/pebble';

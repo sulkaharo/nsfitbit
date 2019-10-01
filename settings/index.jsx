@@ -35,6 +35,19 @@ function mySettings(props) {
         settingsKey="graphTopBG"
         />
 
+<Slider
+  label="Number of CGM hours to plot (1 to 4)"
+  settingsKey="cgmHours"
+  min="1"
+  max="4"
+/>
+
+<Slider
+  label="Number of OpenAPS / Loop predictions to plot (0 to 3)"
+  settingsKey="predictionHours"
+  min="0"
+  max="3"
+/>
         <Toggle
         settingsKey="enableAlarms"
         label={`Enable alarms: ${props.settingsStorage.getItem('enableAlarms') === 'true' ? 'yes' : 'no'}`}
