@@ -32,6 +32,12 @@ _settings.getSettingIndex = function getSettingIndex(key, defvalue) {
   }
 }
 
+function mapTruthy (value) {
+  if (value == 'true') return true;
+  if (value == 'false') return false;
+  return value;
+}
+
 _settings.getSettings = function getSettings(key, defvalue) {
 
   const keyValue = settingsStorage.getItem(key);
@@ -40,9 +46,9 @@ _settings.getSettings = function getSettings(key, defvalue) {
     console.log(key, 'value is', keyValue);
     console.log(key, 'type is', typeof keyValue);
     const parsed = JSON.parse(keyValue);
-    if (parsed.values) return parsed.values[0].name;
-    if (parsed.name) return parsed.name;
-    return parsed;
+    if (parsed.values) return mapTruthy(parsed.values[0].name);
+    if (parsed.name) return mapTruthy(parsed.name);
+    return mapTruthy(parsed);
   } else {
     console.log('Setting', key, 'not found, returning', defvalue);
     return defvalue;

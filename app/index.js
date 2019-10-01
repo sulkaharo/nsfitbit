@@ -269,6 +269,8 @@ function readSGVFile (filename) {
 
 function checkAlarms (entry, prevEntry) {
 
+  if (!settings.enableAlarms) return;
+
   const sgv = entry.sgv;
 
   console.log('Checking alarms');
