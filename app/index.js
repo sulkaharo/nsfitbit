@@ -40,9 +40,10 @@ let muted = false;
 let alarming = false;
 
 // Handles to GUI Elements
-const time = document.getElementById('time');
 const iobLabel = document.getElementById('iob');
 const bwpLabel = document.getElementById('bwp');
+
+const time = document.getElementById('clock');
 
 const statusLine1 = document.getElementById('statusline1');
 const statusLine2 = document.getElementById('statusline2');
@@ -190,15 +191,12 @@ inbox.onnewfile = () => {
   } while (fileName);
 };
 
-let fileLastUpdated =  0;
 let latestGlucoseDate = 0;
 
 function readSGVFile (filename) {
 
   // TODO: have a view that shows no data exists
   // Also WOOOT why is fileExists() not supported?
-
-  fileLastUpdated = Date.now();
 
   let data;
 
@@ -224,21 +222,29 @@ function readSGVFile (filename) {
 
   const recentEntry = data.BGD[0];
 
-  checkAlarms(recentEntry);
+  checkAlarms(recentEntry, data.BGD[1]);
+
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
 
+  const statusStrings = {};
+
+  const state = data.state;
+
+  statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
+  statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
+  statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
+  
+  const s1 = settings.statusLine1 || "IOB";
+  const s2 = settings.statusLine2 || "COB";
+
+  statusLine1.text = statusStrings[s1] || "";
+  statusLine2.text = statusStrings[s2] || "";
+
+  const state = data.state;
+
+
   /*
-  const stateData = data.pebble.bgs[0];
-
-  if (stateData.iob) {
-    statusLine1.text = "IOB " + stateData.iob;
-    if (stateData.bwp) statusLine2.text = "BWP " + stateData.bwp;
-  } else {
-    statusLine1.text = "";
-    statusLine2.text = "";
-  }*/
-
   if (data.openaps) {
     const statusArray = data.openaps.reason.split(", ");
 
@@ -248,6 +254,7 @@ function readSGVFile (filename) {
 
     statusLine1.text = a.join(', '); //data.openapsSuggested.reason;
   }
+*/
 
   // Update the graph
   myGraph.update(data, settings);
@@ -260,14 +267,15 @@ function readSGVFile (filename) {
   }
 }
 
-function checkAlarms (entry) {
+function checkAlarms (entry, prevEntry) {
 
   const sgv = entry.sgv;
 
+  console.log('Checking alarms');
+
   if (alarming && sgv < settings.highThreshold && sgv > settings.lowThreshold) {
     console.log('BG normal, clearing alarm mutes');
-
-    stopVibration();
+    stopAlarming();
     muted = false;
     alarming = false;
     clearTimeout(vibrationTimeout);
@@ -278,32 +286,52 @@ function checkAlarms (entry) {
     return;
   }
 
-  const displayGlucose = settings.units === "mgdl" ? sgv : mmol(sgv);
+  const displayGlucose = settings.units === "mgdl" ? sgv : Math.round((0.0556 * sgv) * 10) / 10;
 
   if (sgv >= settings.highThreshold) {
     console.log('BG HIGH, triggering alarm');
-    startVibration("nudge", displayGlucose);
+    startAlarming("nudge", "HIGH BG: " + displayGlucose);
   }
 
   if (sgv <= settings.lowThreshold) {
     console.log('BG LOW, triggering alarm');
-    startVibration("nudge", displayGlucose);
+    startAlarming("nudge", "LOW BG: " + displayGlucose);
+  }
+
+  if (settings.predSteps > 0) {
+
+    const delta = entry.sgv - prevEntry.sgv;
+    const pred = entry.sgv + delta * settings.predSteps;
+
+    const displayPredGlucose = settings.units === "mgdl" ? pred : Math.round((0.0556 * pred) * 10) / 10;
+
+    console.log("Predicted BG is " + displayPredGlucose);
+
+    if (pred >= settings.highThreshold) {
+      console.log('PRED BG HIGH, triggering alarm');
+      startAlarming("nudge", "HIGH predicted: " + displayPredGlucose);
+    }
+
+    if (pred <= settings.lowThreshold) {
+      console.log('PRED BG LOW, triggering alarm');
+      startAlarming("nudge", "LOW predicted: " + displayPredGlucose);
+    }
   }
 }
 
 let vibrationTimeout;
 
-function startVibration (type, message) {
+function startAlarming (type, message) {
   console.log('Showing alarm (new or unsnoozed)');
   alarming = true;
   showAlert(message);
   vibration.start(type);
   vibrationTimeout = setTimeout(function() {
-    startVibration(type, message);
+    startAlarming(type, message);
   }, MINUTES_10);
 }
 
-function stopVibration () {
+function stopAlarming () {
   alarming = false;
   vibration.stop();
   clearTimeout(vibrationTimeout);
@@ -320,8 +348,7 @@ let btnRight = myPopup.getElementById("btnRight");
 let alertHeader = document.getElementById("alertHeader");
 
 function showAlert (message) {
-  console.log('ALERT BG');
-  console.log(message);
+  console.log('ALERT BG message: ' + message);
   alertHeader.text = message;
   myPopup.style.display = "inline";
 }
@@ -332,7 +359,7 @@ btnLeft.onclick = function(evt) {
   // TODO This needs to mute it for 15 mins
   myPopup.style.display = "none";
   muted = true;
-  stopVibration();
+  stopAlarming();
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -358,13 +385,10 @@ function updateClock () {
 
   const ampm = hours < 12 ? "AM" : "PM";
 
-  let mixedtext = document.getElementById("mixedtext");
-  let t = mixedtext.getElementById("copy");
-
   if (preferences.clockDisplay === "12h") {
-    t.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
+    time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
   } else {
-    t.text = dateText + `${hours}:${mins}`;
+    time.text = dateText + `${hours}:${mins}`;
   }
 
   steps.text = today.local.steps || 0;
@@ -418,7 +442,7 @@ let lastPinged = 0;
 
 function checkNeedForPing() {
   const now = Date.now();
-  const timeSinceLastGlucose = now - latestGlucoseDate; // fileLastUpdated;
+  const timeSinceLastGlucose = now - latestGlucoseDate;
   const lastPingDelta = now - lastPinged;
 
   //console.log('Checking if I need to ping companion');

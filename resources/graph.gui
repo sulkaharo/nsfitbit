@@ -8,6 +8,8 @@
       <line id="tHigh" x1="0" y1="0" x2="100%" y2="0" fill="#006699" stroke-width="1"/>
       <line id="tLow" x1="0" y1="100%" x2="100%" y2="100%" fill="#006699" stroke-width="1"/>
       
+      <line id="predictionLine" x1="0" y1="0" x2="0" y2="100%" fill="#006699" stroke-width="1"/>
+      
       <circle class="gval" cx="4%" cy="50%" r="2" />
       <circle class="gval" cx="8%" cy="50%" r="2" />
       <circle class="gval" cx="12%" cy="50%" r="2" />

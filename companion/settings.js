@@ -1,7 +1,6 @@
 
 import { settingsStorage } from "settings";
 
-
 // converts a mg/dL to mmoL
 function mmol(bg) {
   let mmolBG = Math.round((0.0556 * bg) * 10) / 10;
@@ -17,6 +16,22 @@ function mgdl(bg) {
 
 const _settings = {};
 
+_settings.getSettingIndex = function getSettingIndex(key, defvalue) {
+
+  const keyValue = settingsStorage.getItem(key);
+
+  if (keyValue) {
+    console.log(key, 'value is', keyValue);
+    console.log(key, 'type is', typeof keyValue);
+    const parsed = JSON.parse(keyValue);
+    if (parsed.selected) return parsed.selected[0];
+    return defvalue;
+  } else {
+    console.log('Setting', key, 'not found, returning', defvalue);
+    return defvalue;
+  }
+}
+
 _settings.getSettings = function getSettings(key, defvalue) {
 
   const keyValue = settingsStorage.getItem(key);
@@ -25,8 +40,9 @@ _settings.getSettings = function getSettings(key, defvalue) {
     console.log(key, 'value is', keyValue);
     console.log(key, 'type is', typeof keyValue);
     const parsed = JSON.parse(keyValue);
-    if (!parsed.name) return parsed;
-    return parsed.name;
+    if (parsed.values) return parsed.values[0].name;
+    if (parsed.name) return parsed.name;
+    return parsed;
   } else {
     console.log('Setting', key, 'not found, returning', defvalue);
     return defvalue;
@@ -67,6 +83,22 @@ _settings.parseSettings = function parseSettings() {
   settings.cgmHours = 3;
   settings.predictionHours = 2;
 
+  settings.enableAlarms = _settings.getSettings('enableAlarms', false);
+
+  let predSteps = _settings.getSettingIndex('alarmPredictions', 0);
+  if (predSteps.selected) {
+    predSteps = predSteps.selected[0];
+  }
+  settings.predSteps = predSteps;
+
+  settings.statusLine1 = _settings.getSettings('statusLine1', false);
+  settings.statusLine2 = _settings.getSettings('statusLine2', false);
+
+  settings.graphDynamicScale = _settings.getSettings('graphDynamicScale', false);
+
+  const gt = _settings.getSettings('graphTopBG', settings.units == 'mmol' ? 10: 180);
+  settings.graphTopBG = settings.units == 'mmol' ? gt * 18 : gt;
+
   return settings;
 
 }
@@ -93,10 +125,11 @@ _settings.getURLS = function getURLS() {
   }
 }
 
+let _updateCallback = null;
+
+_settings.setCallback = function(cb) {
+  _updateCallback = cb;
+}
+
 export default _settings;
 
-settingsStorage.onchange = function (evt) {
-  console.log('Setting changed', evt.key, _settings.getSettings(evt.key));
-  _settings.parseSettings();
-  //updateDataFromCloud();
-};

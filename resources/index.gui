@@ -1,10 +1,6 @@
 <svg>
-  
-  <use id="mixedtext" href="#mixed-text-center-top" x="0" height="30" font-size="28" fill="white">
-    <set href="#copy/text" attributeName="text-buffer" to="Header Text"/>
-    <set href="#copy/text" attributeName="text-length" to="32" />
-  </use>
-
+  <textarea id='clock' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
+    font-family="System-Regular" fill="white" font-size="30"></textarea>
 
   <image x="5" y="5" width="25" height="25" href="img/steps.png" load="sync" visibility='hidden'/>
   <image x="5" y="37" width="25" height="25" href="img/heart.png" load="sync" visibility='hidden'/>
@@ -14,9 +10,9 @@
 
 
    <textarea id='statusline1' x="0" y="44" width="100%" text-length="200" text-anchor="middle"
-    font-family="System-Regular" fill="white" font-size="20"></textarea>
+    font-family="System-Regular" fill="white" font-size="30"></textarea>
 
-   <textarea id='statusline2' x="0" y="80" width="100%" text-length="100" text-anchor="middle" visibility="hidden"
+   <textarea id='statusline2' x="0" y="80" width="100%" text-length="100" text-anchor="middle"
     font-family="System-Regular" fill="white" font-size="30"></textarea>
 
   <text id="timex" class="timeText" x="0" y="28" width='300' text-anchor="middle"></text>
@@ -33,7 +29,7 @@
   <image x="0" y="115" width="20" height="20" href="img/battery_4.png" load="sync" id="b4" />
 
   <text id="battery" class="batteryText" x="26" y="131" ></text>
-  <text id="delta" class="deltaText" x="0" y="155" >-? mg/dl</text>
+  <text id="delta" class="deltaText" x="0" y="155" text-length="15">-? mg/dl</text>
   <text id="age" class="ageText" x="0" y="174" >- mins ago</text>
   
   <use href="#graph" id="docGraph" x="0" y="180" width="300" height="120" />
