@@ -42,7 +42,8 @@
         <!-- Title and text -->
         <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white" id="alertHeader">
           <set href="#top-padding" attributeName="display" to="none" />
-          <set href="#header/text" attributeName="text-buffer"  to="---" />
+          <set href="#header/text" attributeName="text-buffer" to="---" />
+          <set href="#header/text" attributeName="text-length" to="30" />
           <set href="#header/text" attributeName="fill" to="fb-magenta"/>
           <set href="#copy/text" attributeName="text-buffer" to="Check BG!" />
           <set href="#bottom-padding" attributeName="display" to="none" />

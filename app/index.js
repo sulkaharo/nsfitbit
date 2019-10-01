@@ -293,11 +293,13 @@ function checkAlarms (entry, prevEntry) {
   if (sgv >= settings.highThreshold) {
     console.log('BG HIGH, triggering alarm');
     startAlarming("nudge", "HIGH BG: " + displayGlucose);
+    return;
   }
 
   if (sgv <= settings.lowThreshold) {
     console.log('BG LOW, triggering alarm');
     startAlarming("nudge", "LOW BG: " + displayGlucose);
+    return;
   }
 
   if (settings.predSteps > 0) {
@@ -312,11 +314,13 @@ function checkAlarms (entry, prevEntry) {
     if (pred >= settings.highThreshold) {
       console.log('PRED BG HIGH, triggering alarm');
       startAlarming("nudge", "HIGH predicted: " + displayPredGlucose);
+      return;
     }
 
     if (pred <= settings.lowThreshold) {
       console.log('PRED BG LOW, triggering alarm');
       startAlarming("nudge", "LOW predicted: " + displayPredGlucose);
+      return;
     }
   }
 }
@@ -452,7 +456,7 @@ function checkNeedForPing() {
   if (lastPingDelta > 30 * 1000 && timeSinceLastGlucose > dataPingInterval) {
     console.log('Pinging companion');
     lastPinged = now;
-    fetchCompanionData('wtf where is my file');
+    fetchCompanionData('hey where is my file');
   }
 }
 
