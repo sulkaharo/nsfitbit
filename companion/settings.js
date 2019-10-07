@@ -87,8 +87,8 @@ _settings.parseSettings = function parseSettings() {
   settings.offOnNight = _settings.getSettings('offOnNight', false);
 
   settings.cgmHours = Number(_settings.getSettings('cgmHours', 3));
-  settings.predictionHours =  Number(_settings.getSettings('cgmHours', 0));
-
+  settings.predictionHours =  Number(_settings.getSettings('predictionHours', 0));
+  
   settings.enableAlarms = _settings.getSettings('enableAlarms', false);
 
   let predSteps = _settings.getSettingIndex('alarmPredictions', 0);
