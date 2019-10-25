@@ -7,7 +7,7 @@ function mmol(bg) {
   return mmolBG;
 }
 
-// converts mmoL to  mg/dL 
+// converts mmoL to  mg/dL
 function mgdl(bg) {
   let mgdlBG = Math.round((bg * 18) / 10) * 10;
   return mgdlBG;
@@ -61,6 +61,8 @@ _settings.parseSettings = function parseSettings() {
 
   settings.units = settingsStorage.getItem('usemgdl') === 'true' ? 'mgdl' : 'mmol';
 
+  settings.multicolor = _settings.getSettings('multicolor', false);
+
   // thresholds are always mgdl
   settings.highThreshold = Number(_settings.getSettings('highThreshold', 200));
   settings.lowThreshold = Number(_settings.getSettings('lowThreshold', 70));
@@ -88,7 +90,7 @@ _settings.parseSettings = function parseSettings() {
 
   settings.cgmHours = Number(_settings.getSettings('cgmHours', 3));
   settings.predictionHours =  Number(_settings.getSettings('predictionHours', 0));
-  
+
   settings.enableAlarms = _settings.getSettings('enableAlarms', false);
 
   let predSteps = _settings.getSettingIndex('alarmPredictions', 0);
@@ -126,7 +128,7 @@ _settings.getURLS = function getURLS() {
 
     return {sgvURL, treatmentURL, pebbleURL, profileURL, v2APIURL};
   } else {
-    // Default xDrip web service 
+    // Default xDrip web service
     return "http://127.0.0.1:17580/sgv.json";
   }
 }
@@ -138,4 +140,3 @@ _settings.setCallback = function(cb) {
 }
 
 export default _settings;
-

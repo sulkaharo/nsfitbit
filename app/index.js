@@ -72,7 +72,7 @@ function mmol (bg) {
   return mmolBG.toFixed(1);
 }
 
-// converts mmoL to  mg/dL 
+// converts mmoL to  mg/dL
 function mgdl (bg) {
   let mgdlBG = Math.round((bg * 18) / 10) * 10;
   return mgdlBG;
@@ -106,7 +106,7 @@ hrm.start();
 
 //----------------------------------------------------------
 //
-// This section deals with getting data from the companion app 
+// This section deals with getting data from the companion app
 //
 //----------------------------------------------------------
 // Request data from the companion
@@ -138,6 +138,47 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
     } else {
       tcolor = "green";
     }
+    if (settings.multicolor){
+      if (data.sgv >= 360){
+        tcolor = '#e3b4f3';
+      } else if (data.sgv > 340) {
+        tcolor = '#D6A7E6';
+      } else if (data.sgv > 300) {
+        tcolor = '#b800f5';
+      } else if (data.sgv > 280) {
+        tcolor = '#d452ff';
+      } else if (data.sgv > 260) {
+        tcolor = '#fd20d7';
+      } else if (data.sgv > 240) {
+        tcolor = '#ee59d5';
+      } else if (data.sgv > 200) {
+        tcolor = '#f38ee2';
+      } else if (data.sgv > 190) {
+        tcolor = '#f44496';
+      } else if (data.sgv > 180) {
+        tcolor = '#f76767';
+      } else if (data.sgv > 170) {
+        tcolor = '#f93434';
+      } else if (data.sgv > 160) {
+        tcolor = '#FF5722';
+      } else if (data.sgv > 150) {
+        tcolor = '#ffa500';
+      } else if (data.sgv > 140) {
+        tcolor = '#ffbf00';
+      } else if (data.sgv > 135) {
+        tcolor = '#ffff00';
+      } else if (data.sgv > 125) {
+        tcolor = '#dbef02';
+      } else if (data.sgv > 100) {
+        tcolor = '#3fce02';
+      } else if (data.sgv > 70) {
+        tcolor = '#02ad27';
+      } else if (data.sgv > 66) {
+        tcolor = '#06bbbb';
+      }else{
+        tcolor = '#2196f3';
+      }
+    }
 
     sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv) + "" + arrowIcon[data.direction];
     sgv.style.fill = tcolor;
@@ -167,8 +208,8 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     if (deltaValue > 0) {
       deltaString = '+' + deltaString;
-    } 
-    
+    }
+
     delta.text = deltaString;
 
   } else {
@@ -234,7 +275,7 @@ function readSGVFile (filename) {
   statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
   statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
   statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
-  
+
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
 
@@ -382,7 +423,7 @@ btnRight.onclick = function(evt) {
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// The updater is used to update the screen every 1 SECONDS 
+// The updater is used to update the screen every 1 SECONDS
 function updateClock () {
 
   const nowDate = new Date();
@@ -390,7 +431,7 @@ function updateClock () {
   const mins = nowDate.getMinutes();
   const month = monthNames[nowDate.getMonth()];
   const day = nowDate.getDate();
-  
+
   if (mins < 10) { mins = `0${mins}`; }
 
   const dateText = `${month} ${day} `;

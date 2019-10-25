@@ -19,6 +19,12 @@ function mySettings(props) {
           settingsKey="highThreshold"
         />
 
+        <Toggle
+        settingsKey="multicolor"
+        label={`Multi color BG graph: ${props.settingsStorage.getItem('multicolor') === 'true' ? 'yes' : 'no'}`}
+        onChange={value => props.settingsStorage.getItem('multicolor', value ? 'yes' : 'no')}
+        />
+
         <TextInput
         label="Low BG threshold"
         settingsKey="lowThreshold"
