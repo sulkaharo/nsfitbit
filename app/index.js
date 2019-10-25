@@ -72,7 +72,7 @@ function mmol (bg) {
   return mmolBG.toFixed(1);
 }
 
-// converts mmoL to  mg/dL 
+// converts mmoL to  mg/dL
 function mgdl (bg) {
   let mgdlBG = Math.round((bg * 18) / 10) * 10;
   return mgdlBG;
@@ -106,7 +106,7 @@ hrm.start();
 
 //----------------------------------------------------------
 //
-// This section deals with getting data from the companion app 
+// This section deals with getting data from the companion app
 //
 //----------------------------------------------------------
 // Request data from the companion
@@ -139,7 +139,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
       tcolor = "green";
     }
 
-    sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv) + "" + arrowIcon[data.direction];
+    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[data.direction] : mmol(data.sgv) + "" + arrowIcon[data.direction];
     sgv.style.fill = tcolor;
 
     //dirArrow.text = arrowIcon[data.direction];
@@ -167,8 +167,8 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     if (deltaValue > 0) {
       deltaString = '+' + deltaString;
-    } 
-    
+    }
+
     delta.text = deltaString;
 
   } else {
@@ -234,7 +234,7 @@ function readSGVFile (filename) {
   statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
   statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
   statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
-  
+
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
 
@@ -382,7 +382,7 @@ btnRight.onclick = function(evt) {
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// The updater is used to update the screen every 1 SECONDS 
+// The updater is used to update the screen every 1 SECONDS
 function updateClock () {
 
   const nowDate = new Date();
@@ -390,7 +390,7 @@ function updateClock () {
   const mins = nowDate.getMinutes();
   const month = monthNames[nowDate.getMonth()];
   const day = nowDate.getDate();
-  
+
   if (mins < 10) { mins = `0${mins}`; }
 
   const dateText = `${month} ${day} `;
