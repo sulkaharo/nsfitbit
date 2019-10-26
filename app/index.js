@@ -58,6 +58,8 @@ steps.text = "--";
 const sgv = document.getElementById("sgv");
 const dirArrow = document.getElementById("dirArrow");
 
+const noise = document.getElementById("noise");
+
 const delta = document.getElementById("delta");
 const age = document.getElementById("age");
 
@@ -72,10 +74,30 @@ function mmol (bg) {
   return mmolBG.toFixed(1);
 }
 
-// converts mmoL to  mg/dL 
+// converts mmoL to  mg/dL
 function mgdl (bg) {
   let mgdlBG = Math.round((bg * 18) / 10) * 10;
   return mgdlBG;
+}
+
+//convert a noise number to text
+function noiseCodeToDisplay(mgdl, noise) {
+    var display;
+    switch (parseInt(noise)) {
+      case 0: display = '---'; break;
+      case 1: display = 'Clean'; break;
+      case 2: display = 'Light'; break;
+      case 3: display = 'Medium'; break;
+      case 4: display = 'Heavy'; break;
+      default:
+        if (mgdl < 40) {
+          display = translate('Heavy');
+        } else {
+          display = '~~~';
+        }
+        break;
+    }
+    return display;
 }
 
 //----------------------------------------------------------
@@ -106,7 +128,7 @@ hrm.start();
 
 //----------------------------------------------------------
 //
-// This section deals with getting data from the companion app 
+// This section deals with getting data from the companion app
 //
 //----------------------------------------------------------
 // Request data from the companion
@@ -167,9 +189,12 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     if (deltaValue > 0) {
       deltaString = '+' + deltaString;
-    } 
-    
+    }
+
     delta.text = deltaString;
+
+    //update noise
+    noise.text = noiseCodeToDisplay(data.sgv, data.noise);
 
   } else {
     sgv.text = '???';
@@ -234,7 +259,7 @@ function readSGVFile (filename) {
   statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
   statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
   statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
-  
+
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
 
@@ -382,7 +407,7 @@ btnRight.onclick = function(evt) {
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// The updater is used to update the screen every 1 SECONDS 
+// The updater is used to update the screen every 1 SECONDS
 function updateClock () {
 
   const nowDate = new Date();
@@ -390,7 +415,7 @@ function updateClock () {
   const mins = nowDate.getMinutes();
   const month = monthNames[nowDate.getMonth()];
   const day = nowDate.getDate();
-  
+
   if (mins < 10) { mins = `0${mins}`; }
 
   const dateText = `${month} ${day} `;
