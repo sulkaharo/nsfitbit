@@ -228,7 +228,7 @@ export default class Graph {
         } else if (sgv.sgv > 135) {
           dot.style.fill = '#ffff00';
         } else if (sgv.sgv > 125) {
-          dot.style.fill = '#dbef02';
+          dot.style.fill = '#aaee02';
         } else if (sgv.sgv > 100) {
           dot.style.fill = '#3fce02';
         } else if (sgv.sgv > 70) {

@@ -168,7 +168,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
       } else if (data.sgv > 135) {
         tcolor = '#ffff00';
       } else if (data.sgv > 125) {
-        tcolor = '#dbef02';
+        tcolor = '#aaee02';
       } else if (data.sgv > 100) {
         tcolor = '#3fce02';
       } else if (data.sgv > 70) {
