@@ -20,7 +20,7 @@
 //  <text id="iob" class="timeText" x="100%" y="60" ></text>
   //<text id="bwp" class="timeText" x="100%" y="90" ></text>
 
-  <text id="noise" class="noiseText" x="100%" y="58%" >---</text>
+  <text id="noise" class="noiseText" x="100%" y="58%" ></text>
   <text id="sgv" class="sgvText" x="100%" y="58%" >---</text>
 
   <image x="0" y="115" width="20" height="20" href="img/battery_0.png" load="sync" id="b0" />

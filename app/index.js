@@ -194,7 +194,11 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
     delta.text = deltaString;
 
     //update noise
-    noise.text = noiseCodeToDisplay(data.sgv, data.noise);
+    //blank the value just encase the value was turned on then off
+    noise.text = '';
+    if (settings.shownoise){
+      noise.text = noiseCodeToDisplay(data.sgv, data.noise);
+    }
 
   } else {
     sgv.text = '???';
