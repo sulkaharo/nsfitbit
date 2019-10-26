@@ -25,6 +25,14 @@
   fill: white;
 }
 
+.noiseText {
+  font-size: 16;
+  font-family: Colfax;
+  font-weight: bold;
+  text-length: 8;
+  text-anchor: end;
+  fill: white;
+}
 .dirText {
   font-size: 120;
   font-family: Fabrikat;
@@ -40,7 +48,7 @@
   font-weight: bold;
   text-length: 16;
   text-anchor: start;
-  fill: green; 
+  fill: green;
 }
 
 .batteryText {

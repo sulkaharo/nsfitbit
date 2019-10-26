@@ -73,6 +73,7 @@ function queryBGD () {
               sgv: bg.sgv
               , direction: bg.direction
               , date: bg.date
+              , noise: bg.noise
             });
 
             lastBG = bg.sgv;
@@ -204,7 +205,7 @@ async function loadDataFromCloud () {
     });
 
     const values = await Promise.all([BGDPromise, TreatmentPromise, ProfilePromise, V2ApiPromise]);
-    
+
     console.log('All promises resolved');
     dataCache = values;
     lastFetch = Date.now();
