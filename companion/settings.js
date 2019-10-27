@@ -99,6 +99,8 @@ _settings.parseSettings = function parseSettings() {
   }
   settings.predSteps = predSteps;
 
+  settings.shownoise = _settings.getSettings('shownoise', false);
+
   settings.statusLine1 = _settings.getSettings('statusLine1', false);
   settings.statusLine2 = _settings.getSettings('statusLine2', false);
 

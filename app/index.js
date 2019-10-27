@@ -60,6 +60,8 @@ steps.text = "--";
 const sgv = document.getElementById("sgv");
 const dirArrow = document.getElementById("dirArrow");
 
+const noise = document.getElementById("noise");
+
 const delta = document.getElementById("delta");
 const age = document.getElementById("age");
 
@@ -78,6 +80,26 @@ function mmol (bg) {
 function mgdl (bg) {
   let mgdlBG = Math.round((bg * 18) / 10) * 10;
   return mgdlBG;
+}
+
+//convert a noise number to text
+function noiseCodeToDisplay(mgdl, noise) {
+    var display;
+    switch (parseInt(noise)) {
+      case 0: display = '---'; break;
+      case 1: display = 'Clean'; break;
+      case 2: display = 'Light'; break;
+      case 3: display = 'Medium'; break;
+      case 4: display = 'Heavy'; break;
+      default:
+        if (mgdl < 40) {
+          display = translate('Heavy');
+        } else {
+          display = '~~~';
+        }
+        break;
+    }
+    return display;
 }
 
 //----------------------------------------------------------
@@ -139,7 +161,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
       tcolor = "green";
     }
 
-    sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv) + "" + arrowIcon[data.direction];
+    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[data.direction] : mmol(data.sgv) + "" + arrowIcon[data.direction];
     sgv.style.fill = tcolor;
 
     //dirArrow.text = arrowIcon[data.direction];
@@ -170,6 +192,13 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
     }
 
     delta.text = deltaString;
+
+    //update noise
+    //blank the value just encase the value was turned on then off
+    noise.text = '';
+    if (settings.shownoise){
+      noise.text = noiseCodeToDisplay(data.sgv, data.noise);
+    }
 
   } else {
     sgv.text = '???';
