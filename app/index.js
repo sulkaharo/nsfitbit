@@ -150,7 +150,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
   if (data) {
 
     //hand off to colour threshold function to allocate the color
-    sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv) + "" + arrowIcon[data.direction];
+    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[data.direction] : mmol(data.sgv) + "" + arrowIcon[data.direction];
     sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
     //dirArrow.text = arrowIcon[data.direction];
