@@ -10,7 +10,7 @@ import { preferences } from "user-settings";
 import { today } from "user-activity";
 import { HeartRateSensor } from "heart-rate";
 import { battery } from "power";
-
+import {coloralloc} from "./functions.js";
 import Graph from "./graph.js";
 
 // Update the clock every minute
@@ -149,61 +149,9 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
   if (data) {
 
-    let tcolor = "white";
-
-    // sgv is always mgdl, but thresholds are unit-specific
-
-    if (data.sgv >= settings.highThreshold) {
-      tcolor = "red";
-    } else if (data.sgv <= settings.lowThreshold) {
-      tcolor = "red";
-    } else {
-      tcolor = "green";
-    }
-    if (settings.multicolor){
-      if (data.sgv >= 360){
-        tcolor = '#e3b4f3';
-      } else if (data.sgv > 340) {
-        tcolor = '#D6A7E6';
-      } else if (data.sgv > 300) {
-        tcolor = '#b800f5';
-      } else if (data.sgv > 280) {
-        tcolor = '#d452ff';
-      } else if (data.sgv > 260) {
-        tcolor = '#fd20d7';
-      } else if (data.sgv > 240) {
-        tcolor = '#ee59d5';
-      } else if (data.sgv > 200) {
-        tcolor = '#f38ee2';
-      } else if (data.sgv > 190) {
-        tcolor = '#f44496';
-      } else if (data.sgv > 180) {
-        tcolor = '#f76767';
-      } else if (data.sgv > 170) {
-        tcolor = '#f93434';
-      } else if (data.sgv > 160) {
-        tcolor = '#FF5722';
-      } else if (data.sgv > 150) {
-        tcolor = '#ffa500';
-      } else if (data.sgv > 140) {
-        tcolor = '#ffbf00';
-      } else if (data.sgv > 135) {
-        tcolor = '#ffff00';
-      } else if (data.sgv > 125) {
-        tcolor = '#aaee02';
-      } else if (data.sgv > 100) {
-        tcolor = '#3fce02';
-      } else if (data.sgv > 70) {
-        tcolor = '#02ad27';
-      } else if (data.sgv > 66) {
-        tcolor = '#06bbbb';
-      }else{
-        tcolor = '#2196f3';
-      }
-    }
-
-    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[data.direction] : mmol(data.sgv) + "" + arrowIcon[data.direction];
-    sgv.style.fill = tcolor;
+    //hand off to colour threshold function to allocate the color
+    sgv.text = settings.units == 'mgdl' ? data.sgv : mmol(data.sgv) + "" + arrowIcon[data.direction];
+    sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
     //dirArrow.text = arrowIcon[data.direction];
     //dirArrow.style.fill = tcolor;

@@ -1,6 +1,6 @@
 import { me as device } from "device";
 import dataProcessor from '../companion/dataprocessing';
-
+import {coloralloc} from "./functions.js";
 // Screen dimension fallback for older firmware
 if (!device.screen) device.screen = {
   width: 348
@@ -199,46 +199,9 @@ export default class Graph {
         dot.style.fill = 'red';
       }
       if (settings.multicolor){
-        if (sgv.sgv >= 360){
-          dot.style.fill = '#e3b4f3';
-        } else if (sgv.sgv > 340) {
-          dot.style.fill = '#D6A7E6';
-        } else if (sgv.sgv > 300) {
-          dot.style.fill = '#b800f5';
-        } else if (sgv.sgv > 280) {
-          dot.style.fill = '#d452ff';
-        } else if (sgv.sgv > 260) {
-          dot.style.fill = '#fd20d7';
-        } else if (sgv.sgv > 240) {
-          dot.style.fill = '#ee59d5';
-        } else if (sgv.sgv > 200) {
-          dot.style.fill = '#f38ee2';
-        } else if (sgv.sgv > 190) {
-          dot.style.fill = '#f44496';
-        } else if (sgv.sgv > 180) {
-          dot.style.fill = '#f76767';
-        } else if (sgv.sgv > 170) {
-          dot.style.fill = '#f93434';
-        } else if (sgv.sgv > 160) {
-          dot.style.fill = '#FF5722';
-        } else if (sgv.sgv > 150) {
-          dot.style.fill = '#ffa500';
-        } else if (sgv.sgv > 140) {
-          dot.style.fill = '#ffbf00';
-        } else if (sgv.sgv > 135) {
-          dot.style.fill = '#ffff00';
-        } else if (sgv.sgv > 125) {
-          dot.style.fill = '#aaee02';
-        } else if (sgv.sgv > 100) {
-          dot.style.fill = '#3fce02';
-        } else if (sgv.sgv > 70) {
-          dot.style.fill = '#02ad27';
-        } else if (sgv.sgv > 66) {
-          dot.style.fill = '#06bbbb';
-        }else{
-          dot.style.fill = '#2196f3';
+        //set color based on thresholds
+        dot.style.fill = coloralloc(sgv.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
         }
-      }
       dot.style.visibility = 'visible';
     }
 
