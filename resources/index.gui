@@ -3,10 +3,10 @@
     font-family="System-Regular" fill="white" font-size="35"></textarea>
 
 
-  <text id="heartrate" class="monitorText" x="116" y="155" visibility='hidden'></text>
-  <text id="steps" class="monitorText" x="116" y="175" visibility='hidden'></text>
-  <image id="stepsicon" x="90" y="160" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
-  <image id="hricon" x="90" y="138" width="16" height="16" href="img/heart.png" visibility='hidden'/>
+  <text id="heartrate" class="monitorText" x="106" y="155" visibility='hidden'></text>
+  <text id="steps" class="monitorText" x="106" y="175" visibility='hidden'></text>
+  <image id="stepsicon" x="85" y="160" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
+  <image id="hricon" x="85" y="138" width="16" height="16" href="img/heart.png" visibility='hidden'/>
 
 
    <textarea id='statusline1' x="0" y="44" width="100%" text-length="200" text-anchor="middle"
