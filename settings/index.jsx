@@ -35,6 +35,12 @@ function mySettings(props) {
         settingsKey="graphTopBG"
         />
 
+        <Toggle
+        settingsKey="activity"
+        label={`Show HR & Steps: ${props.settingsStorage.getItem('activity') === 'true' ? 'yes' : 'no'}`}
+        onChange={value => props.settingsStorage.getItem('activity', value ? 'yes' : 'no')}
+        />
+
 <Slider
   label="Number of CGM hours to plot (1 to 4)"
   settingsKey="cgmHours"

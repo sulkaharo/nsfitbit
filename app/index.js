@@ -49,7 +49,9 @@ const statusLine1 = document.getElementById('statusline1');
 const statusLine2 = document.getElementById('statusline2');
 
 const steps = document.getElementById("steps");
+const stepsicon = document.getElementById("stepsicon");
 const hrLabel = document.getElementById('heartrate');
+const hricon = document.getElementById('hricon');
 const batteryLabel = document.getElementById('battery');
 
 hrLabel.text = "--";
@@ -72,7 +74,7 @@ function mmol (bg) {
   return mmolBG.toFixed(1);
 }
 
-// converts mmoL to  mg/dL 
+// converts mmoL to  mg/dL
 function mgdl (bg) {
   let mgdlBG = Math.round((bg * 18) / 10) * 10;
   return mgdlBG;
@@ -83,7 +85,6 @@ function mgdl (bg) {
 // This section is for displaying the heart rate
 //
 //----------------------------------------------------------
-
 // Create a new instance of the HeartRateSensor object
 var hrm = new HeartRateSensor();
 
@@ -95,18 +96,17 @@ hrm.onreading = function() {
   // Peek the current sensor values
   const now = Date.now();
   if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
-      //console.log("Current heart rate: " + hrm.heartRate);
-      hrLabel.text = hrm.heartRate;
+        hrLabel.text = hrm.heartRate;
+      }
       hrmLastUpdated = now;
-  }
-};
+    };
 
-// Begin monitoring the sensor
-hrm.start();
+  // Begin monitoring the sensor
+  hrm.start();
 
 //----------------------------------------------------------
 //
-// This section deals with getting data from the companion app 
+// This section deals with getting data from the companion app
 //
 //----------------------------------------------------------
 // Request data from the companion
@@ -167,8 +167,8 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     if (deltaValue > 0) {
       deltaString = '+' + deltaString;
-    } 
-    
+    }
+
     delta.text = deltaString;
 
   } else {
@@ -220,6 +220,27 @@ function readSGVFile (filename) {
     display.autoOff = true;
   }
 
+  //Steps Icon and HR
+  if (settings.activity){
+    console.log("The Icon visibility: "+stepsicon.style.visibility);
+    //reduce the amount of interactions with the DOM by checking the visibility and only if false then set item
+    if(stepsicon.style.visibility != "visible"){
+      stepsicon.style.visibility = "visible";
+      steps.style.visibility = "visible";
+      hrLabel.style.visibility = "visible";
+      hricon.style.visibility = "visible";
+    }
+    //Update the amount of steps
+    steps.text = today.local.steps || 0;
+  }else{
+    if(stepsicon.style.visibility == "visible"){
+      stepsicon.style.visibility = "hidden";
+      steps.style.visibility = "hidden";
+      hrLabel.style.visibility = "hidden";
+      hricon.style.visibility = "hidden";
+    }
+  }
+
   const recentEntry = data.BGD[0];
 
   checkAlarms(recentEntry, data.BGD[1]);
@@ -234,7 +255,7 @@ function readSGVFile (filename) {
   statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
   statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
   statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
-  
+
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
 
@@ -382,7 +403,7 @@ btnRight.onclick = function(evt) {
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// The updater is used to update the screen every 1 SECONDS 
+// The updater is used to update the screen every 1 SECONDS
 function updateClock () {
 
   const nowDate = new Date();
@@ -390,7 +411,7 @@ function updateClock () {
   const mins = nowDate.getMinutes();
   const month = monthNames[nowDate.getMonth()];
   const day = nowDate.getDate();
-  
+
   if (mins < 10) { mins = `0${mins}`; }
 
   const dateText = `${month} ${day} `;
@@ -403,7 +424,6 @@ function updateClock () {
     time.text = dateText + `${hours}:${mins}`;
   }
 
-  steps.text = today.local.steps || 0;
   batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
 
   // battery icon

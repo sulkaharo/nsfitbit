@@ -8,7 +8,7 @@
 }
 
 .monitorText {
-  font-size: 30;
+  font-size: 16;
   font-family: Colfax;
   font-weight: bold;
   text-length: 8;
@@ -40,7 +40,7 @@
   font-weight: bold;
   text-length: 16;
   text-anchor: start;
-  fill: green; 
+  fill: green;
 }
 
 .batteryText {
