@@ -31,6 +31,12 @@ function mySettings(props) {
         />
 
         <Toggle
+        settingsKey="shownoise"
+        label={`Show BG noise value: ${props.settingsStorage.getItem('shownoise') === 'true' ? 'yes' : 'no'}`}
+        onChange={value => props.settingsStorage.getItem('shownoise', value ? 'yes' : 'no')}
+        />
+
+        <Toggle
         settingsKey="graphDynamicScale"
         label={`Graph dynamic scaling: ${props.settingsStorage.getItem('graphDynamicScale') === 'true' ? 'yes' : 'no'}`}
         onChange={value => props.settingsStorage.getItem('graphDynamicScale', value ? 'yes' : 'no')}
