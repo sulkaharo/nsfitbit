@@ -1,6 +1,6 @@
 import { me as device } from "device";
 import dataProcessor from '../companion/dataprocessing';
-
+import {coloralloc} from "./functions.js";
 // Screen dimension fallback for older firmware
 if (!device.screen) device.screen = {
   width: 348
@@ -171,7 +171,7 @@ export default class Graph {
       }
       sgvHigh = Math.floor(sgvHigh*1.1); // Give some space for the highest dots
     }
-    
+
     const range = sgvHigh - sgvLow;
 
     function getYFromSgv (sgv) {
@@ -198,6 +198,10 @@ export default class Graph {
       if (sgv.sgv >= settings.highThreshold || sgv.sgv <= settings.lowThreshold) {
         dot.style.fill = 'red';
       }
+      if (settings.multicolor){
+        //set color based on thresholds
+        dot.style.fill = coloralloc(sgv.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
+        }
       dot.style.visibility = 'visible';
     }
 

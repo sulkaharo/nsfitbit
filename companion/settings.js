@@ -61,6 +61,8 @@ _settings.parseSettings = function parseSettings() {
 
   settings.units = settingsStorage.getItem('usemgdl') === 'true' ? 'mgdl' : 'mmol';
 
+  settings.multicolor = _settings.getSettings('multicolor', false);
+
   // thresholds are always mgdl
   settings.highThreshold = Number(_settings.getSettings('highThreshold', 200));
   settings.lowThreshold = Number(_settings.getSettings('lowThreshold', 70));

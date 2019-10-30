@@ -10,7 +10,7 @@ import { preferences } from "user-settings";
 import { today } from "user-activity";
 import { HeartRateSensor } from "heart-rate";
 import { battery } from "power";
-
+import {coloralloc} from "./functions.js";
 import Graph from "./graph.js";
 
 // Update the clock every minute
@@ -149,20 +149,9 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
   if (data) {
 
-    let tcolor = "white";
-
-    // sgv is always mgdl, but thresholds are unit-specific
-
-    if (data.sgv >= settings.highThreshold) {
-      tcolor = "red";
-    } else if (data.sgv <= settings.lowThreshold) {
-      tcolor = "red";
-    } else {
-      tcolor = "green";
-    }
-
+    //hand off to colour threshold function to allocate the color
     sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[data.direction] : mmol(data.sgv) + "" + arrowIcon[data.direction];
-    sgv.style.fill = tcolor;
+    sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
     //dirArrow.text = arrowIcon[data.direction];
     //dirArrow.style.fill = tcolor;
