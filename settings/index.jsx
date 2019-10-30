@@ -104,9 +104,10 @@ function mySettings(props) {
     {name:"BWP"}
   ]}
 />
+
         <Toggle
         settingsKey="alwaysOn"
-        label={`Screen: ${props.settingsStorage.getItem('alwaysOn') === 'true' ? 'always on' : 'sleep is on'}`}
+        label={`Versa 1 screen: ${props.settingsStorage.getItem('alwaysOn') === 'true' ? 'always on' : 'sleep is on'}`}
         onChange={value => props.settingsStorage.getItem('alwaysOn', value ? 'always on' : 'sleep is on')}
         />
         <Toggle
@@ -114,9 +115,10 @@ function mySettings(props) {
         label={`Turn display off for the night (22-07): ${props.settingsStorage.getItem('offOnNight') === 'true' ? 'yes' : 'no'}`}
         onChange={value => props.settingsStorage.getItem('offOnNight', value ? 'yes' : 'no')}
         />
+
       <TextImageRow
-        label="Fitbit NS watchface"
-        sublabel="@Rytiggy / @nivz / @sulkaharo"
+        label="Fitbit Nightscout Monitor watchface"
+        sublabel="@sulkaharo & @Tornado-Tim with special thanks to @Rytiggy / @nivz"
         icon="https://image.ibb.co/gbWF2H/twerp_bowtie_64.png"
       />
     </Page>
