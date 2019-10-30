@@ -2,11 +2,11 @@
   <textarea id='clock' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
     font-family="System-Regular" fill="white" font-size="35"></textarea>
 
-  <image x="5" y="5" width="25" height="25" href="img/steps.png" load="sync" visibility='hidden'/>
-  <image x="5" y="37" width="25" height="25" href="img/heart.png" load="sync" visibility='hidden'/>
 
-  <text id="steps" class="monitorText" x="35" y="28" visibility='hidden' ></text>
-  <text id="heartrate" class="monitorText" x="35" y="60" visibility='hidden'></text>
+  <text id="heartrate" class="monitorText" x="106" y="155" visibility='hidden'></text>
+  <text id="steps" class="monitorText" x="106" y="175" visibility='hidden'></text>
+  <image id="stepsicon" x="85" y="160" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
+  <image id="hricon" x="85" y="138" width="16" height="16" href="img/heart.png" visibility='hidden'/>
 
 
    <textarea id='statusline1' x="0" y="44" width="100%" text-length="200" text-anchor="middle"

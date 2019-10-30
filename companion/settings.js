@@ -70,6 +70,8 @@ _settings.parseSettings = function parseSettings() {
     settings.lowThreshold = mgdl(settings.lowThreshold);
   }
 
+  settings.activity = _settings.getSettings('activity', false);
+
   settings.apiSecret = _settings.getSettings('apiSecret', false); // settingsStorage.getItem('apiSecret').name;
 
   const URLS = _settings.getURLS();

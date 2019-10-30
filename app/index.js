@@ -49,7 +49,9 @@ const statusLine1 = document.getElementById('statusline1');
 const statusLine2 = document.getElementById('statusline2');
 
 const steps = document.getElementById("steps");
+const stepsicon = document.getElementById("stepsicon");
 const hrLabel = document.getElementById('heartrate');
+const hricon = document.getElementById('hricon');
 const batteryLabel = document.getElementById('battery');
 
 hrLabel.text = "--";
@@ -105,7 +107,6 @@ function noiseCodeToDisplay(mgdl, noise) {
 // This section is for displaying the heart rate
 //
 //----------------------------------------------------------
-
 // Create a new instance of the HeartRateSensor object
 var hrm = new HeartRateSensor();
 
@@ -117,14 +118,13 @@ hrm.onreading = function() {
   // Peek the current sensor values
   const now = Date.now();
   if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
-      //console.log("Current heart rate: " + hrm.heartRate);
-      hrLabel.text = hrm.heartRate;
+        hrLabel.text = hrm.heartRate;
+      }
       hrmLastUpdated = now;
-  }
-};
+    };
 
-// Begin monitoring the sensor
-hrm.start();
+  // Begin monitoring the sensor
+  hrm.start();
 
 //----------------------------------------------------------
 //
@@ -247,6 +247,27 @@ function readSGVFile (filename) {
     display.on = true;
   } else {
     display.autoOff = true;
+  }
+
+  //Steps Icon and HR
+  if (settings.activity){
+    console.log("The Icon visibility: "+stepsicon.style.visibility);
+    //reduce the amount of interactions with the DOM by checking the visibility and only if false then set item
+    if(stepsicon.style.visibility != "visible"){
+      stepsicon.style.visibility = "visible";
+      steps.style.visibility = "visible";
+      hrLabel.style.visibility = "visible";
+      hricon.style.visibility = "visible";
+    }
+    //Update the amount of steps
+    steps.text = today.local.steps || 0;
+  }else{
+    if(stepsicon.style.visibility == "visible"){
+      stepsicon.style.visibility = "hidden";
+      steps.style.visibility = "hidden";
+      hrLabel.style.visibility = "hidden";
+      hricon.style.visibility = "hidden";
+    }
   }
 
   const recentEntry = data.BGD[0];
@@ -432,7 +453,6 @@ function updateClock () {
     time.text = dateText + `${hours}:${mins}`;
   }
 
-  steps.text = today.local.steps || 0;
   batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
 
   // battery icon
