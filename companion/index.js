@@ -269,7 +269,7 @@ function buildStateMessage (v2data) {
   }
 
   if (v2data.cob) {
-    state.cob = v2data.cob.cob;
+    state.cob = Math.floor(v2data.cob.cob);
   }
 
   if (v2data.bwp) {
@@ -281,7 +281,7 @@ function buildStateMessage (v2data) {
     const d = new Date(v2data.loop.lastLoop.timestamp);
     if (now - d.getTime() < FIFTEEN_MINUTES) {
       state.date = v2data.loop.lastLoop.timestamp;
-      state.cob = v2data.loop.lastLoop.cob;
+      state.cob = Math.floor(v2data.loop.lastLoop.cob);
       state.iob = Round2Digits(v2data.loop.lastLoop.iob);
       state.insulinReq = v2data.loop.lastLoop.recommendedBolus;
       state.predicted = {

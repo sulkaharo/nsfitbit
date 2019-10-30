@@ -2,7 +2,8 @@ function mySettings(props) {
   return (
     <Page>
         <TextInput
-          label="Api endpoint (if blank, defaults to local xDrip endpoint)"
+          label="Nightscout URL"
+          subLabel="For example, https://itsmysite.heroku.com/"
           settingsKey="endpoint"
         />
         <TextInput
