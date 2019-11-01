@@ -5,13 +5,14 @@ import * as messaging from "messaging";
 import document from "document";
 import { inbox } from "file-transfer";
 import * as fs from "fs";
-import { vibration } from "haptics";
 import { preferences } from "user-settings";
 import { today } from "user-activity";
 import { HeartRateSensor } from "heart-rate";
 import { battery } from "power";
 import {coloralloc} from "./functions.js";
 import Graph from "./graph.js";
+import Alarms from "./alarms.js";
+import AlarmUI from "./alert-ui.js";
 
 // Update the clock every minute
 clock.granularity = "minutes";
@@ -33,15 +34,7 @@ let arrowIcon = {
 let minsAgo = 0;
 let minsAgoText = "mins ago";
 
-const MINUTES_10 = 1000 * 60 * 10; // Snooze length
-
 let lastUpdateTime = 0;
-let muted = false;
-let alarming = false;
-
-// Handles to GUI Elements
-const iobLabel = document.getElementById('iob');
-const bwpLabel = document.getElementById('bwp');
 
 const time = document.getElementById('clock');
 
@@ -69,6 +62,9 @@ const docGraph = document.getElementById("docGraph");
 let myGraph = new Graph(docGraph);
 
 var settings = {};
+
+const alarmsUI = new AlarmUI();
+const alarms = new Alarms(settings, alarmsUI);
 
 // converts a mg/dL to mmoL
 function mmol (bg) {
@@ -261,7 +257,8 @@ function readSGVFile (filename) {
 
   const recentEntry = data.BGD[0];
 
-  checkAlarms(recentEntry, data.BGD[1]);
+  alarms.setSettings(settings);
+  alarms.checkAndAlarm(recentEntry, data.BGD[1]);
 
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
@@ -282,19 +279,6 @@ function readSGVFile (filename) {
 
   const state = data.state;
 
-
-  /*
-  if (data.openaps) {
-    const statusArray = data.openaps.reason.split(", ");
-
-    const a = statusArray.filter(function f(s) {
-      return (s.toLowerCase().indexOf('pred')<0);
-    });
-
-    statusLine1.text = a.join(', '); //data.openapsSuggested.reason;
-  }
-*/
-
   // Update the graph
   myGraph.update(data, settings);
 
@@ -305,119 +289,6 @@ function readSGVFile (filename) {
     myGraph.updateBasals(data.basals, settings);
   }
 }
-
-function canCancelAlarm() {
-  if (alarming && sgv < settings.highThreshold && sgv > settings.lowThreshold) {
-    console.log('BG normal, clearing alarm mutes');
-    stopAlarming();
-    muted = false;
-    alarming = false;
-    clearTimeout(vibrationTimeout);
-    return true;
-  }
-  return false;
-}
-
-function checkAlarms (entry, prevEntry) {
-
-  if (!settings.enableAlarms) return;
-
-  const sgv = entry.sgv;
-
-  console.log('Checking alarms');
-
-  canCancelAlarm();
-
-  if (alarming || muted) {
-    console.log('Alarming or muted, not checking alarms', alarming, muted);
-    return;
-  }
-
-  const displayGlucose = settings.units === "mgdl" ? sgv : Math.round((0.0556 * sgv) * 10) / 10;
-
-  if (sgv >= settings.highThreshold) {
-    console.log('BG HIGH, triggering alarm');
-    startAlarming("nudge", "HIGH BG: " + displayGlucose);
-    return;
-  }
-
-  if (sgv <= settings.lowThreshold) {
-    console.log('BG LOW, triggering alarm');
-    startAlarming("nudge", "LOW BG: " + displayGlucose);
-    return;
-  }
-
-  if (settings.predSteps > 0) {
-
-    const delta = entry.sgv - prevEntry.sgv;
-    const pred = entry.sgv + delta * settings.predSteps;
-
-    const displayPredGlucose = settings.units === "mgdl" ? pred : Math.round((0.0556 * pred) * 10) / 10;
-
-    console.log("Predicted BG is " + displayPredGlucose);
-
-    if (pred >= settings.highThreshold) {
-      console.log('PRED BG HIGH, triggering alarm');
-      startAlarming("nudge", "HIGH predicted: " + displayPredGlucose);
-      return;
-    }
-
-    if (pred <= settings.lowThreshold) {
-      console.log('PRED BG LOW, triggering alarm');
-      startAlarming("nudge", "LOW predicted: " + displayPredGlucose);
-      return;
-    }
-  }
-}
-
-let vibrationTimeout;
-
-function startAlarming (type, message) {
-  console.log('Showing alarm (new or unsnoozed)');
-  alarming = true;
-  showAlert(message);
-  vibration.start(type);
-  vibrationTimeout = setTimeout(function() {
-    if (!canCancelAlarm()) startAlarming(type, message);
-  }, MINUTES_10);
-}
-
-function stopAlarming () {
-  alarming = false;
-  vibration.stop();
-  clearTimeout(vibrationTimeout);
-}
-
-//----------------------------------------------------------
-//
-// Alerts
-//
-//----------------------------------------------------------
-let myPopup = document.getElementById("popup");
-let btnLeft = myPopup.getElementById("btnLeft");
-let btnRight = myPopup.getElementById("btnRight");
-let alertHeader = document.getElementById("alertHeader");
-
-function showAlert (message) {
-  console.log('ALERT BG message: ' + message);
-  alertHeader.text = message;
-  myPopup.style.display = "inline";
-}
-
-// eslint-disable-next-line no-unused-vars
-btnLeft.onclick = function(evt) {
-  console.log("Mute");
-  // TODO This needs to mute it for 15 mins
-  myPopup.style.display = "none";
-  muted = true;
-  stopAlarming();
-};
-
-// eslint-disable-next-line no-unused-vars
-btnRight.onclick = function(evt) {
-  console.log("Snooze");
-  myPopup.style.display = "none";
-};
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
