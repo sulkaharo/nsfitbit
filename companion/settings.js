@@ -78,11 +78,11 @@ _settings.parseSettings = function parseSettings() {
 
   const URLS = _settings.getURLS();
 
-  settings.sgvURL = URLS.sgvURL;
-  settings.treatmentURL = URLS.treatmentURL;
-  settings.pebbleURL = URLS.pebbleURL;
-  settings.profileURL = URLS.profileURL;
-  settings.v2APIURL = URLS.v2APIURL;
+  settings.sgvURL = URLS[0];
+  settings.treatmentURL = URLS[1];
+  settings.pebbleURL = URLS[2];
+  settings.profileURL = URLS[3];
+  settings.v2APIURL = URLS[4];
 
   settings.timeFormat = '24h';
   settings.bgColor = 'black';
@@ -92,6 +92,17 @@ _settings.parseSettings = function parseSettings() {
 
   settings.cgmHours = Number(_settings.getSettings('cgmHours', 3));
   settings.predictionHours =  Number(_settings.getSettings('predictionHours', 0));
+
+  if (_settings.getSettings('endpoint', null).name != ""){
+      settings.offline = false;
+      console.log ("setting offline to false");
+  }else {
+    settings.offline = true;
+    //we have no pridications in offline mode..... yet
+    //so lets turn them off for now
+    settings.predictionHours = 0;
+    console.log ("setting offline to true");
+  }
 
   settings.enableAlarms = _settings.getSettings('enableAlarms', false);
 
@@ -117,24 +128,50 @@ _settings.parseSettings = function parseSettings() {
 
 _settings.getURLS = function getURLS() {
   let url = _settings.getSettings('endpoint', null);
-  if (url) {
+    //default to the xDrip Local endpoint
+    let protocol = 'http'
+    let entryCount = 4*60/5;
+    let server = '127.0.0.1:17580';
+    let urls = {};
+    let endpoints = [
+      '/sgv.json?count=' + entryCount, //[0] = SGV endpoint
+      '', // [1] = treatments endpoint
+      '/pebble', // [2] pebble endpoint
+      '', // [3] = profile endpoint
+      '']; // [4] = V2 API endpoint
+    //const start = protocol+"://"+server;
+
+  //check if we have a nightscout url or not
+  console.log(JSON.stringify(url));
+  if (url.name != "") {
     // eslint-disable-next-line no-useless-escape
     const parsed = url.match(/^(http|https|ftp)?(?:[\:\/]*)([a-z0-9\.-]*)(?:\:([0-9]+))?(\/[^?#]*)?(?:\?([^#]*))?(?:#(.*))?$/i);
-    const host = parsed[2] + '';
-    const start = 'https://' + host.toLowerCase();
-
-    const entryCount = 4*60/5;
-    const sgvURL = start + '/api/v1/entries.json?count=' + entryCount;
-    const treatmentURL = start + '/api/v1/treatments.json?count=150';
-    const pebbleURL = start + '/pebble';
-    const profileURL = start + '/api/v1/profile.json';
-    const v2APIURL = start + '/api/v2/properties';
-
-    return {sgvURL, treatmentURL, pebbleURL, profileURL, v2APIURL};
-  } else {
-    // Default xDrip web service
-    return "http://127.0.0.1:17580/sgv.json";
+    //Use HTTPS
+    protocol = 'https';
+    server = parsed[2].toLowerCase();
+    console.log ('server is: '+server);
+    //Update SGV Endpont
+    endpoints[0] = '/api/v1/entries.json?count=' + entryCount;
+    //Update Treatments endpoint
+    endpoints[1] = '/api/v1/treatments.json?count=150';
+    //Update profile endpoint
+    endpoints[3] = '/api/v1/profile.json';
+    //Update V2 API endpoint
+    endpoints[4] = '/api/v2/properties';
   }
+
+  for (let i=0; i<=4; i++){
+    //check if the endpoint is not empty
+    if (endpoints[i] != ''){
+      urls[i] = protocol+"://"+server+endpoints[i];
+    }else{
+      //pass on a empty resource
+      urls[i] = '';
+    }
+    console.log('Endpoint '+i+' is '+protocol+"://"+server+endpoints[i]);
+  }
+  return urls;
+
 }
 
 let _updateCallback = null;
