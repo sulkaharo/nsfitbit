@@ -100,10 +100,10 @@ function queryBGD () {
             let iob = [];
             if (debug())console.log("split it"+ JSON.stringify(data[0].aaps.split(" ")));
             let aapsdataraw = data[0].aaps.split(" ");
-            //["90%","-0.66U","+0.18","0g"]
-            //["60%","-0.51U(0.61|-1.12)","+0.90","0g"]
-            //[-0.51U(0.61|-1.12)","+0.90","0g"]
-            //["-0.66U","+0.18","0g"]
+            //"-1.34U(0.15|-1.49) +2.27 0g".split(" ");
+            //"90% -0.66U +0.18 0g".split(" ");
+            //"60% -0.51U(0.61|-1.12) +0.90 0g".split(" ");
+            //"-0.66U +0.18 0g".split(" ");
             //OK we have some data
             //but it can change depending on AAPS settings
             //One way is
@@ -139,10 +139,10 @@ function queryBGD () {
             aapsdata.iob.basal = '???';
             aapsdata.iob.total = '???';
             //check if detailed iob is being broadcast
-            if (aapsdataraw[iobindx].indexOf('|') > -1){
+            if (aapsdataraw[iobindx].indexOf('|') > -1 || aapsdataraw[iobindx+1].indexOf('|') > -1){
               if (debug())console.log('Detailed IOB found....');
               let iobraw = aapsdataraw[iobindx].split("(");
-              let iobraw1= iobraw[iobindx].split("|");
+              let iobraw1 = iobraw[1].split("|");
 
               iobtotal = iobraw[0];
               aapsdata.iob.bolus = iobraw1[0];
