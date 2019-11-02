@@ -90,13 +90,13 @@ _settings.parseSettings = function parseSettings() {
 
   if (_settings.getSettings('endpoint', null).name != ""){
       settings.offline = false;
-      console.log ("setting offline to false");
+      //console.log ("setting offline to false");
   }else {
     settings.offline = true;
     //we have no pridications in offline mode..... yet
     //so lets turn them off for now
     settings.predictionHours = 0;
-    console.log ("setting offline to true");
+    //console.log ("setting offline to true");
   }
 
   settings.enableAlarms = _settings.getSettings('enableAlarms', false);
@@ -141,14 +141,14 @@ _settings.getURLS = function getURLS() {
     //const start = protocol+"://"+server;
 
   //check if we have a nightscout url or not
-  console.log(JSON.stringify(url));
+  //console.log(JSON.stringify(url));
   if (url.name != "") {
     // eslint-disable-next-line no-useless-escape
     const parsed = url.match(/^(http|https|ftp)?(?:[\:\/]*)([a-z0-9\.-]*)(?:\:([0-9]+))?(\/[^?#]*)?(?:\?([^#]*))?(?:#(.*))?$/i);
     //Use HTTPS
     protocol = 'https';
     server = parsed[2].toLowerCase();
-    console.log ('server is: '+server);
+    //console.log ('server is: '+server);
     //Update SGV Endpont
     endpoints[0] = '/api/v1/entries.json?count=' + entryCount;
     //Update Treatments endpoint
@@ -167,7 +167,7 @@ _settings.getURLS = function getURLS() {
       //pass on a empty resource
       urls[i] = '';
     }
-    console.log('Endpoint '+i+' is '+protocol+"://"+server+endpoints[i]);
+    //console.log('Endpoint '+i+' is '+protocol+"://"+server+endpoints[i]);
   }
   return urls;
 

@@ -98,7 +98,7 @@ function queryBGD () {
           //if aaps exists in the broadcast then aaps-ts key will have a date
           if (data[0].aaps){
             let iob = [];
-            console.log("split it"+ JSON.stringify(data[0].aaps.split(" ")));
+            if (debug())console.log("split it"+ JSON.stringify(data[0].aaps.split(" ")));
             let aapsdataraw = data[0].aaps.split(" ");
             //["90%","-0.66U","+0.18","0g"]
             //["60%","-0.51U(0.61|-1.12)","+0.90","0g"]
@@ -140,7 +140,7 @@ function queryBGD () {
             aapsdata.iob.total = '???';
             //check if detailed iob is being broadcast
             if (aapsdataraw[iobindx].indexOf('|') > -1){
-              console.log('Detailed IOB found....');
+              if (debug())console.log('Detailed IOB found....');
               let iobraw = aapsdataraw[iobindx].split("(");
               let iobraw1= iobraw[iobindx].split("|");
 
@@ -148,7 +148,7 @@ function queryBGD () {
               aapsdata.iob.bolus = iobraw1[0];
               aapsdata.iob.basal = iobraw1[1].split(")")[0];
             }else {
-              console.log('Detailed IOB NOT found....');
+              if (debug())console.log('Detailed IOB NOT found....');
               iobtotal = aapsdataraw[iobindx];
             }
             //get rid of the Units from IOB
