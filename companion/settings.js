@@ -13,7 +13,6 @@ function mgdl(bg) {
   return mgdlBG;
 }
 
-
 const _settings = {};
 
 _settings.getSettingIndex = function getSettingIndex(key, defvalue) {
@@ -21,13 +20,10 @@ _settings.getSettingIndex = function getSettingIndex(key, defvalue) {
   const keyValue = settingsStorage.getItem(key);
 
   if (keyValue) {
-    console.log(key, 'value is', keyValue);
-    console.log(key, 'type is', typeof keyValue);
     const parsed = JSON.parse(keyValue);
     if (parsed.selected) return parsed.selected[0];
     return defvalue;
   } else {
-    console.log('Setting', key, 'not found, returning', defvalue);
     return defvalue;
   }
 }
@@ -43,14 +39,14 @@ _settings.getSettings = function getSettings(key, defvalue) {
   const keyValue = settingsStorage.getItem(key);
 
   if (keyValue) {
-    console.log(key, 'value is', keyValue);
-    console.log(key, 'type is', typeof keyValue);
     const parsed = JSON.parse(keyValue);
-    if (parsed.values) return mapTruthy(parsed.values[0].name);
+    if (parsed.values) {
+      if (parsed.values[0].value) return mapTruthy(parsed.values[0].value);
+      return mapTruthy(parsed.values[0].name);
+    }
     if (parsed.name) return mapTruthy(parsed.name);
     return mapTruthy(parsed);
   } else {
-    console.log('Setting', key, 'not found, returning', defvalue);
     return defvalue;
   }
 }
@@ -73,7 +69,6 @@ _settings.parseSettings = function parseSettings() {
   }
 
   settings.activity = _settings.getSettings('activity', false);
-
   settings.apiSecret = _settings.getSettings('apiSecret', false); // settingsStorage.getItem('apiSecret').name;
 
   const URLS = _settings.getURLS();
@@ -110,6 +105,8 @@ _settings.parseSettings = function parseSettings() {
 
   const gt = _settings.getSettings('graphTopBG', settings.units == 'mmol' ? 10: 180);
   settings.graphTopBG = settings.units == 'mmol' ? gt * 18 : gt;
+
+  settings.loggingEnabled = false;
 
   return settings;
 
