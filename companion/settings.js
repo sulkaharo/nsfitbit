@@ -106,6 +106,8 @@ _settings.parseSettings = function parseSettings() {
   const gt = _settings.getSettings('graphTopBG', settings.units == 'mmol' ? 10: 180);
   settings.graphTopBG = settings.units == 'mmol' ? gt * 18 : gt;
 
+  settings.staleAlarm = _settings.getSettings('staleAlarm', 0);
+
   settings.loggingEnabled = false;
 
   return settings;

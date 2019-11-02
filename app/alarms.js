@@ -1,6 +1,7 @@
 
 const ALARM_BG = 'BG';
 const ALARM_PRED = 'PRED_BG';
+const ALARM_STALE = 'STALE_DATA';
 
 export default class Alarms {
 
@@ -49,6 +50,21 @@ export default class Alarms {
     const sgv = entry.sgv;
     const displayGlucose = this._settings.units === "mgdl" ? sgv : Math.round((0.0556 * sgv) * 10) / 10;
     const generatedAlarms = [];
+
+    if (this._settings.staleAlarm > 0) {
+
+      const staleMills = this._settings.staleAlarm * 60 * 1000;
+      const delta = Date.now() - entry.mills;
+
+      if (delta > staleMills) {
+        const deltaMins = Math.floor(delta / 1000 / 60);
+
+        generatedAlarms.push(this.generateAlarm(
+          ALARM_STALE
+          , 'Last CGM reading ' + deltaMins + ' mins ago'
+          , 'nudge'));
+      }
+    }
 
     let skipPredictedBG = false;
 
