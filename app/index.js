@@ -9,7 +9,7 @@ import { preferences } from "user-settings";
 import { today } from "user-activity";
 import { HeartRateSensor } from "heart-rate";
 import { battery } from "power";
-import {coloralloc} from "./functions.js";
+import { coloralloc } from "./functions.js";
 import Graph from "./graph.js";
 import Alarms from "./alarms.js";
 import AlarmUI from "./alert-ui.js";
@@ -66,6 +66,10 @@ var settings = {};
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
 
+function debug() {
+  return settings.loggingEnabled;
+}
+
 // converts a mg/dL to mmoL
 function mmol (bg) {
   let mmolBG = Math.round((0.0556 * bg) * 10) / 10;
@@ -79,23 +83,33 @@ function mgdl (bg) {
 }
 
 //convert a noise number to text
-function noiseCodeToDisplay(mgdl, noise) {
-    var display;
-    switch (parseInt(noise)) {
-      case 0: display = '---'; break;
-      case 1: display = 'Clean'; break;
-      case 2: display = 'Light'; break;
-      case 3: display = 'Medium'; break;
-      case 4: display = 'Heavy'; break;
-      default:
-        if (mgdl < 40) {
-          display = translate('Heavy');
-        } else {
-          display = '~~~';
-        }
-        break;
-    }
-    return display;
+function noiseCodeToDisplay (mgdl, noise) {
+  var display;
+  switch (parseInt(noise)) {
+    case 0:
+      display = '---';
+      break;
+    case 1:
+      display = 'Clean';
+      break;
+    case 2:
+      display = 'Light';
+      break;
+    case 3:
+      display = 'Medium';
+      break;
+    case 4:
+      display = 'Heavy';
+      break;
+    default:
+      if (mgdl < 40) {
+        display = translate('Heavy');
+      } else {
+        display = '~~~';
+      }
+      break;
+  }
+  return display;
 }
 
 //----------------------------------------------------------
@@ -114,13 +128,13 @@ hrm.onreading = function() {
   // Peek the current sensor values
   const now = Date.now();
   if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
-        hrLabel.text = hrm.heartRate;
-      }
-      hrmLastUpdated = now;
-    };
+    hrLabel.text = hrm.heartRate;
+  }
+  hrmLastUpdated = now;
+};
 
-  // Begin monitoring the sensor
-  hrm.start();
+// Begin monitoring the sensor
+hrm.start();
 
 //----------------------------------------------------------
 //
@@ -132,7 +146,7 @@ function fetchCompanionData (cmd) {
   //setStatusImage('refresh.png')
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     // Send a command to the companion
-    console.log('Watch pinging the companion');
+    if (debug()) console.log('Watch pinging the companion');
     messaging.peerSocket.send({
       command: cmd
     });
@@ -141,7 +155,7 @@ function fetchCompanionData (cmd) {
 
 // Display the data received from the companion
 function updateScreenWithLatestGlucose (data, prevEntry) {
-  console.log("bg is: " + JSON.stringify(data));
+  if (debug()) console.log("bg is: " + JSON.stringify(data));
 
   if (data) {
 
@@ -168,7 +182,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
       // mmmol needs to be calculated from pre-rounded values to ensure the delta makes sense
       const p = Math.round((0.0556 * prevEntry.sgv) * 10) / 10;
       const n = Math.round((0.0556 * data.sgv) * 10) / 10;
-      deltaValue= n-p;
+      deltaValue = n - p;
       deltaString = deltaValue.toFixed(1) + ' mmol';
     }
 
@@ -181,7 +195,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
     //update noise
     //blank the value just encase the value was turned on then off
     noise.text = '';
-    if (settings.shownoise){
+    if (settings.shownoise) {
       noise.text = noiseCodeToDisplay(data.sgv, data.noise);
     }
 
@@ -217,7 +231,7 @@ function readSGVFile (filename) {
   try {
     data = fs.readFileSync(filename, 'cbor');
   } catch (e) {
-    console.log('File read failed');
+    if (debug()) console.log('File read failed');
     return;
   }
   if (!data.BGD) return;
@@ -225,7 +239,7 @@ function readSGVFile (filename) {
   settings = data.settings;
 
   const hour = new Date().getHours();
-  const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
+  const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
 
   if (settings.displayOn && !nightTimeOff) {
     display.autoOff = false;
@@ -235,10 +249,10 @@ function readSGVFile (filename) {
   }
 
   //Steps Icon and HR
-  if (settings.activity){
-    console.log("The Icon visibility: "+stepsicon.style.visibility);
+  if (settings.activity) {
+    if (debug()) console.log("The Icon visibility: " + stepsicon.style.visibility);
     //reduce the amount of interactions with the DOM by checking the visibility and only if false then set item
-    if(stepsicon.style.visibility != "visible"){
+    if (stepsicon.style.visibility != "visible") {
       stepsicon.style.visibility = "visible";
       steps.style.visibility = "visible";
       hrLabel.style.visibility = "visible";
@@ -246,8 +260,8 @@ function readSGVFile (filename) {
     }
     //Update the amount of steps
     steps.text = today.local.steps || 0;
-  }else{
-    if(stepsicon.style.visibility == "visible"){
+  } else {
+    if (stepsicon.style.visibility == "visible") {
       stepsicon.style.visibility = "hidden";
       steps.style.visibility = "hidden";
       hrLabel.style.visibility = "hidden";
@@ -257,8 +271,7 @@ function readSGVFile (filename) {
 
   const recentEntry = data.BGD[0];
 
-  alarms.setSettings(settings);
-  alarms.checkAndAlarm(recentEntry, data.BGD[1]);
+  alarms.checkAndAlarm(recentEntry, data.BGD[1], settings);
 
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
@@ -274,8 +287,8 @@ function readSGVFile (filename) {
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
 
-  statusLine1.text = statusStrings[s1] || "";
-  statusLine2.text = statusStrings[s2] || "";
+  statusLine1.text = statusStrings[s1] || "";
+  statusLine2.text = statusStrings[s2] || "";
 
   const state = data.state;
 
@@ -324,7 +337,7 @@ function updateClock () {
   if (battery.chargeLevel > 90) b = 4;
 
   for (let i = 0; i < 5; i++) {
-    const bImage = document.getElementById('b'+ i);
+    const bImage = document.getElementById('b' + i);
     if (i == b) {
       bImage.style.visibility = 'visible';
     } else {
@@ -346,7 +359,7 @@ function updateClock () {
   const timeDelta = nowMoment - lastUpdateTime;
 
   if (timeDelta > (1000 * 60)) {
-    console.log('Periodic display update');
+    if (debug()) console.log('Periodic display update');
     readSGVFile('file.txt');
   }
 
@@ -355,21 +368,19 @@ function updateClock () {
 // Have clock ping the Compantion to keep it alive
 
 messaging.peerSocket.onopen = function() {
-  console.log("Socket Open");
+  if (debug()) console.log("Socket Open");
 };
 
 const dataPingInterval = 5 * 60 * 1000;
 let lastPinged = 0;
 
-function checkNeedForPing() {
+function checkNeedForPing () {
   const now = Date.now();
   const timeSinceLastGlucose = now - latestGlucoseDate;
   const lastPingDelta = now - lastPinged;
 
-  //console.log('Checking if I need to ping companion');
-
   if (lastPingDelta > 30 * 1000 && timeSinceLastGlucose > dataPingInterval) {
-    console.log('Pinging companion');
+    if (debug()) console.log('Pinging companion');
     lastPinged = now;
     fetchCompanionData('hey where is my file');
   }
@@ -385,5 +396,5 @@ clock.ontick = () => updateClock();
 // Listen for the onerror event
 messaging.peerSocket.onerror = function(err) {
   // Handle any errors
-  console.log("Connection error: " + err.code + " - " + err.message);
+  if (debug()) console.log("Connection error: " + err.code + " - " + err.message);
 };
