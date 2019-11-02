@@ -1,5 +1,4 @@
 import { me as device } from "device";
-import dataProcessor from '../companion/dataprocessing';
 import {coloralloc} from "./functions.js";
 // Screen dimension fallback for older firmware
 if (!device.screen) device.screen = {
@@ -14,7 +13,7 @@ const predColors = {
   , "ZT": '#00d2d2'
   , "UAM": '#c9bd60'
   , "loop": '#1e88e5'
-, };
+  };
 
 export default class Graph {
 
@@ -45,7 +44,8 @@ export default class Graph {
   }
 
   updateBasals(basals, settings) {
-    console.log('Updating basals');
+    
+    if (settings.loggingEnabled) console.log('Updating basals');
 
     const basalMaxHeight = 20;
 
@@ -74,7 +74,7 @@ export default class Graph {
       //console.log('Basal at ' + (now-b.start)/60000 + ' min ago, rate ' + b.absolute);
 
       if (b.start < maxAge) {
-        console.log('Found oldest needed basal');
+        if (settings.loggingEnabled) console.log('Found oldest needed basal');
         b.duration = b.duration - (maxAge - b.start);
         b.start = maxAge;
         break;
@@ -109,7 +109,7 @@ export default class Graph {
   }
 
   updateTreatments(treatments, settings) {
-    console.log("Updating treatment bars...");
+    if (settings.loggingEnabled) console.log("Updating treatment bars...");
 
     const now = Date.now();
 
@@ -146,7 +146,7 @@ export default class Graph {
 
   update(data, settings) {
 
-    console.log("Updating glucose dots...");
+    if (settings.loggingEnabled) console.log("Updating glucose dots...");
 
     const SGVArray = data.BGD;
 
@@ -209,12 +209,12 @@ export default class Graph {
 
     if (data.state.predicted && settings.predictionHours > 0) {
 
-      console.log('Drawing predictions');
+      if (settings.loggingEnabled) console.log('Drawing predictions');
 
       const d = data.state.predicted;
 
       if (!d.moment) {
-        console.log('No pred data');
+        if (settings.loggingEnabled) console.log('No pred data');
       } else {
 
         let predPointer = 0;
@@ -223,7 +223,7 @@ export default class Graph {
         const predElementsToUse = settings.predictionHours * 12;
 
         for (let predType in d) {
-          console.log('Drawing ' + predType + ' predictions');
+          if (settings.loggingEnabled) console.log('Drawing ' + predType + ' predictions');
 
           const predictions = d[predType];
           const color = predColors[predType];
