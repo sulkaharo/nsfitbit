@@ -2,6 +2,7 @@
 import * as messaging from "messaging";
 import { encode } from 'cbor';
 import { outbox } from "file-transfer";
+import { sha1 } from "./sha1.js";
 
 import Settings from './settings.js';
 import dataProcessor from './dataprocessing.js';
@@ -26,12 +27,16 @@ settingsStorage.onchange = function(evt) {
 
 function getRequesttOptions () {
   const options = {};
-
-  if (settings.apiSecret && !settings.offline) {
+  let apisecret = settings.apiSecret;
+  if (settings.offline && settings.apiSecret){
+    //sha1 the API secret as thats required for xdrip if using API secret
+    apisecret= sha1(settings.apiSecret);
+  }
+  if (settings.apiSecret) {
     options.headers = new Headers({
-      'api-secret': settings.apiSecret
+      'api-secret': apisecret
     });
-    if (debug()) console.log('API-SECRET', settings.apiSecret);
+    if (debug()) console.log('API-SECRET', apisecret);
   }
   return options;
 }
