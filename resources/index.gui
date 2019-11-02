@@ -17,9 +17,6 @@
 
   <text id="timex" class="timeText" x="0" y="28" width='300' text-anchor="middle"></text>
 
-//  <text id="iob" class="timeText" x="100%" y="60" ></text>
-  //<text id="bwp" class="timeText" x="100%" y="90" ></text>
-
   <text id="noise" class="noiseText" x="100%" y="58%" ></text>
   <text id="sgv" class="sgvText" x="100%" y="58%" >---</text>
 
@@ -62,5 +59,20 @@
           <set href="#text" attributeName="text-anchor" to="middle" />
         </use>
       </svg>
+
+  <!-- No Data -->
+
+       <svg id="noData" display="inline" >
+        <!-- Black background -->
+        <rect class="full-size" fill="fb-black" />
+
+        <!-- Title and text -->
+        <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white">
+          <set href="#copy/text" attributeName="text-buffer" to="No data from phone. Check Nightscout URL in watchface settings in the phone Fitbit App." />
+          <set href="#bottom-padding" attributeName="display" to="none" />
+        </use>
+
+       </svg>
+
 
 </svg>

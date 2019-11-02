@@ -6,10 +6,12 @@ function mySettings(props) {
           subLabel="For example, https://itsmysite.heroku.com/"
           settingsKey="endpoint"
         />
+
         <TextInput
-        label="API SECRET"
+        label="API SECRET (if enabled)"
         settingsKey="apiSecret"
         />
+
         <Toggle
           settingsKey="usemgdl"
           label={`Units: ${props.settingsStorage.getItem('usemgdl')== 'true' ? 'mgdl' : 'mmol'}`}
@@ -20,53 +22,64 @@ function mySettings(props) {
           settingsKey="highThreshold"
         />
 
+        <TextInput
+          label="Low BG threshold"
+          settingsKey="lowThreshold"
+        />
+
         <Toggle
-        settingsKey="multicolor"
-        label={`Multi color BG graph: ${props.settingsStorage.getItem('multicolor') === 'true' ? 'yes' : 'no'}`}
-        onChange={value => props.settingsStorage.getItem('multicolor', value ? 'yes' : 'no')}
+          settingsKey="multicolor"
+          label={`Multi color BG graph: ${props.settingsStorage.getItem('multicolor') === 'true' ? 'yes' : 'no'}`}
+          onChange={value => props.settingsStorage.getItem('multicolor', value ? 'yes' : 'no')}
+        />
+
+        <Toggle
+          settingsKey="shownoise"
+          label={`Show BG noise value: ${props.settingsStorage.getItem('shownoise') === 'true' ? 'yes' : 'no'}`}
+          onChange={value => props.settingsStorage.getItem('shownoise', value ? 'yes' : 'no')}
+        />
+
+        <Toggle
+          settingsKey="graphDynamicScale"
+          label={`Graph dynamic scaling: ${props.settingsStorage.getItem('graphDynamicScale') === 'true' ? 'yes' : 'no'}`}
+          onChange={value => props.settingsStorage.getItem('graphDynamicScale', value ? 'yes' : 'no')}
         />
 
         <TextInput
-        label="Low BG threshold"
-        settingsKey="lowThreshold"
+          label="Graph top BG"
+          settingsKey="graphTopBG"
         />
 
         <Toggle
-        settingsKey="shownoise"
-        label={`Show BG noise value: ${props.settingsStorage.getItem('shownoise') === 'true' ? 'yes' : 'no'}`}
-        onChange={value => props.settingsStorage.getItem('shownoise', value ? 'yes' : 'no')}
+          settingsKey="activity"
+          label={`Show HR & Steps: ${props.settingsStorage.getItem('activity') === 'true' ? 'yes' : 'no'}`}
+          onChange={value => props.settingsStorage.getItem('activity', value ? 'yes' : 'no')}
         />
 
-        <Toggle
-        settingsKey="graphDynamicScale"
-        label={`Graph dynamic scaling: ${props.settingsStorage.getItem('graphDynamicScale') === 'true' ? 'yes' : 'no'}`}
-        onChange={value => props.settingsStorage.getItem('graphDynamicScale', value ? 'yes' : 'no')}
-        />
-
-        <TextInput
-        label="Graph top BG"
-        settingsKey="graphTopBG"
-        />
-
-        <Toggle
-        settingsKey="activity"
-        label={`Show HR & Steps: ${props.settingsStorage.getItem('activity') === 'true' ? 'yes' : 'no'}`}
-        onChange={value => props.settingsStorage.getItem('activity', value ? 'yes' : 'no')}
-        />
-
-<Slider
-  label="Number of CGM hours to plot (1 to 4)"
+<Select
+  label={`Number of hours to plot`}
+  title="CGM plot hours"
   settingsKey="cgmHours"
-  min="1"
-  max="4"
+  options={[
+    {name:"1", value: 1},
+    {name:"2", value: 2},
+    {name:"3", value: 3},
+    {name:"4", value: 4}
+  ]}
 />
 
-<Slider
-  label="Number of OpenAPS / Loop predictions to plot (0 to 3)"
+<Select
+  label={`Number of hours to plot`}
+  title="OpenAPS / Loop predictions"
   settingsKey="predictionHours"
-  min="0"
-  max="3"
+  options={[
+    {name:"0", value: 0},
+    {name:"1", value: 1},
+    {name:"2", value: 2},
+    {name:"3", value: 3}
+  ]}
 />
+
         <Toggle
         settingsKey="enableAlarms"
         label={`Enable alarms: ${props.settingsStorage.getItem('enableAlarms') === 'true' ? 'yes' : 'no'}`}
@@ -77,10 +90,26 @@ function mySettings(props) {
   label={`Predictive alarms`}
   settingsKey="alarmPredictions"
   options={[
-    {name:"None"},
-    {name:"1 CGM reading ahead"},
-    {name:"2 CGM readings ahead"},
-    {name:"3 CGM readings ahead"}
+    {name:"None", value: 0},
+    {name:"1 CGM reading ahead", value: 1},
+    {name:"2 CGM readings ahead", value: 2},
+    {name:"3 CGM readings ahead", value: 3}
+  ]}
+/>
+
+<Select
+  label={`CGM data age in minutes until alarm`}
+  title="Stale CGM data alarms"
+  settingsKey="staleAlarm"
+  options={[
+    {name:"Disabled", value: 0},
+    {name:"15", value: 15},
+    {name:"20", value: 20},
+    {name:"25", value: 25},
+    {name:"30", value: 30},
+    {name:"45", value: 45},
+    {name:"60", value: 60},
+    {name:"120", value: 120}
   ]}
 />
 
@@ -116,12 +145,16 @@ function mySettings(props) {
         label={`Turn display off for the night (22-07): ${props.settingsStorage.getItem('offOnNight') === 'true' ? 'yes' : 'no'}`}
         onChange={value => props.settingsStorage.getItem('offOnNight', value ? 'yes' : 'no')}
         />
-
+        
       <TextImageRow
         label="Fitbit Nightscout Monitor watchface"
-        sublabel="@sulkaharo & @Tornado-Tim with special thanks to @Rytiggy / @nivz"
+        sublabel="@sulkaharo & @Tornado-Tim"
         icon="https://image.ibb.co/gbWF2H/twerp_bowtie_64.png"
       />
+      <Text>
+        This watchface is open source and can be found at https://github.com/sulkaharo/nsfitbit
+        Special thanks to @Rytiggy / @nivz!
+      </Text>
     </Page>
   );
 }

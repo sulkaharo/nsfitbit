@@ -14,8 +14,12 @@ let lastFetch = 0;
 
 let settings = Settings.parseSettings();
 
+function debug() {
+  return settings.loggingEnabled;
+}
+
 settingsStorage.onchange = function(evt) {
-  console.log('Setting changed', evt.key);
+  if (debug()) console.log('Setting changed', evt.key);
   settings = Settings.parseSettings();
   updateDataToClient();
 }
@@ -27,7 +31,7 @@ function getRequesttOptions () {
     options.headers = new Headers({
       'api-secret': settings.apiSecret
     });
-    console.log('API-SECRET', settings.apiSecret);
+    if (debug()) console.log('API-SECRET', settings.apiSecret);
   }
   return options;
 }
@@ -35,7 +39,7 @@ function getRequesttOptions () {
 function queryBGD () {
 
   const url = settings.sgvURL;
-  console.log('Fetching SGVs from', url);
+  if (debug()) console.log('Fetching SGVs from', url);
 
   const options = getRequesttOptions();
 
@@ -43,7 +47,7 @@ function queryBGD () {
     .then(function(response) {
       return response.json()
         .then(function(data) {
-          console.log('data0: ' + JSON.stringify(data[0]));
+          if (debug()) console.log('data0: ' + JSON.stringify(data[0]));
 
           // throw out MBG entries
 
@@ -55,7 +59,7 @@ function queryBGD () {
 
           let currentBgDate = data[0].date;
 
-          console.log('currentBgDate: ' + currentBgDate);
+          if (debug()) console.log('currentBgDate: ' + currentBgDate);
 
           // move to a separate function to avoid globals
           if (currentBgDate > lastKnownRecordDate) {
@@ -164,14 +168,14 @@ function queryBGD () {
         });
     })
     .catch(function(err) {
-      console.log("Error fetching glucose data: " + err);
+      if (debug()) console.log("Error fetching glucose data: " + err);
     });
 }
 
 function queryTreatments () {
 
   const url = settings.treatmentURL;
-  console.log('Fetching treatments from', url);
+  if (debug()) console.log('Fetching treatments from', url);
 
   return fetch(url)
     .then(function(response) {
@@ -213,7 +217,7 @@ function queryTreatments () {
         });
     })
     .catch(function(err) {
-      console.log("Error fetching treatment data: " + err);
+      if (debug()) console.log("Error fetching treatment data: " + err);
     });
 }
 
@@ -226,13 +230,13 @@ function queryJSONAPI (url) {
         });
     })
     .catch(function(err) {
-      console.log("Error fetching data from url: ", url, err);
+      if (debug()) console.log("Error fetching data from url: ", url, err);
     });
 }
 
 // Send the BG data to the device
 function queueFile (data) {
-  console.log('Queued a file change');
+  if (debug()) console.log('Queued a file change');
   const myFileInfo = encode(data);
   outbox.enqueue('file.txt', myFileInfo);
 }
@@ -249,8 +253,8 @@ async function loadDataFromCloud () {
 
   let dateNow = Date.now();
 
-  console.log('Delta seconds between now and last record', Math.floor((dateNow - lastKnownRecordDate) / 1000));
-  console.log('Seconds since last fetch', Math.floor((dateNow - lastFetch) / 1000));
+  if (debug()) console.log('Delta seconds between now and last record', Math.floor((dateNow - lastKnownRecordDate) / 1000));
+  if (debug()) console.log('Seconds since last fetch', Math.floor((dateNow - lastFetch) / 1000));
 
   let loadFromCloud = true;
 
@@ -262,7 +266,7 @@ async function loadDataFromCloud () {
   }
 
   if (loadFromCloud) {
-    console.log("Fetching Data");
+    if (debug()) console.log("Fetching Data");
 
     // eslint-disable-next-line no-unused-vars
     const BGDPromise = new Promise(function(resolve, reject) {
@@ -283,7 +287,7 @@ async function loadDataFromCloud () {
 
     const values = await Promise.all([BGDPromise, TreatmentPromise, ProfilePromise, V2ApiPromise]);
 
-    console.log('All promises resolved');
+    if (debug()) console.log('All promises resolved');
     dataCache = values;
     lastFetch = Date.now();
     return values;
@@ -404,7 +408,7 @@ function buildStateMessage (v2data) {
 
 // Listen for messages from the device
 messaging.peerSocket.onmessage = function(evt) {
-  console.log('Got ping from device', JSON.stringify(evt.data));
+  if (debug()) console.log('Got ping from device', JSON.stringify(evt.data));
   if (evt.data) {
     instantiateInterval();
   }
@@ -417,7 +421,7 @@ function instantiateInterval () {
   const timeSinceLastFetch = dateNow - lastFetch;
 
   if (!intervalTimer || timeSinceLastFetch > TWO_MINUTES + 15000) {
-    console.log('Reinstantiating the timer');
+    if (debug()) console.log('Reinstantiating the timer');
     if (intervalTimer) clearInterval(intervalTimer);
     intervalTimer = setInterval(updateDataToClient, 15 * 1000);
     updateDataToClient();
@@ -429,5 +433,5 @@ instantiateInterval();
 // Listen for the onerror event
 messaging.peerSocket.onerror = function(err) {
   // Handle any errors
-  console.log("Connection error: " + err.code + " - " + err.message);
+  if (debug()) console.log("Connection error: " + err.code + " - " + err.message);
 };
