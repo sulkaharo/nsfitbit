@@ -47,6 +47,8 @@ const hrLabel = document.getElementById('heartrate');
 const hricon = document.getElementById('hricon');
 const batteryLabel = document.getElementById('battery');
 
+const noDataWarning = document.getElementById('noData');
+
 hrLabel.text = "--";
 steps.text = "--";
 
@@ -235,6 +237,9 @@ function readSGVFile (filename) {
     return;
   }
   if (!data.BGD) return;
+
+  // We got data, hide the warning
+  noDataWarning.style.display = 'none';
 
   settings = data.settings;
 

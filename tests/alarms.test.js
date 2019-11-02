@@ -17,6 +17,7 @@ describe('alarms', function() {
     , lowThreshold: 10
     , predSteps: 2
     , enableAlarms: true
+    , staleAlarm: 1
   };
 
   it('should initialize', function() {
@@ -54,6 +55,21 @@ describe('alarms', function() {
     alarms[0].message.should.equal('HIGH predicted: 117');
   });
 
+  it('should generate stale data alarm', function() {
+    const a = new Alarms(settings, mockUI);
+    const alarms = a.checkAlarms({ sgv: 99, mills: Date.now() - (1000*60*2) }, { sgv: 90 });
+    alarms[0].message.should.equal('Last CGM reading 2 mins ago');
+  });
+
+  it('should not generate stale data alarm if data is is old but not stale', function() {
+    settings.staleAlarm = 100;
+    const a = new Alarms(settings, mockUI);
+    const alarms = a.checkAlarms({ sgv: 99, mills: Date.now() - (1000*60*90) }, { sgv: 90 });
+    alarms[0].message.should.equal('HIGH predicted: 117');
+  });
+
+
+
   it('should support snoozing', function() {
     const a = new Alarms(settings, mockUI);
 
@@ -67,7 +83,7 @@ describe('alarms', function() {
       hideWasCalled = true;
     };
 
-    a.checkAndAlarm({ sgv: 99 }, { sgv: 90 }, settings);
+    a.checkAndAlarm({ sgv: 99, mills: Date.now() }, { sgv: 90 }, settings);
     a.snooze(5000);
 
     hideWasCalled.should.equal(true);

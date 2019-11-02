@@ -98,6 +98,22 @@ function mySettings(props) {
 />
 
 <Select
+  label={`CGM data age in minutes until alarm`}
+  title="Stale CGM data alarms"
+  settingsKey="staleAlarm"
+  options={[
+    {name:"Disabled", value: 0},
+    {name:"15", value: 15},
+    {name:"20", value: 20},
+    {name:"25", value: 25},
+    {name:"30", value: 30},
+    {name:"45", value: 45},
+    {name:"60", value: 60},
+    {name:"120", value: 120}
+  ]}
+/>
+
+<Select
   label={`Status line 1`}
   settingsKey="statusLine1"
   options={[
