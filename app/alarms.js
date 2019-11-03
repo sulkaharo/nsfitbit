@@ -1,4 +1,3 @@
-
 const ALARM_BG = 'BG';
 const ALARM_PRED = 'PRED_BG';
 const ALARM_STALE = 'STALE_DATA';
@@ -126,7 +125,7 @@ export default class Alarms {
 
   snoozeFilterAlarms(alarms) {
     const a = this;
-    return alarms.filter(function isSnoozed(alarm) {
+    return alarms.filter(function isSnoozed (alarm) {
       return !a.isAlarmTypeSnoozed(alarm.type);
     });
   }
@@ -148,9 +147,11 @@ export default class Alarms {
     const alarms = this.snoozeFilterAlarms(a);
 
     if (alarms.length > 0) {
-      this._activeAlarm = alarms[0];
-      if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
-      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
+      if (this._activeAlarm != null) {
+        this._activeAlarm = alarms[0];
+        if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
+        this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
+      }
     } else {
       this._activeAlarm = null;
       this._ui.hideAlerts();
