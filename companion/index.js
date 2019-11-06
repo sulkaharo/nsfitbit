@@ -321,6 +321,10 @@ async function updateDataToClient () {
 
   const state = buildStateMessage(v2data);
 
+  const meta = {
+    phoneGenerationTime: Date.now()
+  }
+
   let dataToSend = {
     'BGD': values[0]
     , 'basals': []

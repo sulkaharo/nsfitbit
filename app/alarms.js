@@ -1,4 +1,3 @@
-
 const ALARM_BG = 'BG';
 const ALARM_PRED = 'PRED_BG';
 const ALARM_STALE = 'STALE_DATA';
@@ -45,24 +44,32 @@ export default class Alarms {
     };
   }
 
-  checkAlarms(entry, prevEntry) {
+  checkAlarms(entry, prevEntry, fileGenerationTime) {
 
     const sgv = entry.sgv;
     const displayGlucose = this._settings.units === "mgdl" ? sgv : Math.round((0.0556 * sgv) * 10) / 10;
     const generatedAlarms = [];
 
-    if (this._settings.staleAlarm > 0) {
+    const fileAge = Date.now() - fileGenerationTime;
+    const deltaMins = Math.floor(fileAge / 1000 / 60);
 
+    if (fileAge > 10*60*1000) {
+      return [this.generateAlarm(
+        ALARM_STALE
+        , 'Last data update from phone ' + deltaMins + ' mins ago'
+        , 'nudge')];
+    }
+
+    if (this._settings.staleAlarm > 0) {
       const staleMills = this._settings.staleAlarm * 60 * 1000;
-      const delta = Date.now() - entry.mills;
+      const delta = Date.now() - entry.date;
+      const deltaMins = Math.floor(delta / 1000 / 60);
 
       if (delta > staleMills) {
-        const deltaMins = Math.floor(delta / 1000 / 60);
-
-        generatedAlarms.push(this.generateAlarm(
+        return [this.generateAlarm(
           ALARM_STALE
           , 'Last CGM reading ' + deltaMins + ' mins ago'
-          , 'nudge'));
+          , 'nudge')];
       }
     }
 
@@ -86,7 +93,16 @@ export default class Alarms {
 
     if (!skipPredictedBG && this._settings.predSteps > 0) {
 
-      const delta = entry.sgv - prevEntry.sgv;
+      // TODO assumes readings happens every 5 minutes
+
+      let deltaDivisor = 1;
+
+      if ((entry.date - prevEntry.date) > 10*60*1000) {
+        deltaDivisor = Math.floor((entry.date - prevEntry.date) / (5*60*1000)) + 1;
+      }
+
+      // use interpolated delta when readings are missed
+      const delta = (entry.sgv - prevEntry.sgv) / deltaDivisor;
       const pred = entry.sgv + delta * this._settings.predSteps;
 
       const displayPredGlucose = this._settings.units === "mgdl" ? pred : Math.round((0.0556 * pred) * 10) / 10;
@@ -126,12 +142,12 @@ export default class Alarms {
 
   snoozeFilterAlarms(alarms) {
     const a = this;
-    return alarms.filter(function isSnoozed(alarm) {
+    return alarms.filter(function isSnoozed (alarm) {
       return !a.isAlarmTypeSnoozed(alarm.type);
     });
   }
 
-  checkAndAlarm(entry, prevEntry, settings) {
+  checkAndAlarm(entry, prevEntry, settings, fileGenerationTime) {
 
     if (settings.loggingEnabled) console.log('Checking for alarms');
 
@@ -144,13 +160,15 @@ export default class Alarms {
     // check if we should clear snoozes 
     this.checkClearSnoozes(entry, prevEntry);
 
-    const a = this.checkAlarms(entry, prevEntry);
+    const a = this.checkAlarms(entry, prevEntry, fileGenerationTime);
     const alarms = this.snoozeFilterAlarms(a);
-
+    
     if (alarms.length > 0) {
-      this._activeAlarm = alarms[0];
-      if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
-      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
+      if (this._activeAlarm == null) {
+        this._activeAlarm = alarms[0];
+        if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
+        this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
+      }
     } else {
       this._activeAlarm = null;
       this._ui.hideAlerts();
