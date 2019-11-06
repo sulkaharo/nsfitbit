@@ -14,7 +14,7 @@ let lastFetch = 0;
 
 let settings = Settings.parseSettings();
 
-function debug() {
+function debug () {
   return settings.loggingEnabled;
 }
 
@@ -219,6 +219,22 @@ async function loadDataFromCloud () {
   }
 }
 
+function clone (src) {
+  return Object.assign({}, src);
+}
+
+function getClientSettings () {
+  let s = clone(settings);
+
+  delete s.sgvURL;
+  delete s.treatmentURL;
+  delete s.pebbleURL;
+  delete s.profileURL;
+  delete s.v2APIURL;
+  delete s.apiSecret;
+  return s;
+}
+
 async function updateDataToClient () {
 
   const values = await loadDataFromCloud();
@@ -250,7 +266,7 @@ async function updateDataToClient () {
     , meta
   };
 
-  queueFile('settings.cbor', settings);
+  queueFile('settings.cbor', getClientSettings());
   queueFile('data.cbor', dataToSend);
 
 }
