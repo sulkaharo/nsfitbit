@@ -225,9 +225,6 @@ let latestGlucoseDate = 0;
 
 function readSGVFile (filename) {
 
-  // TODO: have a view that shows no data exists
-  // Also WOOOT why is fileExists() not supported?
-
   let data;
 
   try {
@@ -276,7 +273,7 @@ function readSGVFile (filename) {
 
   const recentEntry = data.BGD[0];
 
-  alarms.checkAndAlarm(recentEntry, data.BGD[1], settings);
+  alarms.checkAndAlarm(recentEntry, data.BGD[1], settings, data.meta.phoneGenerationTime);
 
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;

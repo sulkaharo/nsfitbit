@@ -237,13 +237,18 @@ async function updateDataToClient () {
 
   const state = buildStateMessage(v2data);
 
+  const meta = {
+    phoneGenerationTime: Date.now()
+  }
+
   let dataToSend = {
     'BGD': values[0]
     , 'carbs': treatments.carbs
     , 'boluses': treatments.boluses
     , 'basals': processedBasals.reverse()
-    , 'state': state
-    , 'settings': settings
+    , state
+    , settings
+    , meta
   };
 
   queueFile(dataToSend);
