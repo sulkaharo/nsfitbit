@@ -108,7 +108,7 @@ _settings.parseSettings = function parseSettings() {
 
   settings.staleAlarm = _settings.getSettings('staleAlarm', 0);
 
-  settings.loggingEnabled = false;
+  settings.loggingEnabled = true;
 
   return settings;
 

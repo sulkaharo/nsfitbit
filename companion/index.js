@@ -158,10 +158,10 @@ function queryJSONAPI (url) {
 }
 
 // Send the BG data to the device
-function queueFile (data) {
+function queueFile (filename, data) {
   if (debug()) console.log('Queued a file change');
   const myFileInfo = encode(data);
-  outbox.enqueue('file.txt', myFileInfo);
+  outbox.enqueue(filename, myFileInfo);
 }
 
 const TWO_MINUTES = 2 * 60 * 1000;
@@ -247,11 +247,12 @@ async function updateDataToClient () {
     , 'boluses': treatments.boluses
     , 'basals': processedBasals.reverse()
     , state
-    , settings
     , meta
   };
 
-  queueFile(dataToSend);
+  queueFile('settings.cbor', settings);
+  queueFile('data.cbor', dataToSend);
+
 }
 
 Settings.setCallback(updateDataToClient);
