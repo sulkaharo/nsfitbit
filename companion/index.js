@@ -15,7 +15,7 @@ let lastFetch = 0;
 
 let settings = Settings.parseSettings();
 
-function debug() {
+function debug () {
   return settings.loggingEnabled;
 }
 
@@ -240,10 +240,10 @@ function queryJSONAPI (url) {
 }
 
 // Send the BG data to the device
-function queueFile (data) {
+function queueFile (filename, data) {
   if (debug()) console.log('Queued a file change');
   const myFileInfo = encode(data);
-  outbox.enqueue('file.txt', myFileInfo);
+  outbox.enqueue(filename, myFileInfo);
 }
 
 const TWO_MINUTES = 2 * 60 * 1000;
@@ -301,6 +301,28 @@ async function loadDataFromCloud () {
   }
 }
 
+function clone (src) {
+  return Object.assign({}, src);
+}
+
+function getClientSettings () {
+  let s = clone(settings);
+
+  delete s.sgvURL;
+  delete s.treatmentURL;
+  delete s.pebbleURL;
+  delete s.profileURL;
+  delete s.v2APIURL;
+  delete s.apiSecret;
+  return s;
+}
+
+function treatmentTimeFilter(data, mills) {
+  return data.filter(function(entry) {
+    return (entry.date > mills);
+  });
+}
+
 async function updateDataToClient () {
 
   const values = await loadDataFromCloud();
@@ -309,12 +331,13 @@ async function updateDataToClient () {
   const profile = values[2];
   let processedBasals = [];
 
-  //if we are offline dont bother trying to update basals as we cant get that data locally yet
+  const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
+
   if (!settings.offline){
     try {
-      processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals]);
+      processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
     } catch (err) {
-      console.log(err);
+      if (debug()) console.log(err);
     }
   }
   const v2data = values[3];
@@ -331,7 +354,9 @@ async function updateDataToClient () {
     , 'state': []
     , 'settings': settings
     , 'carbs': []
-    , 'boluses': []};
+    , 'boluses': []
+    , 'meta': meta};
+
   //if AAPS locally broadcasted data is available
   if (values[0].aaps){
     //override blank values with locally broadcasted AAPS ones
@@ -341,14 +366,17 @@ async function updateDataToClient () {
     ,'bgi':values[0].aaps.bgi
     ,'bwp':'???'};
   }
+
   if (!settings.offline){
     dataToSend.state = state;
     dataToSend.basals = processedBasals.reverse();
-    dataToSend.carbs = treatments.carbs;
-    dataToSend.boluses = treatments.boluses;
+    dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
+    dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
   }
 
-  queueFile(dataToSend);
+  queueFile('settings.cbor', getClientSettings());
+  queueFile('data.cbor', dataToSend);
+
 }
 
 Settings.setCallback(updateDataToClient);
