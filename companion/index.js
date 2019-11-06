@@ -235,6 +235,12 @@ function getClientSettings () {
   return s;
 }
 
+function treatmentTimeFilter(data, mills) {
+  return data.filter(function(entry) {
+    return (entry.date > mills);
+  });
+}
+
 async function updateDataToClient () {
 
   const values = await loadDataFromCloud();
@@ -243,8 +249,10 @@ async function updateDataToClient () {
   const profile = values[2];
   let processedBasals = [];
 
+  const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
+
   try {
-    processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals]);
+    processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
   } catch (err) {
     if (debug()) console.log(err);
   }
@@ -259,8 +267,8 @@ async function updateDataToClient () {
 
   let dataToSend = {
     'BGD': values[0]
-    , 'carbs': treatments.carbs
-    , 'boluses': treatments.boluses
+    , 'carbs': treatmentTimeFilter(treatments.carbs, dataCap)
+    , 'boluses': treatmentTimeFilter(treatments.boluses, dataCap)
     , 'basals': processedBasals.reverse()
     , state
     , meta
