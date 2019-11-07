@@ -398,8 +398,7 @@ function buildStateMessage (v2data) {
 
   if (v2data.iob) {
     state.iob = Round2Digits(v2data.iob.iob);
-    const iobDate = new Date(v2data.iob.mills);
-    state.date = iobDate.toISOString();
+    state.date = v2data.iob.mills || 0;
   }
 
   if (v2data.cob) {

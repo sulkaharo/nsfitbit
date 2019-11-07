@@ -295,8 +295,6 @@ function readSGVFile () {
   statusLine1.text = statusStrings[s1] || "";
   statusLine2.text = statusStrings[s2] || "";
 
-  const state = data.state;
-
   // Update the graph
   myGraph.update(data, settings);
 
