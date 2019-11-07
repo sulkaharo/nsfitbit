@@ -130,7 +130,7 @@ dataProcessor.processTempBasals = function processTempBasals (results, dataCap) 
 
   // Return temps that will result in something being shown
   for (var i = 0; i < o2.length; i++) {
-    if (i == o2.length - 1 || o2[i + 1].start > dataCap) o3.push(o2[i]);
+    if ((o2[i].start + o2[i].duration) > dataCap) o3.push(o2[i]);
   }
 
   return o3;
