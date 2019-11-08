@@ -164,11 +164,10 @@ export default class Alarms {
     const alarms = this.snoozeFilterAlarms(a);
     
     if (alarms.length > 0) {
-      if (this._activeAlarm == null) {
-        this._activeAlarm = alarms[0];
-        if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
-        this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
-      }
+      // Show whatever is the latest highest priority alarm
+      this._activeAlarm = alarms[0];
+      if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
+      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
     } else {
       this._activeAlarm = null;
       this._ui.hideAlerts();

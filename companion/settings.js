@@ -79,7 +79,6 @@ _settings.parseSettings = function parseSettings () {
   settings.v2APIURL = URLS[4];
 
   settings.timeFormat = '24h';
-  settings.bgColor = 'black';
 
   settings.displayOn = _settings.getSettings('alwaysOn', false);
   settings.offOnNight = _settings.getSettings('offOnNight', false);
