@@ -57,7 +57,7 @@ export default class Alarms {
       return [this.generateAlarm(
         ALARM_STALE
         , 'Last data update from phone ' + deltaMins + ' mins ago'
-        , 'nudge')];
+        , 'ping')];
     }
 
     if (this._settings.staleAlarm > 0) {
@@ -69,7 +69,7 @@ export default class Alarms {
         return [this.generateAlarm(
           ALARM_STALE
           , 'Last CGM reading ' + deltaMins + ' mins ago'
-          , 'nudge')];
+          , 'ping')];
       }
     }
 
@@ -87,7 +87,7 @@ export default class Alarms {
       generatedAlarms.push(this.generateAlarm(
         ALARM_BG
         , 'LOW BG: ' + displayGlucose
-        , 'nudge'));
+        , 'alert'));
       skipPredictedBG = true;
     }
 
@@ -118,7 +118,7 @@ export default class Alarms {
         generatedAlarms.push(this.generateAlarm(
           ALARM_PRED
           , 'LOW predicted: ' + displayPredGlucose
-          , 'nudge'));
+          , 'alert'));
       }
     }
 
