@@ -24,8 +24,6 @@ export default class Graph {
     this._bg = this._id.getElementById("bg");
 
     this._sgvDots = this._id.getElementsByClassName("gval");
-    this._predDots = this._id.getElementsByClassName("pred");
-
     this._treatments = this._id.getElementsByClassName("treatment");
     this._basals = this._id.getElementsByClassName("basal");
 
@@ -156,10 +154,6 @@ export default class Graph {
       this._sgvDots[i].style.visibility = 'hidden';
     }
 
-    for (let i = 0; i < this._predDots.length; i++) {
-      this._predDots[i].style.visibility = 'hidden';
-    }
-
     const sgvLow = 36;
     let sgvHigh = settings.graphTopBG || 180; // make configurable
     const glucoseHeight = 98;
@@ -182,10 +176,13 @@ export default class Graph {
 
     const now = Date.now();
 
+    let sgvdotsUsed = 0;
+
     for (let i = 0; i < SGVArray.length; i++) {
       if (!this._sgvDots[i]) continue;
       const dot = this._sgvDots[i];
       const sgv = SGVArray[i];
+      sgvdotsUsed = i;
 
       const timeDeltaMinutes = (now - sgv.date) / (60 * 1000);
       if (timeDelta > settings.cgmHours * 60) continue;
@@ -217,7 +214,7 @@ export default class Graph {
         if (settings.loggingEnabled) console.log('No pred data');
       } else {
 
-        let predPointer = 0;
+        let predPointer = sgvdotsUsed;
         const predStartMoment = new Date(d.moment).getTime();
         const predStartPixel = zeroPoint + (predStartMoment - now) / (5 * 60 * 1000) * fiveMinWidth;
         const predElementsToUse = settings.predictionHours * 12;
@@ -227,11 +224,12 @@ export default class Graph {
 
           const predictions = d[predType];
           const color = predColors[predType];
+          const count = Math.min(predElementsToUse, predictions.length-1);
 
           if (!color) continue;
 
-          for (let i = 0; i < predElementsToUse; i++) {
-            const dot = this._predDots[predPointer];
+          for (let i = 0; i < count; i++) {
+            const dot = this._sgvDots[predPointer];
             const sgv = predictions[i];
             predPointer += 1;
             if (!sgv || !dot) continue;

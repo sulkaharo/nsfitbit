@@ -13,6 +13,7 @@ import { coloralloc } from "./functions.js";
 import Graph from "./graph.js";
 import Alarms from "./alarms.js";
 import AlarmUI from "./alert-ui.js";
+import { memory } from "system";
 
 // Update the clock every minute
 clock.granularity = "minutes";
@@ -68,7 +69,7 @@ var settings = {};
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
 
-function debug() {
+function debug () {
   return settings.loggingEnabled;
 }
 
@@ -215,33 +216,32 @@ inbox.onnewfile = () => {
   do {
     // If there is a file, move it from staging into the application folder
     fileName = inbox.nextFile();
-    if (fileName) {
-      readSGVFile(fileName);
-    }
+    readSGVFile();
   } while (fileName);
 };
 
 let latestGlucoseDate = 0;
 
-function readSGVFile (filename) {
-
-  // TODO: have a view that shows no data exists
-  // Also WOOOT why is fileExists() not supported?
-
-  let data;
-
+function readFile(filename) {
   try {
-    data = fs.readFileSync(filename, 'cbor');
+    return fs.readFileSync(filename, 'cbor');
   } catch (e) {
     if (debug()) console.log('File read failed');
-    return;
+    return false;
   }
-  if (!data.BGD) return;
+}
+
+function readSGVFile () {
+
+  if (debug()) console.log("JS memory: " + memory.js.used + " used of " + memory.js.total);
+
+  let data = readFile('data.cbor');
+  settings = readFile('settings.cbor');
+
+  if (!data || !settings) return;
 
   // We got data, hide the warning
   noDataWarning.style.display = 'none';
-
-  settings = data.settings;
 
   const hour = new Date().getHours();
   const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
@@ -276,7 +276,7 @@ function readSGVFile (filename) {
 
   const recentEntry = data.BGD[0];
 
-  alarms.checkAndAlarm(recentEntry, data.BGD[1], settings);
+  alarms.checkAndAlarm(recentEntry, data.BGD[1], settings, data.meta.phoneGenerationTime);
 
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
@@ -294,8 +294,6 @@ function readSGVFile (filename) {
 
   statusLine1.text = statusStrings[s1] || "";
   statusLine2.text = statusStrings[s2] || "";
-
-  const state = data.state;
 
   // Update the graph
   myGraph.update(data, settings);
@@ -365,7 +363,7 @@ function updateClock () {
 
   if (timeDelta > (1000 * 60)) {
     if (debug()) console.log('Periodic display update');
-    readSGVFile('file.txt');
+    readSGVFile();
   }
 
 }

@@ -2,6 +2,7 @@
 import * as messaging from "messaging";
 import { encode } from 'cbor';
 import { outbox } from "file-transfer";
+import { sha1 } from "./sha1.js";
 
 import Settings from './settings.js';
 import dataProcessor from './dataprocessing.js';
@@ -14,7 +15,7 @@ let lastFetch = 0;
 
 let settings = Settings.parseSettings();
 
-function debug() {
+function debug () {
   return settings.loggingEnabled;
 }
 
@@ -26,12 +27,16 @@ settingsStorage.onchange = function(evt) {
 
 function getRequesttOptions () {
   const options = {};
-
+  let apisecret = settings.apiSecret;
+  if (settings.offline && settings.apiSecret){
+    //sha1 the API secret as thats required for xdrip if using API secret
+    apisecret= sha1(settings.apiSecret);
+  }
   if (settings.apiSecret) {
     options.headers = new Headers({
-      'api-secret': settings.apiSecret
+      'api-secret': apisecret
     });
-    if (debug()) console.log('API-SECRET', settings.apiSecret);
+    if (debug()) console.log('API-SECRET', apisecret);
   }
   return options;
 }
@@ -85,6 +90,83 @@ function queryBGD () {
           });
 
           lastFetch = Date.now();
+
+          //This is rather yuck as xdrip broadcasts anything in the first 1st value of sgv values
+          //but better than not having anything
+          //the AAPS localbroadcast looks like:
+          //"aaps":"0% 3.47U(5.35|-1.88) -0.63 40g"
+          //"aaps-ts":1572681179398
+
+          //Lets do some stuff with the AAPS broadcast if we have it
+          let aapsdata = {};
+
+          //if aaps exists in the broadcast then aaps-ts key will have a date
+          if (data[0].aaps){
+            let iob = [];
+            if (debug())console.log("split it"+ JSON.stringify(data[0].aaps.split(" ")));
+            let aapsdataraw = data[0].aaps.split(" ");
+            //"-1.34U(0.15|-1.49) +2.27 0g".split(" ");
+            //"90% -0.66U +0.18 0g".split(" ");
+            //"60% -0.51U(0.61|-1.12) +0.90 0g".split(" ");
+            //"-0.66U +0.18 0g".split(" ");
+            //OK we have some data
+            //but it can change depending on AAPS settings
+            //One way is
+            //[0] => Temporary basal
+            //[1] => Insulin on Board Total(BolusIOB|BasalIOB)
+            //[2] => BGI
+            //[3] => COB
+            //OR
+            //[0] => Insulin on Board Total(BolusIOB|BasalIOB)
+            //[1] => BGI
+            //[2] => COB
+
+
+            //difine the indexs where data should be
+            //overide if needed
+            let iobindx = 0;
+            let bgiindex = 1;
+            let cobindx = 2;
+            //check what dataset we have
+            if (aapsdataraw.length == 4){
+              iobindx = 1;
+              bgiindex = 2;
+              cobindx = 3;
+            }
+
+            //lets do some cleaning on the IOB
+            //some hairy parsing....real hairy.
+
+            let iobtotal = 0;
+
+            aapsdata.iob = {};
+            aapsdata.iob.bolus = '???';
+            aapsdata.iob.basal = '???';
+            aapsdata.iob.total = '???';
+            //check if detailed iob is being broadcast
+            if (aapsdataraw[iobindx].indexOf('|') > -1 || aapsdataraw[iobindx+1].indexOf('|') > -1){
+              if (debug())console.log('Detailed IOB found....');
+              let iobraw = aapsdataraw[iobindx].split("(");
+              let iobraw1 = iobraw[1].split("|");
+
+              iobtotal = iobraw[0];
+              aapsdata.iob.bolus = iobraw1[0];
+              aapsdata.iob.basal = iobraw1[1].split(")")[0];
+            }else {
+              if (debug())console.log('Detailed IOB NOT found....');
+              iobtotal = aapsdataraw[iobindx];
+            }
+            //get rid of the Units from IOB
+            aapsdata.iob.total = iobtotal.split('U')[0];
+            aapsdata.cob = aapsdataraw[cobindx];
+            //we dont need a + sign for IOB, check for it and remove it.
+            if(aapsdataraw[cobindx].indexOf('+') > -1){
+              aapsdata.cob = aapsdataraw[cobindx].split("+")[0];
+            }
+            aapsdata.bgi = aapsdataraw[bgiindex];
+
+            bgData.aaps = {'cob':aapsdata.cob,'iob':aapsdata.iob.total,'bgi':aapsdata.bgi};
+          }
 
           // Send the data to the device
           return bgData;
@@ -158,10 +240,10 @@ function queryJSONAPI (url) {
 }
 
 // Send the BG data to the device
-function queueFile (data) {
+function queueFile (filename, data) {
   if (debug()) console.log('Queued a file change');
   const myFileInfo = encode(data);
-  outbox.enqueue('file.txt', myFileInfo);
+  outbox.enqueue(filename, myFileInfo);
 }
 
 const TWO_MINUTES = 2 * 60 * 1000;
@@ -219,6 +301,28 @@ async function loadDataFromCloud () {
   }
 }
 
+function clone (src) {
+  return Object.assign({}, src);
+}
+
+function getClientSettings () {
+  let s = clone(settings);
+
+  delete s.sgvURL;
+  delete s.treatmentURL;
+  delete s.pebbleURL;
+  delete s.profileURL;
+  delete s.v2APIURL;
+  delete s.apiSecret;
+  return s;
+}
+
+function treatmentTimeFilter(data, mills) {
+  return data.filter(function(entry) {
+    return (entry.date > mills);
+  });
+}
+
 async function updateDataToClient () {
 
   const values = await loadDataFromCloud();
@@ -227,26 +331,52 @@ async function updateDataToClient () {
   const profile = values[2];
   let processedBasals = [];
 
-  try {
-    processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals]);
-  } catch (err) {
-    if (debug()) console.log(err);
-  }
+  const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
 
+  if (!settings.offline){
+    try {
+      processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
+    } catch (err) {
+      if (debug()) console.log(err);
+    }
+  }
   const v2data = values[3];
 
   const state = buildStateMessage(v2data);
 
+  const meta = {
+    phoneGenerationTime: Date.now()
+  }
+
   let dataToSend = {
     'BGD': values[0]
-    , 'carbs': treatments.carbs
-    , 'boluses': treatments.boluses
-    , 'basals': processedBasals.reverse()
-    , 'state': state
+    , 'basals': []
+    , 'state': []
     , 'settings': settings
-  };
+    , 'carbs': []
+    , 'boluses': []
+    , 'meta': meta};
 
-  queueFile(dataToSend);
+  //if AAPS locally broadcasted data is available
+  if (values[0].aaps){
+    //override blank values with locally broadcasted AAPS ones
+    dataToSend.state = {
+    'cob':values[0].aaps.cob
+    ,'iob':values[0].aaps.iob
+    ,'bgi':values[0].aaps.bgi
+    ,'bwp':'???'};
+  }
+
+  if (!settings.offline){
+    dataToSend.state = state;
+    dataToSend.basals = processedBasals.reverse();
+    dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
+    dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
+  }
+
+  queueFile('settings.cbor', getClientSettings());
+  queueFile('data.cbor', dataToSend);
+
 }
 
 Settings.setCallback(updateDataToClient);
@@ -268,8 +398,7 @@ function buildStateMessage (v2data) {
 
   if (v2data.iob) {
     state.iob = Round2Digits(v2data.iob.iob);
-    const iobDate = new Date(v2data.iob.mills);
-    state.date = iobDate.toISOString();
+    state.date = v2data.iob.mills || 0;
   }
 
   if (v2data.cob) {
