@@ -414,8 +414,8 @@ function buildStateMessage (v2data) {
     const d = new Date(v2data.loop.lastLoop.timestamp);
     if (now - d.getTime() < FIFTEEN_MINUTES) {
       state.date = v2data.loop.lastLoop.timestamp;
-      state.cob = Math.floor(v2data.loop.lastLoop.cob);
-      state.iob = Round2Digits(v2data.loop.lastLoop.iob);
+      state.cob = Math.floor(v2data.loop.lastLoop.cob.cob);
+      state.iob = Round2Digits(v2data.loop.lastLoop.iob.iob);
       state.insulinReq = v2data.loop.lastLoop.recommendedBolus;
       state.predicted = {
         loop: v2data.loop.lastLoop.predicted.values

@@ -88,7 +88,8 @@ function mgdl (bg) {
 //convert a noise number to text
 function noiseCodeToDisplay (mgdl, noise) {
   var display;
-  switch (parseInt(noise)) {
+  const n = noise || 0;
+  switch (parseInt(n)) {
     case 0:
       display = '---';
       break;
@@ -163,11 +164,11 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
   if (data) {
 
     //hand off to colour threshold function to allocate the color
-    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[data.direction] : mmol(data.sgv) + "" + arrowIcon[data.direction];
-    sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
-    //dirArrow.text = arrowIcon[data.direction];
-    //dirArrow.style.fill = tcolor;
+    const direction = data.direction || 'None';
+
+    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[direction] : mmol(data.sgv) + "" + arrowIcon[direction];
+    sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
     minsAgo = data.date;
     minsAgoText = Math.round((Date.now() - minsAgo) / 60000);
@@ -198,7 +199,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
     //update noise
     //blank the value just encase the value was turned on then off
     noise.text = '';
-    if (settings.shownoise) {
+    if (settings.shownoise && data.noise) {
       noise.text = noiseCodeToDisplay(data.sgv, data.noise);
     }
 
