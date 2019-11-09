@@ -238,9 +238,11 @@ function readSGVFile () {
 
   let data = readFile('data.cbor');
   settings = readFile('settings.cbor');
-
+  
+  //check if the any data exists first
   if (!data || !settings) return;
-
+  //check if empty data strings are being sent
+  if (data.state === undefined || data.state.length == 0) return;
   // We got data, hide the warning
   noDataWarning.style.display = 'none';
 

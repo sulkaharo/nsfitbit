@@ -332,7 +332,6 @@ async function updateDataToClient () {
   let processedBasals = [];
 
   const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
-
   if (!settings.offline){
     try {
       processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
@@ -357,22 +356,24 @@ async function updateDataToClient () {
     , 'boluses': []
     , 'meta': meta};
 
-  //if AAPS locally broadcasted data is available
-  if (values[0].aaps){
-    //override blank values with locally broadcasted AAPS ones
-    dataToSend.state = {
-    'cob':values[0].aaps.cob
-    ,'iob':values[0].aaps.iob
-    ,'bgi':values[0].aaps.bgi
-    ,'bwp':'???'};
-  }
+  if (values[0] != null){
+    //if AAPS locally broadcasted data is available
+    if (values[0].aaps){
+      //override blank values with locally broadcasted AAPS ones
+      dataToSend.state = {
+        'cob':values[0].aaps.cob
+        ,'iob':values[0].aaps.iob
+        ,'bgi':values[0].aaps.bgi
+        ,'bwp':'???'};
+      }
 
-  if (!settings.offline){
-    dataToSend.state = state;
-    dataToSend.basals = processedBasals.reverse();
-    dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
-    dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
-  }
+      if (!settings.offline){
+        dataToSend.state = state;
+        dataToSend.basals = processedBasals.reverse();
+        dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
+        dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
+      }
+    }
 
   queueFile('settings.cbor', getClientSettings());
   queueFile('data.cbor', dataToSend);
