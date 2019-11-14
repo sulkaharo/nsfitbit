@@ -22,15 +22,16 @@ function debug () {
 settingsStorage.onchange = function(evt) {
   if (debug()) console.log('Setting changed', evt.key);
   settings = Settings.parseSettings();
+  queueFile('settings.cbor', getClientSettings());
   updateDataToClient();
 }
 
 function getRequesttOptions () {
   const options = {};
   let apisecret = settings.apiSecret;
-  if (settings.offline && settings.apiSecret){
+  if (settings.offline && settings.apiSecret) {
     //sha1 the API secret as thats required for xdrip if using API secret
-    apisecret= sha1(settings.apiSecret);
+    apisecret = sha1(settings.apiSecret);
   }
   if (settings.apiSecret) {
     options.headers = new Headers({
@@ -101,9 +102,9 @@ function queryBGD () {
           let aapsdata = {};
 
           //if aaps exists in the broadcast then aaps-ts key will have a date
-          if (data[0].aaps){
+          if (data[0].aaps) {
             let iob = [];
-            if (debug())console.log("split it"+ JSON.stringify(data[0].aaps.split(" ")));
+            if (debug()) console.log("split it" + JSON.stringify(data[0].aaps.split(" ")));
             let aapsdataraw = data[0].aaps.split(" ");
             //"-1.34U(0.15|-1.49) +2.27 0g".split(" ");
             //"90% -0.66U +0.18 0g".split(" ");
@@ -121,14 +122,13 @@ function queryBGD () {
             //[1] => BGI
             //[2] => COB
 
-
             //difine the indexs where data should be
             //overide if needed
             let iobindx = 0;
             let bgiindex = 1;
             let cobindx = 2;
             //check what dataset we have
-            if (aapsdataraw.length == 4){
+            if (aapsdataraw.length == 4) {
               iobindx = 1;
               bgiindex = 2;
               cobindx = 3;
@@ -144,28 +144,28 @@ function queryBGD () {
             aapsdata.iob.basal = '???';
             aapsdata.iob.total = '???';
             //check if detailed iob is being broadcast
-            if (aapsdataraw[iobindx].indexOf('|') > -1 || aapsdataraw[iobindx+1].indexOf('|') > -1){
-              if (debug())console.log('Detailed IOB found....');
+            if (aapsdataraw[iobindx].indexOf('|') > -1 || aapsdataraw[iobindx + 1].indexOf('|') > -1) {
+              if (debug()) console.log('Detailed IOB found....');
               let iobraw = aapsdataraw[iobindx].split("(");
               let iobraw1 = iobraw[1].split("|");
 
               iobtotal = iobraw[0];
               aapsdata.iob.bolus = iobraw1[0];
               aapsdata.iob.basal = iobraw1[1].split(")")[0];
-            }else {
-              if (debug())console.log('Detailed IOB NOT found....');
+            } else {
+              if (debug()) console.log('Detailed IOB NOT found....');
               iobtotal = aapsdataraw[iobindx];
             }
             //get rid of the Units from IOB
             aapsdata.iob.total = iobtotal.split('U')[0];
             aapsdata.cob = aapsdataraw[cobindx];
             //we dont need a + sign for IOB, check for it and remove it.
-            if(aapsdataraw[cobindx].indexOf('+') > -1){
+            if (aapsdataraw[cobindx].indexOf('+') > -1) {
               aapsdata.cob = aapsdataraw[cobindx].split("+")[0];
             }
             aapsdata.bgi = aapsdataraw[bgiindex];
 
-            bgData.aaps = {'cob':aapsdata.cob,'iob':aapsdata.iob.total,'bgi':aapsdata.bgi};
+            bgData.aaps = { 'cob': aapsdata.cob, 'iob': aapsdata.iob.total, 'bgi': aapsdata.bgi };
           }
 
           // Send the data to the device
@@ -241,7 +241,7 @@ function queryJSONAPI (url) {
 
 // Send the BG data to the device
 function queueFile (filename, data) {
-  if (debug()) console.log('Queued a file change');
+  if (debug()) console.log('Queued a file change: ' + filename);
   const myFileInfo = encode(data);
   outbox.enqueue(filename, myFileInfo);
 }
@@ -317,7 +317,7 @@ function getClientSettings () {
   return s;
 }
 
-function treatmentTimeFilter(data, mills) {
+function treatmentTimeFilter (data, mills) {
   return data.filter(function(entry) {
     return (entry.date > mills);
   });
@@ -332,8 +332,7 @@ async function updateDataToClient () {
   let processedBasals = [];
 
   const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
-
-  if (!settings.offline){
+  if (!settings.offline) {
     try {
       processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
     } catch (err) {
@@ -355,26 +354,29 @@ async function updateDataToClient () {
     , 'settings': settings
     , 'carbs': []
     , 'boluses': []
-    , 'meta': meta};
+    , 'meta': meta
+  };
 
-  //if AAPS locally broadcasted data is available
-  if (values[0].aaps){
-    //override blank values with locally broadcasted AAPS ones
-    dataToSend.state = {
-    'cob':values[0].aaps.cob
-    ,'iob':values[0].aaps.iob
-    ,'bgi':values[0].aaps.bgi
-    ,'bwp':'???'};
+  if (values[0] != null) {
+    //if AAPS locally broadcasted data is available
+    if (values[0].aaps) {
+      //override blank values with locally broadcasted AAPS ones
+      dataToSend.state = {
+        'cob': values[0].aaps.cob
+        , 'iob': values[0].aaps.iob
+        , 'bgi': values[0].aaps.bgi
+        , 'bwp': '???'
+      };
+    }
+
+    if (!settings.offline) {
+      dataToSend.state = state;
+      dataToSend.basals = processedBasals.reverse();
+      dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
+      dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
+    }
   }
 
-  if (!settings.offline){
-    dataToSend.state = state;
-    dataToSend.basals = processedBasals.reverse();
-    dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
-    dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
-  }
-
-  queueFile('settings.cbor', getClientSettings());
   queueFile('data.cbor', dataToSend);
 
 }
@@ -414,10 +416,10 @@ function buildStateMessage (v2data) {
     const d = new Date(v2data.loop.lastLoop.timestamp);
     if (now - d.getTime() < FIFTEEN_MINUTES) {
       state.date = v2data.loop.lastLoop.timestamp;
-      state.cob = Math.floor(v2data.loop.lastLoop.cob.cob);
-      state.iob = Round2Digits(v2data.loop.lastLoop.iob.iob);
-      state.insulinReq = v2data.loop.lastLoop.recommendedBolus;
-      state.predicted = {
+      if (v2data.loop.lastLoop.cob) state.cob = Math.floor(v2data.loop.lastLoop.cob.cob);
+      if (v2data.loop.lastLoop.iob) state.iob = Round2Digits(v2data.loop.lastLoop.iob.iob);
+      if (v2data.loop.lastLoop) state.insulinReq = v2data.loop.lastLoop.recommendedBolus;
+      if (v2data.loop.lastLoop.predicted) state.predicted = {
         loop: v2data.loop.lastLoop.predicted.values
         , moment: v2data.loop.lastLoop.predicted.startDate
       }
@@ -459,7 +461,7 @@ function instantiateInterval () {
   if (!intervalTimer || timeSinceLastFetch > TWO_MINUTES + 15000) {
     if (debug()) console.log('Reinstantiating the timer');
     if (intervalTimer) clearInterval(intervalTimer);
-    intervalTimer = setInterval(updateDataToClient, 15 * 1000);
+    intervalTimer = setInterval(updateDataToClient, 60 * 1000);
     updateDataToClient();
   }
 }

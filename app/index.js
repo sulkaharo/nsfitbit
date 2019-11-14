@@ -88,7 +88,7 @@ function mgdl (bg) {
 //convert a noise number to text
 function noiseCodeToDisplay (mgdl, noise) {
   var display;
-  const n = noise || 0;
+  const n = noise || 0;
   switch (parseInt(n)) {
     case 0:
       display = '---';
@@ -165,7 +165,7 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     //hand off to colour threshold function to allocate the color
 
-    const direction = data.direction || 'None';
+    const direction = data.direction || 'None';
 
     sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[direction] : mmol(data.sgv) + "" + arrowIcon[direction];
     sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
@@ -214,16 +214,26 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 // Event occurs when new file(s) are received
 inbox.onnewfile = () => {
   let fileName;
+  let runUpdate = false;
+
+  if (debug()) console.log('Inbox says there is a file');
   do {
     // If there is a file, move it from staging into the application folder
     fileName = inbox.nextFile();
-    readSGVFile();
+    if (fileName) runUpdate = true; // This is sometimes called with undefined files?!?
+    if (debug()) console.log('Clearing the queue of: ' + fileName);
   } while (fileName);
+
+  if (debug() && !runUpdate) console.log('Skipping update as there were no real files');
+
+  // Now update the data
+  // TODO: Refactor to read settings and data separately
+  if (runUpdate) readSGVFile(true);
 };
 
 let latestGlucoseDate = 0;
 
-function readFile(filename) {
+function readFile (filename) {
   try {
     return fs.readFileSync(filename, 'cbor');
   } catch (e) {
@@ -232,15 +242,35 @@ function readFile(filename) {
   }
 }
 
-function readSGVFile () {
+var lastSmallUpdate = 0;
+var lastBigUpdate = 0;
+
+const FIFTEEN_SECONDS = 15 * 1000;
+const ONE_MINUTE = 60 * 1000;
+
+function readSGVFile (fileIsNew) {
+
+  if (debug() && fileIsNew) console.log('File is new, running full update');
+
+  const runSmallUpdate = fileIsNew || Date.now() - lastSmallUpdate > FIFTEEN_SECONDS;
+  const runBigUpdate = fileIsNew || Date.now() - lastBigUpdate > ONE_MINUTE;
+
+  // SMALL UPDATE
+  // Only do less CPU intensive work here
+
+  if (!runSmallUpdate) { return; }
+  if (debug()) console.log('Running small update');
+  lastSmallUpdate = Date.now();
 
   if (debug()) console.log("JS memory: " + memory.js.used + " used of " + memory.js.total);
 
   let data = readFile('data.cbor');
   settings = readFile('settings.cbor');
 
-  if (!data || !settings) return;
-
+  //check if the any data exists first
+  if (!data || !settings) return;
+  //check if empty data strings are being sent
+  if (data.state === undefined || data.state.length == 0) return;
   // We got data, hide the warning
   noDataWarning.style.display = 'none';
 
@@ -296,6 +326,13 @@ function readSGVFile () {
   statusLine1.text = statusStrings[s1] || "";
   statusLine2.text = statusStrings[s2] || "";
 
+  // LARGE UPDATE
+  // CPU intensive work is done less frequently
+
+  if (!runBigUpdate) { return; }
+  if (debug()) console.log('Running big update');
+  lastBigUpdate = Date.now();
+
   // Update the graph
   myGraph.update(data, settings);
 
@@ -309,8 +346,10 @@ function readSGVFile () {
 
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// The updater is used to update the screen every 1 SECONDS
+// The updater is used to update the screen every 1 minute
 function updateClock () {
+
+  if (debug()) console.log('Clock update: ' + Date.now());
 
   const nowDate = new Date();
   const hours = nowDate.getHours();
@@ -356,17 +395,6 @@ function updateClock () {
     age.style.fill = 'green';
     if (minsAgoText > 10) age.style.fill = 'red';
   }
-
-  // Update from file if ...
-
-  const nowMoment = nowDate.getTime();
-  const timeDelta = nowMoment - lastUpdateTime;
-
-  if (timeDelta > (1000 * 60)) {
-    if (debug()) console.log('Periodic display update');
-    readSGVFile();
-  }
-
 }
 
 // Have clock ping the Compantion to keep it alive
@@ -392,9 +420,12 @@ function checkNeedForPing () {
 
 setInterval(() => {
   checkNeedForPing();
-}, 15000);
+  readSGVFile(false);
+}, 5000);
 
-// Update the clock every tick event
+readSGVFile(true);
+
+clock.granularity = "minutes";
 clock.ontick = () => updateClock();
 
 // Listen for the onerror event

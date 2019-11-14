@@ -140,7 +140,7 @@ _settings.getURLS = function getURLS () {
 
   //check if we have a nightscout url or not
   //console.log(JSON.stringify(url));
-  if (url != '') {
+  if (url.name != "") {
     // eslint-disable-next-line no-useless-escape
     const parsed = url.match(/^(http|https|ftp)?(?:[\:\/]*)([a-z0-9\.-]*)(?:\:([0-9]+))?(\/[^?#]*)?(?:\?([^#]*))?(?:#(.*))?$/i);
     //Use HTTPS
