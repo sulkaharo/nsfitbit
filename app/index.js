@@ -423,6 +423,8 @@ setInterval(() => {
   readSGVFile(false);
 }, 5000);
 
+readSGVFile(true);
+
 clock.granularity = "minutes";
 clock.ontick = () => updateClock();
 
