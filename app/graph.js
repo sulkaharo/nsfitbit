@@ -42,7 +42,7 @@ export default class Graph {
   }
 
   updateBasals(basals, settings) {
-    
+
     if (settings.loggingEnabled) console.log('Updating basals');
 
     const basalMaxHeight = 20;
@@ -78,30 +78,35 @@ export default class Graph {
         break;
       }
     }
+    //check if any basal can be drawn
+    if (maxVal > 0) {
+      for (let i = 0; i < basalShortList.length; i++) {
+        if (!this._basals[i]) continue;
 
-    for (let i = 0; i < basalShortList.length; i++) {
-      if (!this._basals[i]) continue;
+        const bar = this._basals[i];
+        const b = basalShortList[i];
 
-      const bar = this._basals[i];
-      const b = basalShortList[i];
+        if (!b.duration) continue; // Ok this is actually a problem
 
-      if (!b.duration) continue; // Ok this is actually a problem
+        const d = b.duration / (5 * 60 * 1000);
 
-      const d = b.duration / (5 * 60 * 1000);
+        bar.width = Math.max(1, (fiveMinWidth * d));
 
-      bar.width = Math.max(1, (fiveMinWidth * d));
+        const timeDelta = (now - b.start) / (5 * 60 * 1000);
+        bar.x = zeroPoint - (fiveMinWidth * timeDelta);
 
-      const timeDelta = (now - b.start) / (5 * 60 * 1000);
-      bar.x = zeroPoint - (fiveMinWidth * timeDelta);
+        bar.style.visibility = 'visible';
 
-      bar.style.visibility = 'visible';
+        const abs = Number(b.absolute) || 0;
+        console.log("b.abs: "+JSON.stringify(b.absolute));
+        console.log("ABS: "+JSON.stringify(abs));
+        console.log("MaxVal: "+JSON.stringify(maxVal));
+        console.log("Maxheight: "+JSON.stringify(basalMaxHeight));
+        bar.height = basalMaxHeight * Math.max(0, (abs / maxVal));
 
-      const abs = Number(b.absolute) || 0;
+        bar.y = this._id.height - bar.height;
 
-      bar.height = basalMaxHeight * Math.max(0, (abs / maxVal));
-
-      bar.y = this._id.height - bar.height;
-
+      }
     }
 
   }
