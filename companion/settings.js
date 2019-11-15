@@ -68,7 +68,7 @@ _settings.parseSettings = function parseSettings () {
   }
 
   settings.activity = _settings.getSettings('activity', false);
-  settings.apiSecret = _settings.getSettings('apiSecret', false); // settingsStorage.getItem('apiSecret').name;
+  settings.apiSecret = _settings.getSettings('apiSecret', false);
 
   const URLS = _settings.getURLS();
 
@@ -91,7 +91,7 @@ _settings.parseSettings = function parseSettings () {
     //console.log ("setting offline to false");
   } else {
     settings.offline = true;
-    //we have no pridications in offline mode..... yet
+    //we have no pridictions in offline mode..... yet
     //so lets turn them off for now
     settings.predictionHours = 0;
     //console.log ("setting offline to true");
@@ -126,7 +126,7 @@ _settings.parseSettings = function parseSettings () {
 _settings.getURLS = function getURLS () {
   let url = _settings.getSettings('endpoint', '');
   //default to the xDrip Local endpoint
-  let protocol = 'http'
+  let protocol = 'http';
   let entryCount = 4 * 60 / 5;
   let server = '127.0.0.1:17580';
   let urls = {};
@@ -136,7 +136,6 @@ _settings.getURLS = function getURLS () {
       '/pebble', // [2] pebble endpoint
       '', // [3] = profile endpoint
       '']; // [4] = V2 API endpoint
-  //const start = protocol+"://"+server;
 
   //check if we have a nightscout url or not
   //console.log(JSON.stringify(url));
