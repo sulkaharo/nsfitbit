@@ -98,10 +98,6 @@ export default class Graph {
         bar.style.visibility = 'visible';
 
         const abs = Number(b.absolute) || 0;
-        console.log("b.abs: "+JSON.stringify(b.absolute));
-        console.log("ABS: "+JSON.stringify(abs));
-        console.log("MaxVal: "+JSON.stringify(maxVal));
-        console.log("Maxheight: "+JSON.stringify(basalMaxHeight));
         bar.height = basalMaxHeight * Math.max(0, (abs / maxVal));
 
         bar.y = this._id.height - bar.height;
