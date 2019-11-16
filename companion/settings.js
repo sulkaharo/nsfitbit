@@ -86,15 +86,17 @@ _settings.parseSettings = function parseSettings () {
   settings.cgmHours = Number(_settings.getSettings('cgmHours', 3));
   settings.predictionHours = Number(_settings.getSettings('predictionHours', 0));
 
-  if (_settings.getSettings('endpoint', '') != '') {
-    settings.offline = false;
-    //console.log ("setting offline to false");
-  } else {
+  if (typeof _settings.getSettings('endpoint', '') === 'object' && _settings.getSettings('endpoint', '') !== null || _settings.getSettings('endpoint', '') == ''){
+    //workaround an odd fitbit bug where an empty textbox returns back an object
+    //we presume if the textbox is empty that we are operating in offline mode
     settings.offline = true;
     //we have no pridictions in offline mode..... yet
     //so lets turn them off for now
     settings.predictionHours = 0;
     //console.log ("setting offline to true");
+  }else{
+    settings.offline = false;
+    //console.log ("setting offline to false");
   }
 
   settings.enableAlarms = _settings.getSettings('enableAlarms', false);
@@ -138,8 +140,7 @@ _settings.getURLS = function getURLS () {
       '']; // [4] = V2 API endpoint
 
   //check if we have a nightscout url or not
-  //console.log(JSON.stringify(url));
-  if (url.name != "") {
+  if (typeof url === 'string' || url instanceof String && url) {
     // eslint-disable-next-line no-useless-escape
     const parsed = url.match(/^(http|https|ftp)?(?:[\:\/]*)([a-z0-9\.-]*)(?:\:([0-9]+))?(\/[^?#]*)?(?:\?([^#]*))?(?:#(.*))?$/i);
     //Use HTTPS
