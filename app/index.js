@@ -186,8 +186,6 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     UI_delta.text = deltaString;
 
-    updateClock();
-
     //update noise
     //blank the value just encase the value was turned on then off
     UI_noise.text = '';
@@ -195,10 +193,12 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
       UI_noise.text = noiseCodeToDisplay(data.sgv, data.noise);
     }
 
+    updateClock();
+
   } else {
-    UI_sgv.text = '???';
-    UI_sgv.style.fill = "red";
-    UI_dirArrow.text = '-';
+    UI_sgv.text = '--';
+    UI_sgv.style.fill = 'red';
+    UI_dirArrow.text = '';
     UI_dirArrow.style.fill = "red";
   }
 }
@@ -386,6 +386,7 @@ function updateClock () {
   if (minsAgo > 15) {
     UI_sgv.text = '--';
     UI_delta.text = '--';
+    UI_noise.text = '';
     UI_sgv.style.fill = 'red';
     UI_age.style.fill = 'red';
   }
