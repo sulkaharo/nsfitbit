@@ -164,8 +164,6 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     lastGlucoseDate = data.date;
 
-    updateClock();
-
     // calc the delta
 
     let deltaString = "";
@@ -187,6 +185,8 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
     }
 
     UI_delta.text = deltaString;
+
+    updateClock();
 
     //update noise
     //blank the value just encase the value was turned on then off
@@ -384,7 +384,8 @@ function updateClock () {
   UI_age.style.fill = 'green';
 
   if (minsAgo > 15) {
-    UI_sgv.text = '??';
+    UI_sgv.text = '--';
+    UI_delta.text = '--';
     UI_sgv.style.fill = 'red';
     UI_age.style.fill = 'red';
   }
