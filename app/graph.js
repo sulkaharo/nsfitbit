@@ -157,7 +157,7 @@ export default class Graph {
 
     const sgvLow = 36;
     let sgvHigh = settings.graphTopBG || 180; // make configurable
-    const glucoseHeight = 98;
+    const glucoseHeight = Math.round(0.82 * this._id.height); // 98;
 
     if (settings.graphDynamicScale) {
       for (let i = 0; i < SGVArray.length; i++) {
