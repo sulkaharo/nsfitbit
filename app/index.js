@@ -14,6 +14,9 @@ import Graph from "./graph.js";
 import Alarms from "./alarms.js";
 import AlarmUI from "./alert-ui.js";
 import { memory } from "system";
+import { me as device } from "device";
+
+if (!device.screen) device.screen = { width: 348, height: 250 };
 
 // Update the clock every minute
 clock.granularity = "minutes";
@@ -54,6 +57,10 @@ UI_steps.text = "--";
 
 let lastGlucoseDate = 0;
 
+console.log(`Dimensions: ${device.screen.width} x ${device.screen.height}`);
+
+UI_docGraph.height = Math.round(0.4*device.screen.height);
+UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 
 var settings = {};
