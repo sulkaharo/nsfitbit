@@ -170,7 +170,8 @@ export default class Graph {
     const range = sgvHigh - sgvLow;
 
     function getYFromSgv (sgv) {
-      const v = sgv - sgvLow;
+      const s = sgv > sgvHigh ? sgvHigh : sgv;
+      const v = s - sgvLow;
       const r = v / range;
       return Math.floor(glucoseHeight * (1 - r)) + 1;
     }
