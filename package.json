@@ -1,6 +1,6 @@
 {
   "name": "NightscoutMonitor",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": false,
   "license": "LGPL-2.1",
   "repository": {
@@ -8,15 +8,15 @@
     "url": "https://github.com/sulkaharo/nsfitbit"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/register": "^7.6.2",
-    "@fitbit/sdk": "~4.0.1",
-    "@fitbit/sdk-cli": "^1.7.0",
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/register": "^7.7.0",
+    "@fitbit/sdk": "^4.1.0",
+    "@fitbit/sdk-cli": "^1.7.1",
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.4.0",
-    "jshint": "^2.10.2",
+    "eslint": "^6.6.0",
+    "jshint": "^2.10.3",
     "mocha": "^6.2.2",
     "should": "^13.2.3"
   },
@@ -35,6 +35,7 @@
     ],
     "buildTargets": [
       "meson",
+      "higgs",
       "gemini",
       "mira"
     ],

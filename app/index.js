@@ -14,6 +14,9 @@ import Graph from "./graph.js";
 import Alarms from "./alarms.js";
 import AlarmUI from "./alert-ui.js";
 import { memory } from "system";
+import { me as device } from "device";
+
+if (!device.screen) device.screen = { width: 348, height: 250 };
 
 // Update the clock every minute
 clock.granularity = "minutes";
@@ -32,37 +35,31 @@ let arrowIcon = {
   , "NOT COMPUTABLE": "-"
   , "RATE OUT OF RANGE": "-"
 };
-let minsAgo = 0;
-let minsAgoText = "mins ago";
 
-let lastUpdateTime = 0;
+const UI_time = document.getElementById('clock');
+const UI_statusLine1 = document.getElementById('statusline1');
+const UI_statusLine2 = document.getElementById('statusline2');
+const UI_steps = document.getElementById("steps");
+const UI_stepsicon = document.getElementById("stepsicon");
+const UI_hrLabel = document.getElementById('heartrate');
+const UI_hricon = document.getElementById('hricon');
+const UI_batteryLabel = document.getElementById('battery');
+const UI_noDataWarning = document.getElementById('noData');
+const UI_sgv = document.getElementById("sgv");
+const UI_dirArrow = document.getElementById("dirArrow");
+const UI_noise = document.getElementById("noise");
+const UI_delta = document.getElementById("delta");
+const UI_age = document.getElementById("age");
+const UI_docGraph = document.getElementById("docGraph");
 
-const time = document.getElementById('clock');
+UI_hrLabel.text = "--";
+UI_steps.text = "--";
 
-const statusLine1 = document.getElementById('statusline1');
-const statusLine2 = document.getElementById('statusline2');
+let lastGlucoseDate = 0;
 
-const steps = document.getElementById("steps");
-const stepsicon = document.getElementById("stepsicon");
-const hrLabel = document.getElementById('heartrate');
-const hricon = document.getElementById('hricon');
-const batteryLabel = document.getElementById('battery');
-
-const noDataWarning = document.getElementById('noData');
-
-hrLabel.text = "--";
-steps.text = "--";
-
-const sgv = document.getElementById("sgv");
-const dirArrow = document.getElementById("dirArrow");
-
-const noise = document.getElementById("noise");
-
-const delta = document.getElementById("delta");
-const age = document.getElementById("age");
-
-const docGraph = document.getElementById("docGraph");
-let myGraph = new Graph(docGraph);
+UI_docGraph.height = Math.round(0.4*device.screen.height);
+UI_docGraph.width = device.screen.width;
+let myGraph = new Graph(UI_docGraph);
 
 var settings = {};
 
@@ -132,7 +129,7 @@ hrm.onreading = function() {
   // Peek the current sensor values
   const now = Date.now();
   if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
-    hrLabel.text = hrm.heartRate;
+    UI_hrLabel.text = hrm.heartRate;
   }
   hrmLastUpdated = now;
 };
@@ -167,12 +164,10 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     const direction = data.direction || 'None';
 
-    sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[direction] : mmol(data.sgv) + "" + arrowIcon[direction];
-    sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
+    UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[direction] : mmol(data.sgv) + "" + arrowIcon[direction];
+    UI_sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
-    minsAgo = data.date;
-    minsAgoText = Math.round((Date.now() - minsAgo) / 60000);
-    age.text = `${minsAgoText} mins ago`;
+    lastGlucoseDate = data.date;
 
     // calc the delta
 
@@ -194,20 +189,22 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
       deltaString = '+' + deltaString;
     }
 
-    delta.text = deltaString;
+    UI_delta.text = deltaString;
 
     //update noise
     //blank the value just encase the value was turned on then off
-    noise.text = '';
+    UI_noise.text = '';
     if (settings.shownoise && data.noise) {
-      noise.text = noiseCodeToDisplay(data.sgv, data.noise);
+      UI_noise.text = noiseCodeToDisplay(data.sgv, data.noise);
     }
 
+    updateClock();
+
   } else {
-    sgv.text = '???';
-    sgv.style.fill = "red";
-    dirArrow.text = '-';
-    dirArrow.style.fill = "red";
+    UI_sgv.text = '--';
+    UI_sgv.style.fill = 'red';
+    UI_dirArrow.text = '';
+    UI_dirArrow.style.fill = "red";
   }
 }
 
@@ -272,7 +269,7 @@ function readSGVFile (fileIsNew) {
   //check if empty data strings are being sent
   if (data.state === undefined || data.state.length == 0) return;
   // We got data, hide the warning
-  noDataWarning.style.display = 'none';
+  UI_noDataWarning.style.display = 'none';
 
   const hour = new Date().getHours();
   const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
@@ -286,22 +283,22 @@ function readSGVFile (fileIsNew) {
 
   //Steps Icon and HR
   if (settings.activity) {
-    if (debug()) console.log("The Icon visibility: " + stepsicon.style.visibility);
+    if (debug()) console.log("The Icon visibility: " + UI_stepsicon.style.visibility);
     //reduce the amount of interactions with the DOM by checking the visibility and only if false then set item
-    if (stepsicon.style.visibility != "visible") {
-      stepsicon.style.visibility = "visible";
-      steps.style.visibility = "visible";
-      hrLabel.style.visibility = "visible";
-      hricon.style.visibility = "visible";
+    if (UI_stepsicon.style.visibility != "visible") {
+      UI_stepsicon.style.visibility = "visible";
+      UI_steps.style.visibility = "visible";
+      UI_hrLabel.style.visibility = "visible";
+      UI_hricon.style.visibility = "visible";
     }
     //Update the amount of steps
-    steps.text = today.local.steps || 0;
+    UI_steps.text = today.local.steps || 0;
   } else {
-    if (stepsicon.style.visibility == "visible") {
-      stepsicon.style.visibility = "hidden";
-      steps.style.visibility = "hidden";
-      hrLabel.style.visibility = "hidden";
-      hricon.style.visibility = "hidden";
+    if (UI_stepsicon.style.visibility == "visible") {
+      UI_stepsicon.style.visibility = "hidden";
+      UI_steps.style.visibility = "hidden";
+      UI_hrLabel.style.visibility = "hidden";
+      UI_hricon.style.visibility = "hidden";
     }
   }
 
@@ -323,8 +320,8 @@ function readSGVFile (fileIsNew) {
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
 
-  statusLine1.text = statusStrings[s1] || "";
-  statusLine2.text = statusStrings[s2] || "";
+  UI_statusLine1.text = statusStrings[s1] || "";
+  UI_statusLine2.text = statusStrings[s2] || "";
 
   // LARGE UPDATE
   // CPU intensive work is done less frequently
@@ -364,12 +361,12 @@ function updateClock () {
   const ampm = hours < 12 ? "AM" : "PM";
 
   if (preferences.clockDisplay === "12h") {
-    time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
+    UI_time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
   } else {
-    time.text = dateText + `${hours}:${mins}`;
+    UI_time.text = dateText + `${hours}:${mins}`;
   }
 
-  batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
+  UI_batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
 
   // battery icon
 
@@ -388,13 +385,19 @@ function updateClock () {
     }
   }
 
-  // Update mins ago
-  if (minsAgo > 0) {
-    minsAgoText = Math.round((Date.now() - minsAgo) / 60000);
-    age.text = `${minsAgoText} mins ago`;
-    age.style.fill = 'green';
-    if (minsAgoText > 10) age.style.fill = 'red';
+  let minsAgo = Math.round((Date.now() - lastGlucoseDate) / 60000);
+  UI_age.style.fill = 'green';
+
+  if (minsAgo > 15) {
+    UI_sgv.text = '--';
+    UI_delta.text = '--';
+    UI_noise.text = '';
+    UI_sgv.style.fill = 'red';
+    UI_age.style.fill = 'red';
   }
+
+  UI_age.text = minsAgo > 30 ? ">30 mins ago" : `${minsAgo} mins ago`;
+
 }
 
 // Have clock ping the Compantion to keep it alive

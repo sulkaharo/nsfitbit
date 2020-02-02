@@ -231,11 +231,20 @@ function queryJSONAPI (url) {
     .then(function(response) {
       return response.json()
         .then(function(data) {
+          if (settings.prevsgvURL){
+            //reset SGV URL to original
+            settings.offline = false;
+            settings.sgvURL = settings.prevsgvURL;
+            delete settings.prevsgvURL;
+          }
           return data;
         });
     })
     .catch(function(err) {
       if (debug()) console.log("Error fetching data from url: ", url, err);
+      settings.offline = true;
+      settings.prevsgvURL = settings.sgvURL;
+      settings.sgvURL = 'http://127.0.0.1:17580/sgv.json?count=48'
     });
 }
 
