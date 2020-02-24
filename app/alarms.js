@@ -54,9 +54,12 @@ export default class Alarms {
     const deltaMins = Math.floor(fileAge / 1000 / 60);
 
     if (fileAge > 10*60*1000) {
+
+      const messageTime = deltaMins > 30 ? ">30" : deltaMins;
+
       return [this.generateAlarm(
         ALARM_STALE
-        , 'Last data update from phone ' + deltaMins + ' mins ago'
+        , 'Last data update from phone ' + messageTime + ' mins ago'
         , 'ping')];
     }
 
