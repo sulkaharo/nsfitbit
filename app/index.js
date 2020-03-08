@@ -31,9 +31,6 @@ let arrowIcon = {
   , "FortyFiveDown": "\u{2198}"
   , "SingleDown": "\u{2193}"
   , "DoubleDown": "\u{2193}\u{2193}"
-  , "None": "-"
-  , "NOT COMPUTABLE": "-"
-  , "RATE OUT OF RANGE": "-"
 };
 
 const UI_time = document.getElementById('clock');
@@ -61,7 +58,9 @@ UI_docGraph.height = Math.round(0.4*device.screen.height);
 UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 
-var settings = {};
+let settings = {};
+
+let latestHR = 0;
 
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
@@ -130,6 +129,7 @@ hrm.onreading = function() {
   const now = Date.now();
   if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
     UI_hrLabel.text = hrm.heartRate;
+    latestHR = hrm.heartRate;
   }
   hrmLastUpdated = now;
 };
@@ -162,9 +162,9 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     //hand off to colour threshold function to allocate the color
 
-    const direction = data.direction || 'None';
+    const direction = arrowIcon.hasOwnProperty(data.direction) ? arrowIcon[data.direction] : '-';
 
-    UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[direction] : mmol(data.sgv) + "" + arrowIcon[direction];
+    UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + direction : mmol(data.sgv) + "" + direction;
     UI_sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
     lastGlucoseDate = data.date;
@@ -316,6 +316,8 @@ function readSGVFile (fileIsNew) {
   statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
   statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
   statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
+  statusStrings["Steps"] = "Steps " + today.local.steps;
+  statusStrings["Heart rate"] = "HR " + latestHR;
 
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
