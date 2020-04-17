@@ -120,7 +120,9 @@ function mySettings(props) {
     {name:"None"},
     {name:"IOB"},
     {name:"COB"},
-    {name:"BWP"}
+    {name:"BWP"},
+    {name:"Heart rate"},
+    {name:"Steps"}
   ]}
 />
 
@@ -131,7 +133,9 @@ function mySettings(props) {
     {name:"None"},
     {name:"IOB"},
     {name:"COB"},
-    {name:"BWP"}
+    {name:"BWP"},
+    {name:"Heart rate"},
+    {name:"Steps"}
   ]}
 />
 
