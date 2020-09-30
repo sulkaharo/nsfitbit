@@ -49,7 +49,7 @@
   "scripts": {
     "build": "fitbit-build",
     "prebuild": "cp -r ../app/* app/; cp -r ../companion/* companion/; cp -r ../settings/* settings/; cp -r ../resources/* resources/;  cp -r resources_sdk4/* resources/",
-    "test": "mocha --require @babel/register --exit ../tests/*.test.js",
+    "test": "yarn run prebuild; cp -r ../tests/* tests/; mocha --require @babel/register --exit tests/*.test.js",
     "debug": "fitbit"
   },
   "babel": {
