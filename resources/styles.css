@@ -73,6 +73,10 @@
   fill: green;
 }
 
+.application-fill           { fill: fb-pink; }
+.foreground-fill            { fill: fb-white; }
+.background-fill            { fill: fb-black; }
+
 #btnLeft #text {
   text-buffer: "MUTE";
 }

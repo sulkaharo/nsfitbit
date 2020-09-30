@@ -81,7 +81,7 @@ export default class Alarms {
     if (sgv >= this._settings.highThreshold) {
       generatedAlarms.push(this.generateAlarm(
         ALARM_BG
-        , 'HIGH BG: ' + displayGlucose
+        , `HIGH BG: ${displayGlucose} `
         , 'nudge'));
       skipPredictedBG = true;
     }
