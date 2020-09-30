@@ -1,0 +1,1707 @@
+{
+    "bgnow": {
+        "mean": 120,
+        "last": 120,
+        "mills": 1569303739122,
+        "sgvs": [
+            {
+                "mgdl": 120,
+                "mills": 1569303739122,
+                "device": "xDrip-DexcomG5",
+                "direction": "FortyFiveUp",
+                "filtered": 101184,
+                "unfiltered": 110466,
+                "noise": 1,
+                "rssi": 100,
+                "scaled": "6.7"
+            }
+        ]
+    },
+    "delta": {
+        "absolute": 4,
+        "elapsedMins": 4.993783333333333,
+        "interpolated": false,
+        "mean5MinsAgo": 116,
+        "mgdl": 4,
+        "scaled": 0.3,
+        "display": "+0.3",
+        "previous": {
+            "mean": 116,
+            "last": 116,
+            "mills": 1569303439495,
+            "sgvs": [
+                {
+                    "mgdl": 116,
+                    "mills": 1569303439495,
+                    "device": "xDrip-DexcomG5",
+                    "direction": "FortyFiveUp",
+                    "filtered": 93636,
+                    "unfiltered": 105570,
+                    "noise": 1,
+                    "rssi": 100
+                }
+            ]
+        }
+    },
+    "buckets": [
+        {
+            "mean": 120,
+            "last": 120,
+            "mills": 1569303739122,
+            "index": 0,
+            "fromMills": 1569303589122,
+            "toMills": 1569303889122,
+            "sgvs": [
+                {
+                    "mgdl": 120,
+                    "mills": 1569303739122,
+                    "device": "xDrip-DexcomG5",
+                    "direction": "FortyFiveUp",
+                    "filtered": 101184,
+                    "unfiltered": 110466,
+                    "noise": 1,
+                    "rssi": 100,
+                    "scaled": "6.7"
+                }
+            ]
+        },
+        {
+            "mean": 116,
+            "last": 116,
+            "mills": 1569303439495,
+            "index": 1,
+            "fromMills": 1569303289122,
+            "toMills": 1569303589122,
+            "sgvs": [
+                {
+                    "mgdl": 116,
+                    "mills": 1569303439495,
+                    "device": "xDrip-DexcomG5",
+                    "direction": "FortyFiveUp",
+                    "filtered": 93636,
+                    "unfiltered": 105570,
+                    "noise": 1,
+                    "rssi": 100
+                }
+            ]
+        },
+        {
+            "mean": 107,
+            "last": 107,
+            "mills": 1569303139209,
+            "index": 2,
+            "fromMills": 1569302989122,
+            "toMills": 1569303289122,
+            "sgvs": [
+                {
+                    "mgdl": 107,
+                    "mills": 1569303139209,
+                    "device": "xDrip-DexcomG5",
+                    "direction": "FortyFiveUp",
+                    "filtered": 86326,
+                    "unfiltered": 97614,
+                    "noise": 1,
+                    "rssi": 100
+                }
+            ]
+        },
+        {
+            "mean": 100,
+            "last": 100,
+            "mills": 1569302839322,
+            "index": 3,
+            "fromMills": 1569302689122,
+            "toMills": 1569302989122,
+            "sgvs": [
+                {
+                    "mgdl": 100,
+                    "mills": 1569302839322,
+                    "device": "xDrip-DexcomG5",
+                    "direction": "FortyFiveUp",
+                    "filtered": 80240,
+                    "unfiltered": 91494,
+                    "noise": 1,
+                    "rssi": 100
+                }
+            ]
+        }
+    ],
+    "rawbg": {},
+    "direction": {
+        "display": null,
+        "value": "FortyFiveUp",
+        "label": "↗",
+        "entity": "&#8599;"
+    },
+    "upbat": {
+        "level": 75,
+        "display": "86%",
+        "status": "current",
+        "devices": {
+            "openaps://eeroedison5": {
+                "name": "eeroedison5",
+                "uri": "openaps://eeroedison5",
+                "statuses": [
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4043,
+                            "battery": 86,
+                            "value": 86,
+                            "voltage": 4.043,
+                            "voltageDisplay": "4.043v",
+                            "display": "86%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:45:18.354Z",
+                        "mills": 1569303918354,
+                        "_id": "5d89ad6e4d861600044e11d6"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4044,
+                            "battery": 86,
+                            "value": 86,
+                            "voltage": 4.044,
+                            "voltageDisplay": "4.044v",
+                            "display": "86%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:44:19.556Z",
+                        "mills": 1569303859556,
+                        "_id": "5d89ad334d861600044e11d5"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4049,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.049,
+                            "voltageDisplay": "4.049v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:43:42.577Z",
+                        "mills": 1569303822577,
+                        "_id": "5d89ad0e4d861600044e11d4"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4052,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.052,
+                            "voltageDisplay": "4.052v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:42:15.307Z",
+                        "mills": 1569303735307,
+                        "_id": "5d89acb74d861600044e11d2"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4046,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.046,
+                            "voltageDisplay": "4.046v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:41:15.956Z",
+                        "mills": 1569303675956,
+                        "_id": "5d89ac7b4d861600044e11d1"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4045,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.045,
+                            "voltageDisplay": "4.045v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:40:20.355Z",
+                        "mills": 1569303620355,
+                        "_id": "5d89ac444d861600044e11d0"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4053,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.053,
+                            "voltageDisplay": "4.053v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:39:14.610Z",
+                        "mills": 1569303554610,
+                        "_id": "5d89ac024d861600044e11cf"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4039,
+                            "battery": 86,
+                            "value": 86,
+                            "voltage": 4.039,
+                            "voltageDisplay": "4.039v",
+                            "display": "86%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:38:44.164Z",
+                        "mills": 1569303524164,
+                        "_id": "5d89abe44d861600044e11ce"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4050,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.05,
+                            "voltageDisplay": "4.050v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:37:15.623Z",
+                        "mills": 1569303435623,
+                        "_id": "5d89ab8b4d861600044e11cc"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4046,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.046,
+                            "voltageDisplay": "4.046v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:36:18.585Z",
+                        "mills": 1569303378585,
+                        "_id": "5d89ab524d861600044e11cb"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4048,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.048,
+                            "voltageDisplay": "4.048v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:35:31.918Z",
+                        "mills": 1569303331918,
+                        "_id": "5d89ab234d861600044e11ca"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4043,
+                            "battery": 86,
+                            "value": 86,
+                            "voltage": 4.043,
+                            "voltageDisplay": "4.043v",
+                            "display": "86%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:34:15.448Z",
+                        "mills": 1569303255448,
+                        "_id": "5d89aad74d861600044e11c9"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4048,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.048,
+                            "voltageDisplay": "4.048v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:33:42.964Z",
+                        "mills": 1569303222964,
+                        "_id": "5d89aab64d861600044e11c8"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4065,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.065,
+                            "voltageDisplay": "4.065v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:32:20.794Z",
+                        "mills": 1569303140794,
+                        "_id": "5d89aa644d861600044e11c6"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4055,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.055,
+                            "voltageDisplay": "4.055v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:31:14.650Z",
+                        "mills": 1569303074650,
+                        "_id": "5d89aa224d861600044e11c5"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4049,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.049,
+                            "voltageDisplay": "4.049v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:30:16.628Z",
+                        "mills": 1569303016628,
+                        "_id": "5d89a9e84d861600044e11c4"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4052,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.052,
+                            "voltageDisplay": "4.052v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:29:43.297Z",
+                        "mills": 1569302983297,
+                        "_id": "5d89a9c74d861600044e11c3"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4060,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.06,
+                            "voltageDisplay": "4.060v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:27:16.118Z",
+                        "mills": 1569302836118,
+                        "_id": "5d89a9344d861600044e11c1"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4057,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.057,
+                            "voltageDisplay": "4.057v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:26:16.038Z",
+                        "mills": 1569302776038,
+                        "_id": "5d89a8f84d861600044e11c0"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4049,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.049,
+                            "voltageDisplay": "4.049v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:25:17.174Z",
+                        "mills": 1569302717174,
+                        "_id": "5d89a8bd4d861600044e11bf"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4053,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.053,
+                            "voltageDisplay": "4.053v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:24:15.901Z",
+                        "mills": 1569302655901,
+                        "_id": "5d89a87f4d861600044e11be"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4054,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.054,
+                            "voltageDisplay": "4.054v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:23:44.217Z",
+                        "mills": 1569302624217,
+                        "_id": "5d89a8604d861600044e11bd"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4060,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.06,
+                            "voltageDisplay": "4.060v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:22:15.693Z",
+                        "mills": 1569302535693,
+                        "_id": "5d89a8074d861600044e11bb"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4056,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.056,
+                            "voltageDisplay": "4.056v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:21:16.725Z",
+                        "mills": 1569302476725,
+                        "_id": "5d89a7cc4d861600044e11ba"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4049,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.049,
+                            "voltageDisplay": "4.049v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:20:17.200Z",
+                        "mills": 1569302417200,
+                        "_id": "5d89a7914d861600044e11b9"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4052,
+                            "battery": 87,
+                            "value": 87,
+                            "voltage": 4.052,
+                            "voltageDisplay": "4.052v",
+                            "display": "87%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:19:20.885Z",
+                        "mills": 1569302360885,
+                        "_id": "5d89a7584d861600044e11b8"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4059,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.059,
+                            "voltageDisplay": "4.059v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:18:44.024Z",
+                        "mills": 1569302324024,
+                        "_id": "5d89a7344d861600044e11b7"
+                    },
+                    {
+                        "uploader": {
+                            "batteryVoltage": 4064,
+                            "battery": 88,
+                            "value": 88,
+                            "voltage": 4.064,
+                            "voltageDisplay": "4.064v",
+                            "display": "88%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:17:15.680Z",
+                        "mills": 1569302235680,
+                        "_id": "5d89a6db4d861600044e11b5"
+                    }
+                ],
+                "min": {
+                    "batteryVoltage": 4043,
+                    "battery": 86,
+                    "value": 86,
+                    "voltage": 4.043,
+                    "voltageDisplay": "4.043v",
+                    "display": "86%",
+                    "level": 75
+                }
+            },
+            "nomu S30mini": {
+                "name": "nomu S30mini",
+                "uri": "nomu S30mini",
+                "statuses": [
+                    {
+                        "uploader": {
+                            "battery": 90,
+                            "value": 90,
+                            "display": "90%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:42:25.928Z",
+                        "mills": 1569303745928,
+                        "_id": "5d89acc14d861600044e11d3"
+                    },
+                    {
+                        "uploader": {
+                            "battery": 91,
+                            "value": 91,
+                            "display": "91%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:37:26.035Z",
+                        "mills": 1569303446035,
+                        "_id": "5d89ab964d861600044e11cd"
+                    },
+                    {
+                        "uploader": {
+                            "battery": 92,
+                            "value": 92,
+                            "display": "92%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:32:25.668Z",
+                        "mills": 1569303145668,
+                        "_id": "5d89aa694d861600044e11c7"
+                    },
+                    {
+                        "uploader": {
+                            "battery": 92,
+                            "value": 92,
+                            "display": "92%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:27:25.710Z",
+                        "mills": 1569302845710,
+                        "_id": "5d89a93d4d861600044e11c2"
+                    },
+                    {
+                        "uploader": {
+                            "battery": 93,
+                            "value": 93,
+                            "display": "93%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:22:25.840Z",
+                        "mills": 1569302545840,
+                        "_id": "5d89a8114d861600044e11bc"
+                    },
+                    {
+                        "uploader": {
+                            "battery": 94,
+                            "value": 94,
+                            "display": "94%",
+                            "level": 75
+                        },
+                        "created_at": "2019-09-24T05:17:25.922Z",
+                        "mills": 1569302245922,
+                        "_id": "5d89a6e54d861600044e11b6"
+                    }
+                ],
+                "min": {
+                    "battery": 90,
+                    "value": 90,
+                    "display": "90%",
+                    "level": 75
+                }
+            }
+        },
+        "min": {
+            "batteryVoltage": 4043,
+            "battery": 86,
+            "value": 86,
+            "voltage": 4.043,
+            "voltageDisplay": "4.043v",
+            "display": "86%",
+            "level": 75
+        }
+    },
+    "ar2": {
+        "forecast": {
+            "predicted": [
+                {
+                    "mills": 1569304041122,
+                    "mgdl": 123,
+                    "color": "cyan",
+                    "scaled": "6.8"
+                },
+                {
+                    "mills": 1569304341122,
+                    "mgdl": 126,
+                    "color": "cyan",
+                    "scaled": "7.0"
+                },
+                {
+                    "mills": 1569304641122,
+                    "mgdl": 127,
+                    "color": "cyan",
+                    "scaled": "7.1"
+                },
+                {
+                    "mills": 1569304941122,
+                    "mgdl": 129,
+                    "color": "cyan",
+                    "scaled": "7.2"
+                },
+                {
+                    "mills": 1569305241122,
+                    "mgdl": 130,
+                    "color": "cyan",
+                    "scaled": "7.2"
+                },
+                {
+                    "mills": 1569305541122,
+                    "mgdl": 131,
+                    "color": "cyan",
+                    "scaled": "7.3"
+                }
+            ],
+            "avgLoss": 0.0009632002984000796
+        },
+        "displayLine": "BG 15m: 7.1 mmol/L"
+    },
+    "iob": {
+        "iob": 0.797,
+        "basaliob": -0.41,
+        "activity": 0.0061,
+        "source": "OpenAPS",
+        "device": "openaps://eeroedison5",
+        "mills": 1569303880000,
+        "treatmentIob": 1.554,
+        "display": "0.80",
+        "displayLine": "IOB: 0.80U"
+    },
+    "pump": {
+        "_id": "5d89ad6e4d861600044e11d6",
+        "device": "openaps://eeroedison5",
+        "openaps": {
+            "iob": {
+                "iob": 0.797,
+                "activity": 0.0061,
+                "basaliob": -0.41,
+                "bolusiob": 1.206,
+                "netbasalinsulin": -0.8,
+                "bolusinsulin": 1.7,
+                "iobWithZeroTemp": {
+                    "iob": 0.797,
+                    "activity": 0.0061,
+                    "basaliob": -0.41,
+                    "bolusiob": 1.206,
+                    "netbasalinsulin": -0.8,
+                    "bolusinsulin": 1.7,
+                    "time": "2019-09-24T05:44:40.000Z"
+                },
+                "lastBolusTime": 1569303622000,
+                "lastTemp": {
+                    "rate": 0.5,
+                    "timestamp": "2019-09-24T08:39:58+03:00",
+                    "started_at": "2019-09-24T05:39:58.000Z",
+                    "date": 1569303598000,
+                    "duration": 5.75
+                },
+                "timestamp": "2019-09-24T05:44:40.000Z",
+                "moment": "2019-09-24T05:44:40.000Z"
+            },
+            "suggested": {
+                "temp": "absolute",
+                "bg": 120,
+                "tick": "+4",
+                "eventualBG": 103,
+                "insulinReq": -0.12,
+                "reservoir": "53.625",
+                "deliverAt": "2019-09-24T05:44:47.710Z",
+                "sensitivityRatio": 1,
+                "COB": 8,
+                "IOB": 0.797,
+                "reason": "COB: 8, Dev: 2.5, BGI: -0.2, ISF: 6.5, CR: 12, Target: 5.2, minPredBG 4.4, minGuardBG 3.9, IOBpredBG 3.9, COBpredBG 5.7, UAMpredBG 2.7;  insulinReq -0.12; setting 30m low temp of 0U/h. ",
+                "rate": 0,
+                "duration": 30,
+                "timestamp": "2019-09-24T05:44:47.000Z",
+                "moment": "2019-09-24T05:44:47.000Z"
+            },
+            "enacted": {
+                "insulinReq": -0.12,
+                "received": true,
+                "bg": 120,
+                "reservoir": "53.625",
+                "temp": "absolute",
+                "rate": 0,
+                "predBGs": {
+                    "ZT": [
+                        120,
+                        116,
+                        113,
+                        109,
+                        106,
+                        103,
+                        100,
+                        97,
+                        94,
+                        91,
+                        89,
+                        87,
+                        85,
+                        84,
+                        83,
+                        82,
+                        81,
+                        80,
+                        80,
+                        80,
+                        81,
+                        81,
+                        82,
+                        83,
+                        85,
+                        86,
+                        88,
+                        90,
+                        92
+                    ],
+                    "COB": [
+                        120,
+                        124,
+                        127,
+                        130,
+                        132,
+                        135,
+                        137,
+                        138,
+                        140,
+                        140,
+                        141,
+                        142,
+                        142,
+                        142,
+                        141,
+                        141,
+                        140,
+                        138,
+                        137,
+                        135,
+                        133,
+                        131,
+                        129,
+                        127,
+                        125,
+                        124,
+                        122,
+                        120,
+                        119,
+                        117,
+                        116,
+                        115,
+                        114,
+                        113,
+                        112,
+                        111,
+                        110,
+                        109,
+                        108,
+                        107,
+                        106,
+                        106,
+                        105,
+                        105,
+                        104,
+                        104,
+                        103
+                    ],
+                    "UAM": [
+                        120,
+                        123,
+                        124,
+                        125,
+                        124,
+                        122,
+                        119,
+                        116,
+                        112,
+                        109,
+                        106,
+                        103,
+                        100,
+                        97,
+                        94,
+                        91,
+                        89,
+                        86,
+                        84,
+                        81,
+                        79,
+                        77,
+                        75,
+                        73,
+                        71,
+                        70,
+                        68,
+                        66,
+                        65,
+                        64,
+                        62,
+                        61,
+                        60,
+                        59,
+                        58,
+                        57,
+                        56,
+                        55,
+                        54,
+                        53,
+                        53,
+                        52,
+                        51,
+                        51,
+                        50,
+                        50,
+                        49
+                    ],
+                    "IOB": [
+                        120,
+                        123,
+                        126,
+                        128,
+                        130,
+                        131,
+                        131,
+                        131,
+                        130,
+                        129,
+                        127,
+                        124,
+                        121,
+                        118,
+                        115,
+                        113,
+                        110,
+                        108,
+                        105,
+                        103,
+                        101,
+                        99,
+                        97,
+                        95,
+                        93,
+                        91,
+                        89,
+                        88,
+                        86,
+                        85,
+                        84,
+                        82,
+                        81,
+                        80,
+                        79,
+                        78,
+                        77,
+                        76,
+                        75,
+                        75,
+                        74,
+                        73,
+                        73,
+                        72,
+                        72,
+                        71,
+                        71,
+                        70
+                    ],
+                    "moment": "2019-09-24T05:44:54.000Z"
+                },
+                "reason": "COB: 8, Dev: 2.5, BGI: -0.2, ISF: 6.5, CR: 12, Target: 5.2, minPredBG 4.4, minGuardBG 3.9, IOBpredBG 3.9, COBpredBG 5.7, UAMpredBG 2.7;  insulinReq -0.12; setting 30m low temp of 0U/h. ",
+                "IOB": 0.797,
+                "sensitivityRatio": 1,
+                "COB": 8,
+                "eventualBG": 103,
+                "timestamp": "2019-09-24T05:44:54.000Z",
+                "duration": 30,
+                "tick": "+4",
+                "deliverAt": "2019-09-24T05:44:47.710Z",
+                "moment": "2019-09-24T05:44:54.000Z"
+            }
+        },
+        "pump": {
+            "clock": "2019-09-24T08:44:40+03:00",
+            "battery": {
+                "status": "normal",
+                "voltage": 1.55
+            },
+            "reservoir": 53.625,
+            "status": {
+                "status": "normal",
+                "bolusing": false,
+                "suspended": false,
+                "timestamp": "2019-09-24T05:45:13.000Z"
+            }
+        },
+        "uploader": {
+            "batteryVoltage": 4043,
+            "battery": 86,
+            "value": 86,
+            "voltage": 4.043,
+            "voltageDisplay": "4.043v",
+            "display": "86%",
+            "level": 75
+        },
+        "created_at": "2019-09-24T05:45:18.354Z",
+        "utcOffset": 0,
+        "mills": 1569303918354,
+        "clockMills": 1569303880000,
+        "data": {
+            "level": -3,
+            "clock": {
+                "value": "2019-09-24T05:44:40.000Z",
+                "label": "Last Clock",
+                "display": "2m ago",
+                "level": -3
+            },
+            "reservoir": {
+                "value": 53.625,
+                "label": "Reservoir",
+                "display": "53.6U",
+                "level": -3
+            },
+            "extended": null,
+            "status": {
+                "value": "normal",
+                "display": "normal",
+                "label": "Status"
+            },
+            "battery": {
+                "value": 1.55,
+                "unit": "volts",
+                "label": "Battery",
+                "display": "1.55v",
+                "level": -3
+            },
+            "device": {
+                "label": "Device",
+                "display": "openaps://eeroedison5"
+            },
+            "title": "Pump Status"
+        }
+    },
+    "openaps": {
+        "seenDevices": {
+            "openaps://eeroedison5": {
+                "name": "eeroedison5",
+                "uri": "openaps://eeroedison5",
+                "status": {
+                    "symbol": "⌁",
+                    "code": "enacted",
+                    "label": "Enacted",
+                    "when": "2019-09-24T05:45:18.354Z"
+                }
+            }
+        },
+        "lastEnacted": {
+            "insulinReq": -0.12,
+            "received": true,
+            "bg": 120,
+            "reservoir": "53.625",
+            "temp": "absolute",
+            "rate": 0,
+            "predBGs": {
+                "ZT": [
+                    120,
+                    116,
+                    113,
+                    109,
+                    106,
+                    103,
+                    100,
+                    97,
+                    94,
+                    91,
+                    89,
+                    87,
+                    85,
+                    84,
+                    83,
+                    82,
+                    81,
+                    80,
+                    80,
+                    80,
+                    81,
+                    81,
+                    82,
+                    83,
+                    85,
+                    86,
+                    88,
+                    90,
+                    92
+                ],
+                "COB": [
+                    120,
+                    124,
+                    127,
+                    130,
+                    132,
+                    135,
+                    137,
+                    138,
+                    140,
+                    140,
+                    141,
+                    142,
+                    142,
+                    142,
+                    141,
+                    141,
+                    140,
+                    138,
+                    137,
+                    135,
+                    133,
+                    131,
+                    129,
+                    127,
+                    125,
+                    124,
+                    122,
+                    120,
+                    119,
+                    117,
+                    116,
+                    115,
+                    114,
+                    113,
+                    112,
+                    111,
+                    110,
+                    109,
+                    108,
+                    107,
+                    106,
+                    106,
+                    105,
+                    105,
+                    104,
+                    104,
+                    103
+                ],
+                "UAM": [
+                    120,
+                    123,
+                    124,
+                    125,
+                    124,
+                    122,
+                    119,
+                    116,
+                    112,
+                    109,
+                    106,
+                    103,
+                    100,
+                    97,
+                    94,
+                    91,
+                    89,
+                    86,
+                    84,
+                    81,
+                    79,
+                    77,
+                    75,
+                    73,
+                    71,
+                    70,
+                    68,
+                    66,
+                    65,
+                    64,
+                    62,
+                    61,
+                    60,
+                    59,
+                    58,
+                    57,
+                    56,
+                    55,
+                    54,
+                    53,
+                    53,
+                    52,
+                    51,
+                    51,
+                    50,
+                    50,
+                    49
+                ],
+                "IOB": [
+                    120,
+                    123,
+                    126,
+                    128,
+                    130,
+                    131,
+                    131,
+                    131,
+                    130,
+                    129,
+                    127,
+                    124,
+                    121,
+                    118,
+                    115,
+                    113,
+                    110,
+                    108,
+                    105,
+                    103,
+                    101,
+                    99,
+                    97,
+                    95,
+                    93,
+                    91,
+                    89,
+                    88,
+                    86,
+                    85,
+                    84,
+                    82,
+                    81,
+                    80,
+                    79,
+                    78,
+                    77,
+                    76,
+                    75,
+                    75,
+                    74,
+                    73,
+                    73,
+                    72,
+                    72,
+                    71,
+                    71,
+                    70
+                ],
+                "moment": "2019-09-24T05:44:54.000Z"
+            },
+            "reason": "COB: 8, Dev: 2.5, BGI: -0.2, ISF: 6.5, CR: 12, Target: 5.2, minPredBG 4.4, minGuardBG 3.9, IOBpredBG 3.9, COBpredBG 5.7, UAMpredBG 2.7;  insulinReq -0.12; setting 30m low temp of 0U/h. ",
+            "IOB": 0.797,
+            "sensitivityRatio": 1,
+            "COB": 8,
+            "eventualBG": 103,
+            "timestamp": "2019-09-24T05:44:54.000Z",
+            "duration": 30,
+            "tick": "+4",
+            "deliverAt": "2019-09-24T05:44:47.710Z",
+            "moment": "2019-09-24T05:44:54.000Z"
+        },
+        "lastNotEnacted": {
+            "insulinReq": 0,
+            "received": false,
+            "bg": 74,
+            "reservoir": "54.125",
+            "temp": "absolute",
+            "requested": {
+                "duration": 30,
+                "rate": 0,
+                "temp": "absolute"
+            },
+            "rate": 0,
+            "predBGs": {
+                "ZT": [
+                    74,
+                    72,
+                    70,
+                    67,
+                    64,
+                    61,
+                    57,
+                    53,
+                    50,
+                    46,
+                    42,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39,
+                    40,
+                    44,
+                    47,
+                    51,
+                    55,
+                    59,
+                    62
+                ],
+                "COB": [
+                    74,
+                    71,
+                    68,
+                    65,
+                    62,
+                    60,
+                    58,
+                    56,
+                    55,
+                    55,
+                    55,
+                    56,
+                    57,
+                    59,
+                    61,
+                    64,
+                    67,
+                    71,
+                    76,
+                    81,
+                    87,
+                    92,
+                    97,
+                    101,
+                    105,
+                    109,
+                    112,
+                    115,
+                    118,
+                    120,
+                    122,
+                    124,
+                    125,
+                    126,
+                    126,
+                    126,
+                    126,
+                    125,
+                    124,
+                    122,
+                    120,
+                    119,
+                    117,
+                    116,
+                    114,
+                    113,
+                    112,
+                    111
+                ],
+                "UAM": [
+                    74,
+                    70,
+                    66,
+                    62,
+                    57,
+                    52,
+                    47,
+                    42,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39
+                ],
+                "IOB": [
+                    74,
+                    70,
+                    66,
+                    62,
+                    57,
+                    52,
+                    47,
+                    42,
+                    39,
+                    39,
+                    39,
+                    39,
+                    39
+                ]
+            },
+            "reason": "COB: 20, Dev: -0.7, BGI: -0.1, ISF: 6.5, CR: 12, Target: 5.2, minPredBG 4.2, minGuardBG 3.1, IOBpredBG 2.2, COBpredBG 6.2, UAMpredBG 2.2; minGuardBG 3.1<3.7",
+            "IOB": 1.358,
+            "sensitivityRatio": 1,
+            "COB": 20,
+            "eventualBG": 111,
+            "timestamp": "2019-09-24T04:40:04.000Z",
+            "duration": 16,
+            "tick": -3,
+            "deliverAt": "2019-09-24T04:39:53.548Z",
+            "moment": "2019-09-24T04:40:04.000Z"
+        },
+        "lastSuggested": {
+            "temp": "absolute",
+            "bg": 120,
+            "tick": "+4",
+            "eventualBG": 103,
+            "insulinReq": -0.12,
+            "reservoir": "53.625",
+            "deliverAt": "2019-09-24T05:44:47.710Z",
+            "sensitivityRatio": 1,
+            "COB": 8,
+            "IOB": 0.797,
+            "reason": "COB: 8, Dev: 2.5, BGI: -0.2, ISF: 6.5, CR: 12, Target: 5.2, minPredBG 4.4, minGuardBG 3.9, IOBpredBG 3.9, COBpredBG 5.7, UAMpredBG 2.7;  insulinReq -0.12; setting 30m low temp of 0U/h. ",
+            "rate": 0,
+            "duration": 30,
+            "timestamp": "2019-09-24T05:44:47.000Z",
+            "moment": "2019-09-24T05:44:47.000Z"
+        },
+        "lastIOB": {
+            "iob": 0.797,
+            "activity": 0.0061,
+            "basaliob": -0.41,
+            "bolusiob": 1.206,
+            "netbasalinsulin": -0.8,
+            "bolusinsulin": 1.7,
+            "iobWithZeroTemp": {
+                "iob": 0.797,
+                "activity": 0.0061,
+                "basaliob": -0.41,
+                "bolusiob": 1.206,
+                "netbasalinsulin": -0.8,
+                "bolusinsulin": 1.7,
+                "time": "2019-09-24T05:44:40.000Z"
+            },
+            "lastBolusTime": 1569303622000,
+            "lastTemp": {
+                "rate": 0.5,
+                "timestamp": "2019-09-24T08:39:58+03:00",
+                "started_at": "2019-09-24T05:39:58.000Z",
+                "date": 1569303598000,
+                "duration": 5.75
+            },
+            "timestamp": "2019-09-24T05:44:40.000Z",
+            "moment": "2019-09-24T05:44:40.000Z"
+        },
+        "lastMMTune": null,
+        "lastPredBGs": {
+            "ZT": [
+                120,
+                116,
+                113,
+                109,
+                106,
+                103,
+                100,
+                97,
+                94,
+                91,
+                89,
+                87,
+                85,
+                84,
+                83,
+                82,
+                81,
+                80,
+                80,
+                80,
+                81,
+                81,
+                82,
+                83,
+                85,
+                86,
+                88,
+                90,
+                92
+            ],
+            "COB": [
+                120,
+                124,
+                127,
+                130,
+                132,
+                135,
+                137,
+                138,
+                140,
+                140,
+                141,
+                142,
+                142,
+                142,
+                141,
+                141,
+                140,
+                138,
+                137,
+                135,
+                133,
+                131,
+                129,
+                127,
+                125,
+                124,
+                122,
+                120,
+                119,
+                117,
+                116,
+                115,
+                114,
+                113,
+                112,
+                111,
+                110,
+                109,
+                108,
+                107,
+                106,
+                106,
+                105,
+                105,
+                104,
+                104,
+                103
+            ],
+            "UAM": [
+                120,
+                123,
+                124,
+                125,
+                124,
+                122,
+                119,
+                116,
+                112,
+                109,
+                106,
+                103,
+                100,
+                97,
+                94,
+                91,
+                89,
+                86,
+                84,
+                81,
+                79,
+                77,
+                75,
+                73,
+                71,
+                70,
+                68,
+                66,
+                65,
+                64,
+                62,
+                61,
+                60,
+                59,
+                58,
+                57,
+                56,
+                55,
+                54,
+                53,
+                53,
+                52,
+                51,
+                51,
+                50,
+                50,
+                49
+            ],
+            "IOB": [
+                120,
+                123,
+                126,
+                128,
+                130,
+                131,
+                131,
+                131,
+                130,
+                129,
+                127,
+                124,
+                121,
+                118,
+                115,
+                113,
+                110,
+                108,
+                105,
+                103,
+                101,
+                99,
+                97,
+                95,
+                93,
+                91,
+                89,
+                88,
+                86,
+                85,
+                84,
+                82,
+                81,
+                80,
+                79,
+                78,
+                77,
+                76,
+                75,
+                75,
+                74,
+                73,
+                73,
+                72,
+                72,
+                71,
+                71,
+                70
+            ],
+            "moment": "2019-09-24T05:44:54.000Z"
+        },
+        "lastLoopMoment": "2019-09-24T05:44:54.000Z",
+        "lastEventualBG": 103,
+        "status": {
+            "symbol": "⌁",
+            "code": "enacted",
+            "label": "Enacted"
+        }
+    },
+    "bwp": {
+        "effect": 4.383500000000001,
+        "outcome": 2.3164999999999996,
+        "bolusEstimate": -0.597,
+        "scaledSGV": 6.7,
+        "iob": 0.797,
+        "belowLowTarget": false,
+        "aimTarget": 5.6,
+        "aimTargetString": "below low",
+        "tempBasalAdjustment": {
+            "thirtymin": -165,
+            "onehour": -33
+        },
+        "bolusEstimateDisplay": "-0.60",
+        "outcomeDisplay": 2.3,
+        "displayIOB": "0.79",
+        "effectDisplay": 4.4,
+        "displayLine": "BWP: -0.60U"
+    },
+    "cage": {
+        "found": true,
+        "age": 35,
+        "treatmentDate": 1569175500000,
+        "checkForAlert": false,
+        "days": 1,
+        "hours": 11,
+        "minFractions": 41,
+        "level": -3,
+        "display": "35h"
+    },
+    "sage": {
+        "Sensor Start": {
+            "found": true,
+            "treatmentDate": 1568399965572,
+            "age": 251,
+            "days": 10,
+            "hours": 11,
+            "minFractions": 6,
+            "display": "10d11h",
+            "displayLong": "10 days 11 hours",
+            "level": 2
+        },
+        "Sensor Change": {
+            "found": false
+        },
+        "min": "Sensor Start"
+    },
+    "bage": {
+        "found": true,
+        "age": 135,
+        "treatmentDate": 1568815680000,
+        "checkForAlert": false,
+        "days": 5,
+        "hours": 15,
+        "minFractions": 38,
+        "level": -3,
+        "display": "5d15h"
+    },
+    "basal": {
+        "display": "T: 0.000U",
+        "current": {
+            "basal": 0.45,
+            "treatment": {
+                "_id": "5d89ab896c6bae3d98bb4c2b",
+                "duration": 30,
+                "raw_duration": {
+                    "_type": "TempBasalDuration",
+                    "_description": "TempBasalDuration 2019-09-24T08:35:10 head[2], body[0] op[0x16]",
+                    "timestamp": "2019-09-24T08:35:10+03:00",
+                    "_body": "",
+                    "_head": "1601",
+                    "duration (min)": 30,
+                    "_date": "8a63085813"
+                },
+                "timestamp": "2019-09-24T08:35:10+03:00",
+                "absolute": 0,
+                "rate": 0,
+                "raw_rate": {
+                    "_type": "TempBasal",
+                    "temp": "absolute",
+                    "_description": "TempBasal 2019-09-24T08:35:10 head[2], body[1] op[0x33]",
+                    "timestamp": "2019-09-24T08:35:10+03:00",
+                    "_body": "00",
+                    "_head": "3300",
+                    "rate": 0,
+                    "_date": "8a63085813"
+                },
+                "eventType": "Temp Basal",
+                "medtronic": "mm://openaps/mm-format-ns-treatments/Temp Basal",
+                "created_at": "2019-09-24T05:35:10.000Z",
+                "enteredBy": "openaps://medtronic/554",
+                "utcOffset": 180,
+                "mills": 1569303310000,
+                "mgdl": 111.5,
+                "endmills": 1569305110000
+            },
+            "combobolustreatment": null,
+            "tempbasal": 0,
+            "combobolusbasal": 0,
+            "totalbasal": 0
+        }
+    }
+}

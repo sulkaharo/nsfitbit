@@ -1,0 +1,24 @@
+<svg>
+  <defs>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="import" href="/mnt/sysassets/system_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/text_button.defs" />
+
+     <!-- Additional Imports -->
+    <link rel="import" href="/mnt/sysassets/widgets/baseview_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/scrollview_widget.defs" />
+    <!-- <link rel="import" href="/mnt/sysassets/widgets/combo_button_widget.defs" /> 
+    
+    <link rel="import" href="/mnt/sysassets/widgets/push_button_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/square_button_widget.defs" />
+
+    <link rel="stylesheet" href="/mnt/sysassets/widgets/dynamic_textarea.css" />
+    <link rel="import" href="/mnt/sysassets/widgets/dynamic_textarea.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/square_button_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/mixed_text_widget.defs" />
+    -->
+    
+    <!-- line below required to import the graph -->
+    <link rel="import" href="graph.view" />
+  </defs>
+</svg>

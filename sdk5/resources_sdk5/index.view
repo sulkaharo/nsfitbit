@@ -1,0 +1,65 @@
+<svg>
+  <textarea id='clock' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
+    font-family="System-Regular" fill="white" font-size="35"></textarea>
+
+  <text id="heartrate" class="monitorText" x="106" y="51%" visibility='hidden'></text>
+  <text id="steps" class="monitorText" x="106" y="58%" visibility='hidden'></text>
+  <image id="stepsicon" x="85" y="53%" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
+  <image id="hricon" x="85" y="46%" width="16" height="16" href="img/heart.png" visibility='hidden'/>
+
+
+   <textarea id='statusline1' x="0" y="15%" width="100%" text-length="200" text-anchor="middle"
+    font-family="System-Regular" fill="white" font-size="30"></textarea>
+
+   <textarea id='statusline2' x="0" y="26%" width="100%" text-length="100" text-anchor="middle"
+    font-family="System-Regular" fill="white" font-size="30"></textarea>
+
+  <text id="timex" class="timeText" x="0" y="9%" width='300' text-anchor="middle"></text>
+
+  <text id="noise" class="noiseText" x="100%" y="58%" ></text>
+  <text id="sgv" class="sgvText" x="100%" y="58%" >---</text>
+
+  <image x="0" y="38%" width="20" height="20" href="img/battery_0.png" load="sync" id="b0" />
+  <image x="0" y="38%" width="20" height="20" href="img/battery_1.png" load="sync" id="b1" />
+  <image x="0" y="38%" width="20" height="20" href="img/battery_2.png" load="sync" id="b2" />
+  <image x="0" y="38%" width="20" height="20" href="img/battery_3.png" load="sync" id="b3" />
+  <image x="0" y="38%" width="20" height="20" href="img/battery_4.png" load="sync" id="b4" />
+
+  <text id="battery" class="batteryText" x="26" y="44%" ></text>
+  <text id="delta" class="deltaText" x="0" y="52%" text-length="15">-? mg/dl</text>
+  <text id="age" class="ageText" x="0" y="58%" >- mins ago</text>
+
+  <use href="#graph" id="docGraph" x="0" y="60%" width="300" height="40%" />
+
+  <!-- Alert -->
+      <svg id="popup" display="none" >
+        <!-- Black background -->
+        <rect class="full-size" fill="fb-black" />
+
+        <!-- Title and text -->
+
+        <textarea id='alertHeader' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
+           font-family="System-Regular" fill="white" font-size="35">Check BG!</textarea>
+
+
+<use id="btnLeft" href="#text-button" class="text-button bottom left secondary application-fill" />
+<use id="btnRight" href="#text-button" class="text-button bottom right application-fill" />
+
+      </svg>
+
+  <!-- No Data -->
+
+       <svg id="noData" display="inline" >
+        <!-- Black background -->
+        <rect class="full-size" fill="fb-black" />
+
+        <!-- Title and text -->
+        <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white">
+          <set href="#copy/text" attributeName="text-buffer" to="No data from phone. Check Nightscout URL in watchface settings in the phone Fitbit App." />
+          <set href="#bottom-padding" attributeName="display" to="none" />
+        </use>
+
+       </svg>
+
+
+</svg>

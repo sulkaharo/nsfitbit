@@ -1,7 +1,6 @@
 .timeText {
   font-size: 30;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 18;
   text-anchor: end;
   fill: white;
@@ -9,8 +8,7 @@
 
 .monitorText {
   font-size: 16;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 8;
   text-anchor: start;
   fill: white;
@@ -18,8 +16,7 @@
 
 .sgvText {
   font-size: 70;
-  font-family: Fabrikat;
-  font-weight: regular;
+  font-family: System-Regular;
   text-length: 12;
   text-anchor: end;
   fill: white;
@@ -27,16 +24,14 @@
 
 .noiseText {
   font-size: 16;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 8;
   text-anchor: end;
   fill: white;
 }
 .dirText {
   font-size: 120;
-  font-family: Fabrikat;
-  font-weight: regular;
+  font-family: System-Regular;
   text-length: 4;
   text-anchor: end;
   fill: white;
@@ -44,8 +39,7 @@
 
 .ageText {
   font-size: 16;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 16;
   text-anchor: start;
   fill: green;
@@ -53,8 +47,7 @@
 
 .batteryText {
   font-size: 16;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 6;
   text-anchor: start;
   fill: white;
@@ -62,8 +55,7 @@
 
 .deltaText {
   font-size: 22;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 6;
   text-anchor: start;
   fill: white;
@@ -71,14 +63,20 @@
 
 .scaleText {
   font-size: 16;
-  font-family: Colfax;
-  font-weight: bold;
+  font-family: System-Bold;
   text-length: 6;
   text-anchor: end;
   fill: white;
 }
 
-
 .gval {
   fill: green;
+}
+
+#btnLeft #text {
+  text-buffer: "MUTE";
+}
+
+#btnRight #text {
+  text-buffer: "SNOOZE";
 }
