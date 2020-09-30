@@ -12,8 +12,8 @@
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
     "@babel/register": "^7.7.0",
-    "@fitbit/sdk": "^4.1.0",
-    "@fitbit/sdk-cli": "^1.7.1",
+    "@fitbit/sdk": "^5.0.0",
+    "@fitbit/sdk-cli": "^1.7.3",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.6.0",
     "jshint": "^2.10.3",
@@ -34,10 +34,8 @@
       "access_user_profile"
     ],
     "buildTargets": [
-      "meson",
-      "higgs",
-      "gemini",
-      "mira"
+      "atlas",
+      "vulcan"
     ],
     "i18n": {
       "en": {
@@ -48,7 +46,8 @@
   },
   "scripts": {
     "build": "fitbit-build",
-    "test": "mocha --require @babel/register --exit tests/*.test.js",
+    "prebuild": "mkdir app; cp -r ../app/* app/; mkdir companion; cp -r ../companion/* companion/; mkdir settings; cp -r ../settings/* settings/; mkdir resources; cp -r ../resources/* resources/;  cp -r resources_sdk5/* resources/",
+    "test": "yarn run prebuild; mkdir tests; cp -r ../tests/* tests/; mocha --require @babel/register --exit tests/*.test.js",
     "debug": "fitbit"
   },
   "babel": {

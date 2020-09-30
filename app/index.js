@@ -13,6 +13,7 @@ import { coloralloc } from "./functions.js";
 import Graph from "./graph.js";
 import Alarms from "./alarms.js";
 import AlarmUI from "./alert-ui.js";
+//import Tracking from "./tracking.js";
 import { memory } from "system";
 import { me as device } from "device";
 
@@ -64,6 +65,8 @@ let latestHR = 0;
 
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
+
+// const tracking = new Tracking(settings);
 
 function debug () {
   return settings.loggingEnabled;
