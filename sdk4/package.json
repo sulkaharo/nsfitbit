@@ -48,8 +48,8 @@
   },
   "scripts": {
     "build": "fitbit-build",
-    "prebuild": "cp -r ../app/* app/; cp -r ../companion/* companion/; cp -r ../settings/* settings/; cp -r ../resources/* resources/;  cp -r resources_sdk4/* resources/",
-    "test": "yarn run prebuild; cp -r ../tests/* tests/; mocha --require @babel/register --exit tests/*.test.js",
+    "prebuild": "mkdir app; cp -r ../app/* app/; mkdir companion; cp -r ../companion/* companion/; mkdir settings; cp -r ../settings/* settings/; mkdir resources; cp -r ../resources/* resources/;  cp -r resources_sdk4/* resources/",
+    "test": "yarn run prebuild; mkdir tests; cp -r ../tests/* tests/; mocha --require @babel/register --exit tests/*.test.js",
     "debug": "fitbit"
   },
   "babel": {
