@@ -6,9 +6,11 @@ sdk4/build/*
 sdk4/app/*
 sdk4/companion/*
 sdk4/resources/*
+sdk4/tests/*
 
 sdk5/node_modules/*
 sdk5/build/*
 sdk5/app/*
 sdk5/companion/*
 sdk5/resources/*
+sdk5/tests/*
