@@ -43,12 +43,11 @@
         <!-- Black background -->
 
         <rect height='100%' width='100%' fill="black" />
-        <rect height='240' width='100%' fill="red" />
 
         <!-- Title and text -->
 
         <textarea x="30" y="30" width="100%-60" height="70%"
-          font-family="System-Bold" fill="black" font-size="30" id='alertHeader'>Lorem ipsum dolor
+          font-family="System-Bold" fill="red" font-size="30" id='alertHeader'>Lorem ipsum dolor
           sit amet, consectetur adipiscing elit. Hoc Hieronymus summum bonum esse
           dixit. Cui Tubuli nomen odio non est? Teneo, inquit, finem illi videri nihil
           dolere.</textarea>
