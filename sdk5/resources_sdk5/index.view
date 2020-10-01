@@ -1,51 +1,60 @@
 <svg>
+
+  <!-- Clock -->
   <textarea id='clock' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
     font-family="System-Regular" fill="white" font-size="35"></textarea>
 
-  <text id="heartrate" class="monitorText" x="106" y="51%" visibility='hidden'></text>
-  <text id="steps" class="monitorText" x="106" y="58%" visibility='hidden'></text>
-  <image id="stepsicon" x="85" y="53%" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
-  <image id="hricon" x="85" y="46%" width="16" height="16" href="img/heart.png" visibility='hidden'/>
+  <!-- old heartrate etc -->
 
-
-   <textarea id='statusline1' x="0" y="15%" width="100%" text-length="200" text-anchor="middle"
+  <!-- status lines-->
+   <textarea id='statusline1' x="3%" y="75%" width="97%" text-length="200" text-anchor="start"
     font-family="System-Regular" fill="white" font-size="30"></textarea>
 
-   <textarea id='statusline2' x="0" y="26%" width="100%" text-length="100" text-anchor="middle"
+   <textarea id='statusline2' x="0" y="75%" width="97%" text-length="100" text-anchor="end"
     font-family="System-Regular" fill="white" font-size="30"></textarea>
 
-  <text id="timex" class="timeText" x="0" y="9%" width='300' text-anchor="middle"></text>
+   <!-- SGV  -->
+  <textarea id="noise"  class="noiseText" x="0" y="8%" width="100%" text-anchor="end">---</textarea>
+  <textarea id="sgv" class="sgvText" x="4%" y="8%" width="100%" text-anchor="start">---</textarea>
 
-  <text id="noise" class="noiseText" x="100%" y="58%" ></text>
-  <text id="sgv" class="sgvText" x="100%" y="58%" >---</text>
+  <textarea id="age" class="ageText" x="0" y="17%" width="95%" text-anchor="end">- mins ago</textarea>
+  <textarea id="delta" class="deltaText" x="0" y="22%" width="96%" text-length="15" text-anchor="end">-? mg/dl</textarea>
 
-  <image x="0" y="38%" width="20" height="20" href="img/battery_0.png" load="sync" id="b0" />
-  <image x="0" y="38%" width="20" height="20" href="img/battery_1.png" load="sync" id="b1" />
-  <image x="0" y="38%" width="20" height="20" href="img/battery_2.png" load="sync" id="b2" />
-  <image x="0" y="38%" width="20" height="20" href="img/battery_3.png" load="sync" id="b3" />
-  <image x="0" y="38%" width="20" height="20" href="img/battery_4.png" load="sync" id="b4" />
+   <!-- bottom  -->
+  <image x="18%" y="294" width="20" height="20" href="img/battery_0.png" load="sync" id="b0" />
+  <image x="18%" y="294" width="20" height="20" href="img/battery_1.png" load="sync" id="b1" />
+  <image x="18%" y="294" width="20" height="20" href="img/battery_2.png" load="sync" id="b2" />
+  <image x="18%" y="294" width="20" height="20" href="img/battery_3.png" load="sync" id="b3" />
+  <image x="18%" y="294" width="20" height="20" href="img/battery_4.png" load="sync" id="b4" />
+  <text id="battery" class="batteryText" x="26%" y="92%" ></text>
 
-  <text id="battery" class="batteryText" x="26" y="44%" ></text>
-  <text id="delta" class="deltaText" x="0" y="52%" text-length="15">-? mg/dl</text>
-  <text id="age" class="ageText" x="0" y="58%" >- mins ago</text>
+  <text id="heartrate" class="monitorText" x="50%" y="92%" visibility='hidden'></text>
+  <image id="hricon" x="44%" y="88%" width="16" height="16" href="img/heart.png" visibility='hidden'/>
 
-  <use href="#graph" id="docGraph" x="0" y="60%" width="300" height="40%" />
+  <text id="steps" class="monitorText" x="69%" y="92%" visibility='hidden'></text>
+  <image id="stepsicon" x="63%" y="88%" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
+
+  <!-- Graph -->
+  <use href="#graph" id="docGraph" x="0" y="30%" width="300" height="200" />
+  <rect width="100%" height="2" fill="fb-blue" y="250" />
 
   <!-- Alert -->
-      <svg id="popup" display="none" >
+      <svg id="popup" display="none">
         <!-- Black background -->
-        <rect class="full-size" fill="fb-black" />
+
+        <rect height='100%' width='100%' fill="black" />
+        <rect height='240' width='100%' fill="red" />
 
         <!-- Title and text -->
-        <svg class="horizontal-pad">
-          <use href="#dynamic-textarea" id='alertHeader' class="p2 foreground-fill" y="50">
-            <set href="#text" attributeName="text-buffer" to="This is a long alarm message placeholder" />
-          </use>
-          <rect width="100%" height="2" fill="fb-cyan" y="$+6" />
-        </svg>
 
-<use id="btnLeft" href="#text-button" class="text-button bottom left secondary application-fill" />
-<use id="btnRight" href="#text-button" class="text-button bottom right application-fill" />
+        <textarea x="30" y="30" width="100%-60" height="70%"
+          font-family="System-Bold" fill="black" font-size="30" id='alertHeader'>Lorem ipsum dolor
+          sit amet, consectetur adipiscing elit. Hoc Hieronymus summum bonum esse
+          dixit. Cui Tubuli nomen odio non est? Teneo, inquit, finem illi videri nihil
+          dolere.</textarea>
+
+        <use id="btnLeft" href="#text-button" class="text-button bottom left secondary application-fill" />
+        <use id="btnRight" href="#text-button" class="text-button bottom right application-fill" />
 
       </svg>
 

@@ -55,7 +55,7 @@ UI_steps.text = "--";
 
 let lastGlucoseDate = 0;
 
-UI_docGraph.height = Math.round(0.4*device.screen.height);
+UI_docGraph.height = Math.round(0.45*device.screen.height);
 UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 

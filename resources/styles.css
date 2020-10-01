@@ -73,9 +73,16 @@
   fill: green;
 }
 
-.application-fill           { fill: fb-pink; }
-.foreground-fill            { fill: fb-white; }
-.background-fill            { fill: fb-black; }
+#alertHeader {
+  font-size: 30;
+  font-family: System-Bold;
+  display-align: center;
+  text-anchor: middle;
+}
+
+.application-fill           { fill: fb-yellow; opacity: 1; }
+.foreground-fill            { fill: fb-white; opacity: 1; }
+.background-fill            { fill: fb-black; opacity: 1; }
 
 #btnLeft #text {
   text-buffer: "MUTE";
