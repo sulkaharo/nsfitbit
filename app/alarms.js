@@ -156,7 +156,10 @@ export default class Alarms {
 
     this._settings = settings;
 
-    if (!this._settings.enableAlarms) {
+    const hour = new Date().getHours();
+    const nightTimeOff = (hour >= 21 || hour <= 7) && settings.alarmsOffDuringNight;
+
+    if (!this._settings.enableAlarms || nightTimeOff) {
       return;
     }
 

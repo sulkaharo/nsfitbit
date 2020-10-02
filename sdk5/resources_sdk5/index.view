@@ -17,8 +17,8 @@
   <textarea id="noise"  class="noiseText" x="0" y="8%" width="100%" text-anchor="end">---</textarea>
   <textarea id="sgv" class="sgvText" x="4%" y="8%" width="100%" text-anchor="start">---</textarea>
 
-  <textarea id="age" class="ageText" x="0" y="17%" width="95%" text-anchor="end">- mins ago</textarea>
-  <textarea id="delta" class="deltaText" x="0" y="22%" width="96%" text-length="15" text-anchor="end">-? mg/dl</textarea>
+  <textarea id="age" class="ageText" x="0" y="13%" width="95%" text-anchor="end">- mins ago</textarea>
+  <textarea id="delta" class="deltaText" x="0" y="21%" width="96%" text-length="15" text-anchor="end">-? mg/dl</textarea>
 
    <!-- bottom  -->
   <image x="18%" y="294" width="20" height="20" href="img/battery_0.png" load="sync" id="b0" />

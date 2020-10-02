@@ -82,6 +82,7 @@ _settings.parseSettings = function parseSettings () {
 
   settings.displayOn = _settings.getSettings('alwaysOn', false);
   settings.offOnNight = _settings.getSettings('offOnNight', false);
+  settings.alarmsOffDuringNight = _settings.getSettings('alarmsOffDuringNight', false);
 
   settings.cgmHours = Number(_settings.getSettings('cgmHours', 3));
   settings.predictionHours = Number(_settings.getSettings('predictionHours', 0));

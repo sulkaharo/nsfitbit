@@ -55,7 +55,10 @@ UI_steps.text = "--";
 
 let lastGlucoseDate = 0;
 
-UI_docGraph.height = Math.round(0.45*device.screen.height);
+// Separate scaling between SDK4 vs SDK 5 devices
+const mult = device.screen.height == 336 ? 0.45 : 0.4;
+UI_docGraph.height = Math.round(mult*device.screen.height);
+
 UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 
