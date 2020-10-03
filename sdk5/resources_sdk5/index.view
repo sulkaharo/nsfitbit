@@ -38,6 +38,14 @@
   <use href="#graph" id="docGraph" x="0" y="30%" width="300" height="200" />
   <rect width="100%" height="2" fill="fb-blue" y="250" />
 
+  <!-- Data is old-->
+
+   <svg id="olddata" display="inline" height='75%' width='100%' y='12%'>
+     <rect height='100%' width='100%' fill="fb-black" />
+     <textarea x="4%" y="2%" width="96%" text-anchor="middle" fill="red">No data for >30 minutes. Restart Fibit App on phone?</textarea>
+   </svg>
+
+
   <!-- Alert -->
       <svg id="popup" display="none">
         <!-- Black background -->
@@ -57,6 +65,7 @@
 
       </svg>
 
+
   <!-- No Data -->
 
        <svg id="noData" display="inline" >
@@ -64,7 +73,7 @@
         <rect class="full-size" fill="fb-black" />
 
         <!-- Title and text -->
-        <use href="#dynamic-textarea" class="p2 foreground-fill" y="50">
+        <use href="#dynamic-textarea" class="p2 foreground-fill" y="50" x="6%" width="88%">
       <set href="#text" attributeName="text-buffer" to="No data from phone. Check Nightscout URL in watchface settings in the phone Fitbit App." />
     </use>
 

@@ -49,6 +49,7 @@ const UI_noise = document.getElementById("noise");
 const UI_delta = document.getElementById("delta");
 const UI_age = document.getElementById("age");
 const UI_docGraph = document.getElementById("docGraph");
+const UI_oldData = document.getElementById("olddata");
 
 UI_hrLabel.text = "--";
 UI_steps.text = "--";
@@ -405,6 +406,12 @@ function updateClock () {
   }
 
   UI_age.text = minsAgo > 30 ? ">30 mins ago" : `${minsAgo} mins ago`;
+
+  UI_oldData.style.visibility = 'hidden';
+
+  if (minsAgo > 30) {
+    UI_oldData.style.visibility = 'visible';
+  }
 
 }
 
