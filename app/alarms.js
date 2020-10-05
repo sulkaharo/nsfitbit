@@ -36,11 +36,12 @@ export default class Alarms {
     this._activeAlarm = null;
   }
 
-  generateAlarm(type, message, vibration) {
+  generateAlarm(type, message, vibration, icon) {
     return {
       type
       , message
       , vibration
+      , icon
     };
   }
 
@@ -60,7 +61,8 @@ export default class Alarms {
       return [this.generateAlarm(
         ALARM_STALE
         , 'Last data update from phone ' + messageTime + ' mins ago'
-        , 'ping')];
+        , 'ping'
+        , 'nodata')];
     }
 
     if (this._settings.staleAlarm > 0) {
@@ -72,7 +74,8 @@ export default class Alarms {
         return [this.generateAlarm(
           ALARM_STALE
           , 'Last CGM reading ' + deltaMins + ' mins ago'
-          , 'ping')];
+          , 'ping'
+          , 'nodata')];
       }
     }
 
@@ -82,7 +85,8 @@ export default class Alarms {
       generatedAlarms.push(this.generateAlarm(
         ALARM_BG
         , `HIGH BG: ${displayGlucose}`
-        , 'nudge'));
+        , 'nudge'
+        , 'doubleup'));
       skipPredictedBG = true;
     }
 
@@ -90,7 +94,8 @@ export default class Alarms {
       generatedAlarms.push(this.generateAlarm(
         ALARM_BG
         , 'LOW BG: ' + displayGlucose
-        , 'alert'));
+        , 'alert'
+        , 'doubledown'));
       skipPredictedBG = true;
     }
 
@@ -114,14 +119,16 @@ export default class Alarms {
         generatedAlarms.push(this.generateAlarm(
           ALARM_PRED
           , 'HIGH predicted: ' + displayPredGlucose
-          , 'nudge'));
+          , 'nudge'
+          , 'doubleup'));
       }
 
       if (pred <= this._settings.lowThreshold) {
         generatedAlarms.push(this.generateAlarm(
           ALARM_PRED
           , 'LOW predicted: ' + displayPredGlucose
-          , 'alert'));
+          , 'alert'
+          , 'doubledown'));
       }
     }
 
@@ -173,7 +180,7 @@ export default class Alarms {
       // Show whatever is the latest highest priority alarm
       this._activeAlarm = alarms[0];
       if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
-      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
+      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration, this._activeAlarm.icon);
     } else {
       this._activeAlarm = null;
       this._ui.hideAlerts();

@@ -46,6 +46,10 @@
         <!-- Black background -->
         <rect class="full-size" fill="fb-black" />
 
+        <image id="alert_doubleup" x="40%" y="8%" width="20%" height="20%" href="img/doubleup.png" visibility="hidden"/>
+        <image id="alert_doubledown" x="40%" y="8%" width="20%" height="20%" href="img/doubledown.png"  visibility="hidden"/>
+        <image id="alert_nodata" x="40%" y="8%" width="20%" height="20%" href="img/nodata.png" visibility="hidden"/>
+
         <!-- Title and text -->
         <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white" id="alertHeader">
           <set href="#top-padding" attributeName="display" to="none" />

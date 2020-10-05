@@ -107,7 +107,7 @@ function mySettings(props) {
         />
 
         <Select
-  label={`Tap to set pedictive alarms`}
+  label={`Tap to set predictive alarms`}
   settingsKey="alarmPredictions"
   options={[
     {name:"None", value: 0},
