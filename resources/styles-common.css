@@ -39,7 +39,7 @@
 }
 
 .ageText {
-  font-size: 16;
+  font-size: 25;
   font-family: System-Bold;
   text-length: 16;
   text-anchor: start;
@@ -55,7 +55,7 @@
 }
 
 .deltaText {
-  font-size: 22;
+  font-size: 25;
   font-family: System-Bold;
   text-length: 6;
   text-anchor: start;

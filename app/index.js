@@ -67,6 +67,8 @@ let settings = {};
 
 let latestHR = 0;
 
+let month;
+
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
 
@@ -313,6 +315,8 @@ function readSGVFile (fileIsNew) {
 
   alarms.checkAndAlarm(recentEntry, data.BGD[1], settings, data.meta.phoneGenerationTime);
 
+  month = data.meta.month;
+
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
 
@@ -360,12 +364,12 @@ function updateClock () {
   const nowDate = new Date();
   const hours = nowDate.getHours();
   const mins = nowDate.getMinutes();
-  const month = monthNames[nowDate.getMonth()];
+  const m = month ? month : monthNames[nowDate.getMonth()];;
   const day = nowDate.getDate();
 
   if (mins < 10) { mins = `0${mins}`; }
 
-  const dateText = `${month} ${day} `;
+  const dateText = `${m} ${day} `;
 
   const ampm = hours < 12 ? "AM" : "PM";
 

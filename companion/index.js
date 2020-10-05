@@ -7,6 +7,7 @@ import { sha1 } from "./sha1.js";
 import Settings from './settings.js';
 import dataProcessor from './dataprocessing.js';
 import { settingsStorage } from "settings";
+import { locale } from "user-settings";
 
 // Let's abuse some Globals
 
@@ -354,6 +355,7 @@ async function updateDataToClient () {
 
   const meta = {
     phoneGenerationTime: Date.now()
+    , month: new Date().toLocaleString(locale.language, {month: "short"})
   }
 
   let dataToSend = {
@@ -391,8 +393,6 @@ async function updateDataToClient () {
 }
 
 Settings.setCallback(updateDataToClient);
-
-//Settings.updateCallback = updateDataFromCloud;
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
