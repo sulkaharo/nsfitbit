@@ -151,9 +151,9 @@ _settings.getURLS = function getURLS () {
     //Update SGV Endpont
     endpoints[0] = '/api/v1/entries.json?count=' + entryCount;
     //Update Treatments endpoint
-    endpoints[1] = '/api/v1/treatments.json?count=150';
+    endpoints[1] = '/api/v1/treatments.json?count=120';
     //Update profile endpoint
-    endpoints[3] = '/api/v1/profile.json';
+    endpoints[3] = '/api/v1/profile.json?count=1';
     //Update V2 API endpoint
     endpoints[4] = '/api/v2/properties';
   }
