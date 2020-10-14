@@ -6,7 +6,7 @@
   <textarea id="age" class="ageText" x="0" y="16%" text-anchor="end">- mins ago</textarea>
   <textarea id="delta" class="deltaText" x="0" y="26%" text-length="15" text-anchor="end">-? mg/dl</textarea>
 
-  <text id="noise" class="noiseText" x="100%" y="32%" ></text>
+  <textarea id="noise" class="noiseText" x="0" y="28%" text-anchor="middle" ></textarea>
   <textarea id="sgv" class="sgvText" x="0" y="6%" text-anchor="start">---</textarea>
 
 <!-- Graph -->
@@ -26,7 +26,7 @@
   <image x="20%" y="91%" width="20" height="20" href="img/battery_2.png" load="sync" id="b2" />
   <image x="20%" y="91%" width="20" height="20" href="img/battery_3.png" load="sync" id="b3" />
   <image x="20%" y="91%" width="20" height="20" href="img/battery_4.png" load="sync" id="b4" />
-  <text id="battery" class="batteryText" x="27%" y="96%" ></text>
+  <text id="battery" class="batteryText" x="28%" y="96%" ></text>
 
   <text id="heartrate" class="monitorText" x="52%" y="96%" visibility='hidden'></text>
   <image id="hricon" x="46%" y="92%" width="16" height="16" href="img/heart.png" visibility='hidden'/>
