@@ -13,6 +13,7 @@ This repository has the source code for a simple Nightscout Fitbit watchface.
 
 ![Screenshot](/screenshots/Screenshot%202020-10-02%20at%2012.16.24.png?raw=true "Screen capture of the watchface")
 ![Screenshot](/screenshots/Screenshot%202020-10-05%20at%2010.02.26.png?raw=true "Screen capture of the watchface")
+
 ![Screenshot](/screenshots/Screenshot%202020-10-14%20at%2010.24.48.png?raw=true "Screen capture of the watchface")
 ![Screenshot](/screenshots/Screenshot%202020-10-14%20at%2010.25.25.png?raw=true "Screen capture of the watchface")
 
