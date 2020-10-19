@@ -11,7 +11,10 @@ This repository has the source code for a simple Nightscout Fitbit watchface.
 * Option to choose number of hours for CGM and prediction plots
 * Option to have the screen be on all the time (for Versa 1 and Versa Lite only, Versa 2 does not support this option)
 
-![Screenshot](/screenshots/Screenshot_5.png?raw=true "Screen capture of the watchface")
+![Screenshot](/screenshots/Screenshot%202020-10-02%20at%2012.16.24.png?raw=true "Screen capture of the watchface")
+![Screenshot](/screenshots/Screenshot%202020-10-05%20at%2010.02.26.png?raw=true "Screen capture of the watchface")
+![Screenshot](/screenshots/Screenshot%202020-10-14%20at%2010.24.48.png?raw=true "Screen capture of the watchface")
+![Screenshot](/screenshots/Screenshot%202020-10-14%20at%2010.25.25.png?raw=true "Screen capture of the watchface")
 
 # SDK 4.2 and SDK 5 support
 
