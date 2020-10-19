@@ -13,6 +13,7 @@ import { coloralloc } from "./functions.js";
 import Graph from "./graph.js";
 import Alarms from "./alarms.js";
 import AlarmUI from "./alert-ui.js";
+//import Tracking from "./tracking.js";
 import { memory } from "system";
 import { me as device } from "device";
 
@@ -31,9 +32,6 @@ let arrowIcon = {
   , "FortyFiveDown": "\u{2198}"
   , "SingleDown": "\u{2193}"
   , "DoubleDown": "\u{2193}\u{2193}"
-  , "None": "-"
-  , "NOT COMPUTABLE": "-"
-  , "RATE OUT OF RANGE": "-"
 };
 
 const UI_time = document.getElementById('clock');
@@ -51,20 +49,30 @@ const UI_noise = document.getElementById("noise");
 const UI_delta = document.getElementById("delta");
 const UI_age = document.getElementById("age");
 const UI_docGraph = document.getElementById("docGraph");
+const UI_oldData = document.getElementById("olddata");
 
 UI_hrLabel.text = "--";
 UI_steps.text = "--";
 
 let lastGlucoseDate = 0;
 
-UI_docGraph.height = Math.round(0.4*device.screen.height);
+// Separate scaling between SDK4 vs SDK 5 devices
+const mult = device.screen.height == 336 ? 0.45 : 0.4;
+UI_docGraph.height = Math.round(mult*device.screen.height);
+
 UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 
-var settings = {};
+let settings = {};
+
+let latestHR = 0;
+
+let month;
 
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
+
+// const tracking = new Tracking(settings);
 
 function debug () {
   return settings.loggingEnabled;
@@ -130,6 +138,7 @@ hrm.onreading = function() {
   const now = Date.now();
   if ((Date.now() - hrmLastUpdated) > hrmUpdateInterval) {
     UI_hrLabel.text = hrm.heartRate;
+    latestHR = hrm.heartRate;
   }
   hrmLastUpdated = now;
 };
@@ -162,9 +171,9 @@ function updateScreenWithLatestGlucose (data, prevEntry) {
 
     //hand off to colour threshold function to allocate the color
 
-    const direction = data.direction || 'None';
+    const direction = arrowIcon.hasOwnProperty(data.direction) ? arrowIcon[data.direction] : '-';
 
-    UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + arrowIcon[direction] : mmol(data.sgv) + "" + arrowIcon[direction];
+    UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + direction : mmol(data.sgv) + "" + direction;
     UI_sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
     lastGlucoseDate = data.date;
@@ -306,6 +315,8 @@ function readSGVFile (fileIsNew) {
 
   alarms.checkAndAlarm(recentEntry, data.BGD[1], settings, data.meta.phoneGenerationTime);
 
+  month = data.meta.month;
+
   updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
   latestGlucoseDate = recentEntry.date;
 
@@ -316,6 +327,8 @@ function readSGVFile (fileIsNew) {
   statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
   statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
   statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
+  statusStrings["Steps"] = "Steps " + today.local.steps;
+  statusStrings["Heart rate"] = "HR " + latestHR;
 
   const s1 = settings.statusLine1 || "IOB";
   const s2 = settings.statusLine2 || "COB";
@@ -351,12 +364,12 @@ function updateClock () {
   const nowDate = new Date();
   const hours = nowDate.getHours();
   const mins = nowDate.getMinutes();
-  const month = monthNames[nowDate.getMonth()];
+  const m = month ? month : monthNames[nowDate.getMonth()];;
   const day = nowDate.getDate();
 
   if (mins < 10) { mins = `0${mins}`; }
 
-  const dateText = `${month} ${day} `;
+  const dateText = `${m} ${day} `;
 
   const ampm = hours < 12 ? "AM" : "PM";
 
@@ -397,6 +410,12 @@ function updateClock () {
   }
 
   UI_age.text = minsAgo > 30 ? ">30 mins ago" : `${minsAgo} mins ago`;
+
+  UI_oldData.style.visibility = 'hidden';
+
+  if (minsAgo > 30) {
+    UI_oldData.style.visibility = 'visible';
+  }
 
 }
 

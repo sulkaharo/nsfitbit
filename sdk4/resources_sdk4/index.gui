@@ -1,0 +1,92 @@
+<svg>
+  <textarea id='clock' x="0" y="0" width="100%" text-length="50" text-anchor="middle"
+    font-family="System-Regular" fill="white" font-size="35"></textarea>
+
+<!-- SGV data -->
+  <textarea id="age" class="ageText" x="0" y="16%" text-anchor="end">- mins ago</textarea>
+  <textarea id="delta" class="deltaText" x="0" y="26%" text-length="15" text-anchor="end">-? mg/dl</textarea>
+
+  <textarea id="noise" class="noiseText" x="0" y="28%" text-anchor="middle" ></textarea>
+  <textarea id="sgv" class="sgvText" x="0" y="6%" text-anchor="start">---</textarea>
+
+<!-- Graph -->
+  <use href="#graph" id="docGraph" x="0" y="37%" width="300" height="40%" />
+  <rect width="100%" height="2" fill="fb-blue" y="77%" />
+
+<!-- status lines -->
+   <textarea id='statusline1' x="0" y="78%" width="100%" text-length="200" text-anchor="start"
+    font-family="System-Regular" fill="white" font-size="30"></textarea>
+
+   <textarea id='statusline2' x="0" y="78%" width="100%" text-length="100" text-anchor="end"
+    font-family="System-Regular" fill="white" font-size="30"></textarea>
+
+<!-- Bottom stuff -->
+  <image x="20%" y="91%" width="20" height="20" href="img/battery_0.png" load="sync" id="b0" />
+  <image x="20%" y="91%" width="20" height="20" href="img/battery_1.png" load="sync" id="b1" />
+  <image x="20%" y="91%" width="20" height="20" href="img/battery_2.png" load="sync" id="b2" />
+  <image x="20%" y="91%" width="20" height="20" href="img/battery_3.png" load="sync" id="b3" />
+  <image x="20%" y="91%" width="20" height="20" href="img/battery_4.png" load="sync" id="b4" />
+  <text id="battery" class="batteryText" x="28%" y="96%" ></text>
+
+  <text id="heartrate" class="monitorText" x="52%" y="96%" visibility='hidden'></text>
+  <image id="hricon" x="46%" y="92%" width="16" height="16" href="img/heart.png" visibility='hidden'/>
+
+  <text id="steps" class="monitorText" x="69%" y="96%" visibility='hidden'></text>
+  <image id="stepsicon" x="63%" y="92%" width="16" height="16" href="img/steps.png" load="sync" visibility='hidden'/>
+
+  <!-- Data is old-->
+
+   <svg id="olddata" display="inline" height='75%' width='100%' y='12%'>
+     <rect height='100%' width='100%' fill="fb-black" />
+     <textarea x="4%" y="2%" width="96%" text-anchor="middle" fill="red">No data for >30 minutes. Restart Fibit App on phone?</textarea>
+   </svg>
+
+  <!-- Alert -->
+      <svg id="popup" display="none" >
+        <!-- Black background -->
+        <rect class="full-size" fill="fb-black" />
+
+        <image id="alert_doubleup" x="40%" y="8%" width="20%" height="20%" href="img/doubleup.png" visibility="hidden"/>
+        <image id="alert_doubledown" x="40%" y="8%" width="20%" height="20%" href="img/doubledown.png"  visibility="hidden"/>
+        <image id="alert_nodata" x="40%" y="8%" width="20%" height="20%" href="img/nodata.png" visibility="hidden"/>
+
+        <!-- Title and text -->
+        <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white" id="alertHeader">
+          <set href="#top-padding" attributeName="display" to="none" />
+          <set href="#header/text" attributeName="text-buffer" to="---" />
+          <set href="#header/text" attributeName="text-length" to="40" />
+          <set href="#header/text" attributeName="fill" to="fb-magenta"/>
+          <set href="#copy/text" attributeName="text-buffer" to="Check BG!" />
+          <set href="#bottom-padding" attributeName="display" to="none" />
+        </use>
+
+        <!-- Left button -->
+        <use id="btnLeft" class="dialog-half-button-left" href="#square-button-neutral">
+           <set href="#text" attributeName="text-buffer" to="Mute" /> <!--Change this to be 15 when you add the 15 min mute code in -->
+          <set href="#text" attributeName="text-anchor" to="middle" />
+        </use>
+
+        <!-- Right button -->
+        <use id="btnRight" class="dialog-half-button-right" href="#square-button-negative">
+          <set href="#text" attributeName="text-buffer" to="Snooze" />
+          <set href="#text" attributeName="text-anchor" to="middle" />
+        </use>
+      </svg>
+
+
+  <!-- No Data at all -->
+
+       <svg id="noData" display="inline" >
+        <!-- Black background -->
+        <rect class="full-size" fill="fb-black" />
+
+        <!-- Title and text -->
+        <use href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white">
+          <set href="#copy/text" attributeName="text-buffer" to="No data from phone. Check Nightscout URL in watchface settings in the phone Fitbit App." />
+          <set href="#bottom-padding" attributeName="display" to="none" />
+        </use>
+
+       </svg>
+
+
+</svg>

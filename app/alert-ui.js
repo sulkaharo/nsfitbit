@@ -4,6 +4,10 @@ import { vibration } from "haptics";
 const TEN_MINUTES = 1000 * 60 * 10;
 const INDEFINITELY = 1000 * 60 * 1000;
 
+const Icon_doubleup = document.getElementById("alert_doubleup");
+const Icon_doubledown = document.getElementById("alert_doubledown");
+const Icon_nodata = document.getElementById("alert_nodata");
+
 export default class AlertUI {
 
   constructor() {
@@ -33,9 +37,25 @@ export default class AlertUI {
     };
   }
 
-  showAlert(message, vibrationtype) {
+  hideicons() {
+    Icon_doubleup.style.visibility = 'hidden';
+    Icon_doubledown.style.visibility = 'hidden';
+    Icon_nodata.style.visibility = 'hidden';
+  }
+
+  showAlert(message, vibrationtype, icon) {
     console.log('ALERT BG message: ' + message);
     // todo add vibration cancelling
+
+    this.hideicons();
+
+    if (icon) {
+      const i = document.getElementById("alert_" + icon);
+      if (i) {
+        i.style.visibility = 'visible';
+      }
+    }
+
     vibration.start(vibrationtype);
     this._alertHeader.text = message;
     this._myPopup.style.display = "inline";

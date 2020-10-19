@@ -1,0 +1,24 @@
+
+.sgvText {
+  font-family: System-Regular;
+}
+
+.ageText {
+  font-size: 26;
+}
+
+.deltaText {
+  font-size: 26;
+}
+
+.application-fill           { fill: fb-yellow; opacity: 1; }
+.foreground-fill            { fill: fb-white; opacity: 1; }
+.background-fill            { fill: fb-black; opacity: 1; }
+
+#btnLeft #text {
+  text-buffer: "MUTE";
+}
+
+#btnRight #text {
+  text-buffer: "SNOOZE";
+}

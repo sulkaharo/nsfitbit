@@ -36,11 +36,12 @@ export default class Alarms {
     this._activeAlarm = null;
   }
 
-  generateAlarm(type, message, vibration) {
+  generateAlarm(type, message, vibration, icon) {
     return {
       type
       , message
       , vibration
+      , icon
     };
   }
 
@@ -54,10 +55,14 @@ export default class Alarms {
     const deltaMins = Math.floor(fileAge / 1000 / 60);
 
     if (fileAge > 10*60*1000) {
+
+      const messageTime = deltaMins > 30 ? ">30" : deltaMins;
+
       return [this.generateAlarm(
         ALARM_STALE
-        , 'Last data update from phone ' + deltaMins + ' mins ago'
-        , 'ping')];
+        , 'Last data update from phone ' + messageTime + ' mins ago'
+        , 'ping'
+        , 'nodata')];
     }
 
     if (this._settings.staleAlarm > 0) {
@@ -69,7 +74,8 @@ export default class Alarms {
         return [this.generateAlarm(
           ALARM_STALE
           , 'Last CGM reading ' + deltaMins + ' mins ago'
-          , 'ping')];
+          , 'ping'
+          , 'nodata')];
       }
     }
 
@@ -78,8 +84,9 @@ export default class Alarms {
     if (sgv >= this._settings.highThreshold) {
       generatedAlarms.push(this.generateAlarm(
         ALARM_BG
-        , 'HIGH BG: ' + displayGlucose
-        , 'nudge'));
+        , `HIGH BG: ${displayGlucose}`
+        , 'nudge'
+        , 'doubleup'));
       skipPredictedBG = true;
     }
 
@@ -87,7 +94,8 @@ export default class Alarms {
       generatedAlarms.push(this.generateAlarm(
         ALARM_BG
         , 'LOW BG: ' + displayGlucose
-        , 'alert'));
+        , 'alert'
+        , 'doubledown'));
       skipPredictedBG = true;
     }
 
@@ -111,14 +119,16 @@ export default class Alarms {
         generatedAlarms.push(this.generateAlarm(
           ALARM_PRED
           , 'HIGH predicted: ' + displayPredGlucose
-          , 'nudge'));
+          , 'nudge'
+          , 'doubleup'));
       }
 
       if (pred <= this._settings.lowThreshold) {
         generatedAlarms.push(this.generateAlarm(
           ALARM_PRED
           , 'LOW predicted: ' + displayPredGlucose
-          , 'alert'));
+          , 'alert'
+          , 'doubledown'));
       }
     }
 
@@ -153,7 +163,10 @@ export default class Alarms {
 
     this._settings = settings;
 
-    if (!this._settings.enableAlarms) {
+    const hour = new Date().getHours();
+    const nightTimeOff = (hour >= 21 || hour <= 7) && settings.alarmsOffDuringNight;
+
+    if (!this._settings.enableAlarms || nightTimeOff) {
       return;
     }
 
@@ -167,7 +180,7 @@ export default class Alarms {
       // Show whatever is the latest highest priority alarm
       this._activeAlarm = alarms[0];
       if (settings.loggingEnabled) console.log('Showing alarm (new or unsnoozed)');
-      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration);
+      this._ui.showAlert(this._activeAlarm.message, this._activeAlarm.vibration, this._activeAlarm.icon);
     } else {
       this._activeAlarm = null;
       this._ui.hideAlerts();

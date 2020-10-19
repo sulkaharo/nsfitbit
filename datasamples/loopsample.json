@@ -1,0 +1,455 @@
+{
+    "bgnow": {
+        "mean": 73,
+        "last": 73,
+        "mills": 1569468270000,
+        "sgvs": [
+            {
+                "mgdl": 73,
+                "mills": 1569468270000,
+                "device": "share2",
+                "direction": "Flat"
+            }
+        ]
+    },
+    "delta": {
+        "absolute": 5,
+        "elapsedMins": 5.016666666666667,
+        "interpolated": false,
+        "mean5MinsAgo": 68,
+        "mgdl": 5,
+        "scaled": 0.3,
+        "display": "+0.3",
+        "previous": {
+            "mean": 68,
+            "last": 68,
+            "mills": 1569467969000,
+            "sgvs": [
+                {
+                    "mgdl": 68,
+                    "mills": 1569467969000,
+                    "device": "share2",
+                    "direction": "SingleDown"
+                }
+            ]
+        }
+    },
+    "buckets": [
+        {
+            "mean": 73,
+            "last": 73,
+            "mills": 1569468270000,
+            "index": 0,
+            "fromMills": 1569468120000,
+            "toMills": 1569468420000,
+            "sgvs": [
+                {
+                    "mgdl": 73,
+                    "mills": 1569468270000,
+                    "device": "share2",
+                    "direction": "Flat"
+                }
+            ]
+        },
+        {
+            "mean": 68,
+            "last": 68,
+            "mills": 1569467969000,
+            "index": 1,
+            "fromMills": 1569467820000,
+            "toMills": 1569468120000,
+            "sgvs": [
+                {
+                    "mgdl": 68,
+                    "mills": 1569467969000,
+                    "device": "share2",
+                    "direction": "SingleDown"
+                }
+            ]
+        },
+        {
+            "mean": 78,
+            "last": 78,
+            "mills": 1569467669000,
+            "index": 2,
+            "fromMills": 1569467520000,
+            "toMills": 1569467820000,
+            "sgvs": [
+                {
+                    "mgdl": 78,
+                    "mills": 1569467669000,
+                    "device": "share2",
+                    "direction": "FortyFiveDown"
+                }
+            ]
+        },
+        {
+            "mean": 88,
+            "last": 88,
+            "mills": 1569467371000,
+            "index": 3,
+            "fromMills": 1569467220000,
+            "toMills": 1569467520000,
+            "sgvs": [
+                {
+                    "mgdl": 88,
+                    "mills": 1569467371000,
+                    "device": "share2",
+                    "direction": "Flat"
+                }
+            ]
+        }
+    ],
+    "rawbg": {},
+    "direction": {
+        "display": null,
+        "value": "Flat",
+        "label": "→",
+        "entity": "&#8594;"
+    },
+    "upbat": {
+        "display": "?%",
+        "devices": {}
+    },
+    "ar2": {
+        "forecast": {
+            "predicted": [
+                {
+                    "mills": 1569468572000,
+                    "mgdl": 77,
+                    "color": "cyan",
+                    "scaled": "4.3"
+                },
+                {
+                    "mills": 1569468872000,
+                    "mgdl": 81,
+                    "color": "cyan",
+                    "scaled": "4.5"
+                },
+                {
+                    "mills": 1569469172000,
+                    "mgdl": 84,
+                    "color": "cyan",
+                    "scaled": "4.7"
+                },
+                {
+                    "mills": 1569469472000,
+                    "mgdl": 86,
+                    "color": "cyan",
+                    "scaled": "4.8"
+                },
+                {
+                    "mills": 1569469772000,
+                    "mgdl": 88,
+                    "color": "cyan",
+                    "scaled": "4.9"
+                },
+                {
+                    "mills": 1569470072000,
+                    "mgdl": 90,
+                    "color": "cyan",
+                    "scaled": "5.0"
+                }
+            ],
+            "avgLoss": 0.028989592167976103
+        },
+        "displayLine": "BG 15m: 4.7 mmol/L"
+    },
+    "iob": {
+        "iob": 0,
+        "activity": 0,
+        "lastBolus": null,
+        "source": "Care Portal",
+        "display": "0",
+        "displayLine": "IOB: 0U"
+    },
+    "cob": {
+        "decayedBy": null,
+        "isDecaying": 0,
+        "carbs_hr": 0,
+        "rawCarbImpact": 0,
+        "cob": 0,
+        "lastCarbs": {
+            "_id": "5d8c044cc631d95155fc1090",
+            "carbs": 25,
+            "eventType": "Meal Bolus",
+            "created_at": "2019-09-25T23:59:18Z",
+            "absorptionTime": 120,
+            "timestamp": "2019-09-25T23:59:18Z",
+            "foodType": "☕️",
+            "enteredBy": "loop://F.R.I.D.A.Y",
+            "mills": 1569455958000,
+            "mgdl": 137.5
+        },
+        "source": "Care Portal",
+        "display": 0,
+        "displayLine": "COB: 0g"
+    },
+    "pump": {
+        "data": {
+            "level": -3,
+            "clock": null,
+            "reservoir": null,
+            "extended": null,
+            "device": {
+                "label": "Device"
+            },
+            "title": "Pump Status"
+        }
+    },
+    "openaps": {
+        "seenDevices": {},
+        "lastEnacted": null,
+        "lastNotEnacted": null,
+        "lastSuggested": null,
+        "lastIOB": null,
+        "lastMMTune": null,
+        "lastPredBGs": null,
+        "status": {
+            "symbol": "⚠",
+            "code": "warning",
+            "label": "Warning"
+        }
+    },
+    "loop": {
+        "lastLoop": {
+            "timestamp": "2019-09-26T01:41:29Z",
+            "enacted": {
+                "timestamp": "2019-09-26T01:41:29Z",
+                "received": true,
+                "rate": 3.1,
+                "duration": 30,
+                "moment": "2019-09-26T01:41:29.000Z"
+            },
+            "cob": {
+                "cob": 23.830026313135946,
+                "timestamp": "2019-09-26T01:40:00Z"
+            },
+            "iob": {
+                "timestamp": "2019-09-26T01:40:00Z",
+                "iob": 4.225393398630624
+            },
+            "recommendedBolus": 0.35,
+            "version": "1.10.0dev-jojo-spike",
+            "name": "Loop",
+            "predicted": {
+                "startDate": "2019-09-26T01:39:31Z",
+                "values": [
+                    129,
+                    129,
+                    133,
+                    136,
+                    138,
+                    140,
+                    141,
+                    143,
+                    145,
+                    147,
+                    149,
+                    152,
+                    154,
+                    158,
+                    161,
+                    165,
+                    169,
+                    173,
+                    178,
+                    183,
+                    189,
+                    193,
+                    188,
+                    182,
+                    177,
+                    172,
+                    168,
+                    163,
+                    159,
+                    155,
+                    151,
+                    148,
+                    145,
+                    142,
+                    139,
+                    137,
+                    135,
+                    132,
+                    130,
+                    129,
+                    127,
+                    126,
+                    125,
+                    124,
+                    122,
+                    121,
+                    121,
+                    120,
+                    119,
+                    118,
+                    118,
+                    117,
+                    117,
+                    116,
+                    116,
+                    116,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115,
+                    115
+                ]
+            },
+            "moment": "2019-09-26T01:41:29.000Z"
+        },
+        "lastEnacted": {
+            "timestamp": "2019-09-26T01:41:29Z",
+            "received": true,
+            "rate": 3.1,
+            "duration": 30,
+            "moment": "2019-09-26T01:41:29.000Z"
+        },
+        "lastPredicted": {
+            "startDate": "2019-09-26T01:39:31Z",
+            "values": [
+                129,
+                129,
+                133,
+                136,
+                138,
+                140,
+                141,
+                143,
+                145,
+                147,
+                149,
+                152,
+                154,
+                158,
+                161,
+                165,
+                169,
+                173,
+                178,
+                183,
+                189,
+                193,
+                188,
+                182,
+                177,
+                172,
+                168,
+                163,
+                159,
+                155,
+                151,
+                148,
+                145,
+                142,
+                139,
+                137,
+                135,
+                132,
+                130,
+                129,
+                127,
+                126,
+                125,
+                124,
+                122,
+                121,
+                121,
+                120,
+                119,
+                118,
+                118,
+                117,
+                117,
+                116,
+                116,
+                116,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115,
+                115
+            ]
+        },
+        "lastOkMoment": "2019-09-26T01:41:29.000Z",
+        "lastOverride": {
+            "timestamp": "2019-09-26T01:41:29Z",
+            "active": false,
+            "moment": "2019-09-26T01:41:29.000Z"
+        },
+        "display": {
+            "symbol": "⚠",
+            "code": "warning",
+            "label": "Warning"
+        }
+    },
+    "cage": {
+        "found": false,
+        "age": 0,
+        "treatmentDate": null,
+        "checkForAlert": false,
+        "level": -3,
+        "display": "n/a "
+    },
+    "sage": {
+        "Sensor Start": {
+            "found": false,
+            "level": -3
+        },
+        "Sensor Change": {
+            "found": false
+        },
+        "min": "Sensor Start"
+    },
+    "iage": {
+        "found": false,
+        "age": 0,
+        "treatmentDate": null,
+        "level": -3
+    },
+    "basal": {
+        "display": "1.500U",
+        "current": {
+            "basal": 1.5,
+            "treatment": null,
+            "combobolustreatment": null,
+            "tempbasal": 1.5,
+            "combobolusbasal": 0,
+            "totalbasal": 1.5
+        }
+    }
+}
