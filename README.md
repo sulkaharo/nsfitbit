@@ -29,6 +29,8 @@ If you need to make a build for a specific SDK, cd into the sdk4 or sdk5 folders
 ``yarn install; yarn run build`` and then install the build to the Fitbit simulator or
 device with ``npx fitbit`` and running the ``install` command there.
 
+SDK 6 builds also use the sdk5 directory.
+
 # Tests
 
 Run unit tests by changing to the correct SDK directory and running ``yarn run test``.
