@@ -8,11 +8,13 @@ import Settings from './settings.js';
 import dataProcessor from './dataprocessing.js';
 import { settingsStorage } from "settings";
 import { locale } from "user-settings";
+import isEqual from 'lodash.isequal';
 
 // Let's abuse some Globals
 
 let lastKnownRecordDate = 0;
 let lastFetch = 0;
+let lastDataPackage = {};
 
 let settings = Settings.parseSettings();
 
@@ -374,7 +376,12 @@ async function updateDataToClient () {
       dataToSend.boluses = treatments ? treatmentTimeFilter(treatments.boluses, dataCap) : [];
     }
 
-    queueFile('data.cbor', dataToSend);
+    if (!isEqual(lastDataPackage, dataToSend)) {
+      lastDataPackage = dataToSend;
+      queueFile('data.cbor', dataToSend);
+    } else {
+      console.log('Data not changed, skipping cbor sending');
+    }
 
   } catch (err) {
     console.log("Error compiling data update to client: ", err);

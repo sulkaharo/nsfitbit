@@ -54,5 +54,8 @@
     "presets": [
       "@babel/preset-env"
     ]
+  },
+  "dependencies": {
+    "lodash.isequal": "^4.5.0"
   }
 }
