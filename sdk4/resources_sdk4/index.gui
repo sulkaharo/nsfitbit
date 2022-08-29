@@ -38,7 +38,7 @@
 
    <svg id="olddata" display="inline" height='75%' width='100%' y='12%'>
      <rect height='100%' width='100%' fill="fb-black" />
-     <textarea x="4%" y="2%" width="96%" text-anchor="middle" fill="red">No data for >30 minutes. Restart Fibit App on phone?</textarea>
+     <textarea x="4%" y="2%" width="96%" text-anchor="middle" fill="red">No data for >30 minutes. Restart Fitbit App on phone?</textarea>
    </svg>
 
   <!-- Alert -->
