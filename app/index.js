@@ -16,6 +16,7 @@ import AlarmUI from "./alert-ui.js";
 //import Tracking from "./tracking.js";
 import { memory } from "system";
 import { me as device } from "device";
+import { BodyPresenceSensor } from "body-presence";
 
 if (!device.screen) device.screen = { width: 348, height: 250 };
 
@@ -58,16 +59,17 @@ let lastGlucoseDate = 0;
 
 // Separate scaling between SDK4 vs SDK 5 devices
 const mult = device.screen.height == 336 ? 0.45 : 0.4;
-UI_docGraph.height = Math.round(mult*device.screen.height);
+UI_docGraph.height = Math.round(mult * device.screen.height);
 
 UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 
 let settings = {};
-
 let latestHR = 0;
 
 let month;
+
+settings.bodyPrecense = _bodyPresence;
 
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
@@ -121,6 +123,18 @@ function noiseCodeToDisplay (mgdl, noise) {
   return display;
 }
 
+// Body Presence API
+
+let _bodyPresence = false;
+
+if (BodyPresenceSensor) {
+  console.log("This device has a BodyPresenceSensor!");
+  _bodyPresence = new BodyPresenceSensor();
+  _bodyPresence.start();
+} else {
+  console.log("This device does NOT have a BodyPresenceSensor!");
+}
+
 //----------------------------------------------------------
 //
 // This section is for displaying the heart rate
@@ -153,67 +167,76 @@ hrm.start();
 //----------------------------------------------------------
 // Request data from the companion
 function fetchCompanionData (cmd) {
-  //setStatusImage('refresh.png')
-  if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
-    // Send a command to the companion
-    if (debug()) console.log('Watch pinging the companion');
-    messaging.peerSocket.send({
-      command: cmd
-    });
+  try {
+    //setStatusImage('refresh.png')
+    if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
+      // Send a command to the companion
+      if (debug()) console.log('Watch pinging the companion');
+      messaging.peerSocket.send({
+        command: cmd
+      });
+    }
+  } catch (err) {
+    console.log("Error sending message to companion: ", err);
   }
 }
 
 // Display the data received from the companion
 function updateScreenWithLatestGlucose (data, prevEntry) {
-  if (debug()) console.log("bg is: " + JSON.stringify(data));
 
-  if (data) {
+  try {
+    if (debug()) console.log("bg is: " + JSON.stringify(data));
 
-    //hand off to colour threshold function to allocate the color
+    if (data) {
 
-    const direction = arrowIcon.hasOwnProperty(data.direction) ? arrowIcon[data.direction] : '-';
+      //hand off to colour threshold function to allocate the color
 
-    UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + direction : mmol(data.sgv) + "" + direction;
-    UI_sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
+      const direction = arrowIcon.hasOwnProperty(data.direction) ? arrowIcon[data.direction] : '-';
 
-    lastGlucoseDate = data.date;
+      UI_sgv.text = settings.units == 'mgdl' ? data.sgv + "" + direction : mmol(data.sgv) + "" + direction;
+      UI_sgv.style.fill = coloralloc(data.sgv, settings.lowThreshold, settings.highThreshold, settings.multicolor);
 
-    // calc the delta
+      lastGlucoseDate = data.date;
 
-    let deltaString = "";
-    let deltaValue = 0;
+      // calc the delta
 
-    if (settings.units == 'mgdl') {
-      deltaValue = data.sgv - prevEntry.sgv;
-      deltaString = deltaValue + ' mgdl';
+      let deltaString = "";
+      let deltaValue = 0;
+
+      if (settings.units == 'mgdl') {
+        deltaValue = data.sgv - prevEntry.sgv;
+        deltaString = deltaValue + ' mgdl';
+      } else {
+        // mmmol needs to be calculated from pre-rounded values to ensure the delta makes sense
+        const p = Math.round((0.0556 * prevEntry.sgv) * 10) / 10;
+        const n = Math.round((0.0556 * data.sgv) * 10) / 10;
+        deltaValue = n - p;
+        deltaString = deltaValue.toFixed(1) + ' mmol';
+      }
+
+      if (deltaValue > 0) {
+        deltaString = '+' + deltaString;
+      }
+
+      UI_delta.text = deltaString;
+
+      //update noise
+      //blank the value just encase the value was turned on then off
+      UI_noise.text = '';
+      if (settings.shownoise && data.noise) {
+        UI_noise.text = noiseCodeToDisplay(data.sgv, data.noise);
+      }
+
+      updateClock();
+
     } else {
-      // mmmol needs to be calculated from pre-rounded values to ensure the delta makes sense
-      const p = Math.round((0.0556 * prevEntry.sgv) * 10) / 10;
-      const n = Math.round((0.0556 * data.sgv) * 10) / 10;
-      deltaValue = n - p;
-      deltaString = deltaValue.toFixed(1) + ' mmol';
+      UI_sgv.text = '--';
+      UI_sgv.style.fill = 'red';
+      UI_dirArrow.text = '';
+      UI_dirArrow.style.fill = "red";
     }
-
-    if (deltaValue > 0) {
-      deltaString = '+' + deltaString;
-    }
-
-    UI_delta.text = deltaString;
-
-    //update noise
-    //blank the value just encase the value was turned on then off
-    UI_noise.text = '';
-    if (settings.shownoise && data.noise) {
-      UI_noise.text = noiseCodeToDisplay(data.sgv, data.noise);
-    }
-
-    updateClock();
-
-  } else {
-    UI_sgv.text = '--';
-    UI_sgv.style.fill = 'red';
-    UI_dirArrow.text = '';
-    UI_dirArrow.style.fill = "red";
+  } catch (err) {
+    console.log("SGV update failed: ", err);
   }
 }
 
@@ -256,101 +279,107 @@ const ONE_MINUTE = 60 * 1000;
 
 function readSGVFile (fileIsNew) {
 
-  if (debug() && fileIsNew) console.log('File is new, running full update');
+  try {
 
-  const runSmallUpdate = fileIsNew || Date.now() - lastSmallUpdate > FIFTEEN_SECONDS;
-  const runBigUpdate = fileIsNew || Date.now() - lastBigUpdate > ONE_MINUTE;
+    if (debug() && fileIsNew) console.log('File is new, running full update');
 
-  // SMALL UPDATE
-  // Only do less CPU intensive work here
+    const runSmallUpdate = fileIsNew || Date.now() - lastSmallUpdate > FIFTEEN_SECONDS;
+    const runBigUpdate = fileIsNew || Date.now() - lastBigUpdate > ONE_MINUTE;
 
-  if (!runSmallUpdate) { return; }
-  if (debug()) console.log('Running small update');
-  lastSmallUpdate = Date.now();
+    // SMALL UPDATE
+    // Only do less CPU intensive work here
 
-  if (debug()) console.log("JS memory: " + memory.js.used + " used of " + memory.js.total);
+    if (!runSmallUpdate) { return; }
+    if (debug()) console.log('Running small update');
+    lastSmallUpdate = Date.now();
 
-  let data = readFile('data.cbor');
-  settings = readFile('settings.cbor');
+    if (debug()) console.log("JS memory: " + memory.js.used + " used of " + memory.js.total);
 
-  //check if the any data exists first
-  if (!data || !settings) return;
-  //check if empty data strings are being sent
-  if (data.state === undefined || data.state.length == 0) return;
-  // We got data, hide the warning
-  UI_noDataWarning.style.display = 'none';
+    let data = readFile('data.cbor');
+    settings = readFile('settings.cbor');
 
-  const hour = new Date().getHours();
-  const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
+    //check if the any data exists first
+    if (!data || !settings) return;
+    //check if empty data strings are being sent
+    if (data.state === undefined || data.state.length == 0) return;
+    // We got data, hide the warning
+    UI_noDataWarning.style.display = 'none';
 
-  if (settings.displayOn && !nightTimeOff) {
-    display.autoOff = false;
-    display.on = true;
-  } else {
-    display.autoOff = true;
-  }
+    const hour = new Date().getHours();
+    const nightTimeOff = (hour >= 22 || hour <= 7) && settings.offOnNight;
 
-  //Steps Icon and HR
-  if (settings.activity) {
-    if (debug()) console.log("The Icon visibility: " + UI_stepsicon.style.visibility);
-    //reduce the amount of interactions with the DOM by checking the visibility and only if false then set item
-    if (UI_stepsicon.style.visibility != "visible") {
-      UI_stepsicon.style.visibility = "visible";
-      UI_steps.style.visibility = "visible";
-      UI_hrLabel.style.visibility = "visible";
-      UI_hricon.style.visibility = "visible";
+    if (settings.displayOn && !nightTimeOff) {
+      display.autoOff = false;
+      display.on = true;
+    } else {
+      display.autoOff = true;
     }
-    //Update the amount of steps
-    UI_steps.text = today.local.steps || 0;
-  } else {
-    if (UI_stepsicon.style.visibility == "visible") {
-      UI_stepsicon.style.visibility = "hidden";
-      UI_steps.style.visibility = "hidden";
-      UI_hrLabel.style.visibility = "hidden";
-      UI_hricon.style.visibility = "hidden";
+
+    //Steps Icon and HR
+    if (settings.activity) {
+      if (debug()) console.log("The Icon visibility: " + UI_stepsicon.style.visibility);
+      //reduce the amount of interactions with the DOM by checking the visibility and only if false then set item
+      if (UI_stepsicon.style.visibility != "visible") {
+        UI_stepsicon.style.visibility = "visible";
+        UI_steps.style.visibility = "visible";
+        UI_hrLabel.style.visibility = "visible";
+        UI_hricon.style.visibility = "visible";
+      }
+      //Update the amount of steps
+      UI_steps.text = today.local.steps || 0;
+    } else {
+      if (UI_stepsicon.style.visibility == "visible") {
+        UI_stepsicon.style.visibility = "hidden";
+        UI_steps.style.visibility = "hidden";
+        UI_hrLabel.style.visibility = "hidden";
+        UI_hricon.style.visibility = "hidden";
+      }
     }
-  }
 
-  const recentEntry = data.BGD[0];
+    const recentEntry = data.BGD[0];
 
-  alarms.checkAndAlarm(recentEntry, data.BGD[1], settings, data.meta.phoneGenerationTime);
+    alarms.checkAndAlarm(recentEntry, data.BGD[1], settings, data.meta.phoneGenerationTime);
 
-  month = data.meta.month;
+    month = data.meta.month;
 
-  updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
-  latestGlucoseDate = recentEntry.date;
+    updateScreenWithLatestGlucose(recentEntry, data.BGD[1]);
+    latestGlucoseDate = recentEntry.date;
 
-  const statusStrings = {};
+    const statusStrings = {};
 
-  const state = data.state;
+    const state = data.state;
 
-  statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
-  statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
-  statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
-  statusStrings["Steps"] = "Steps " + today.local.steps;
-  statusStrings["Heart rate"] = "HR " + latestHR;
+    statusStrings["IOB"] = state.iob ? "IOB " + state.iob : "IOB ???";
+    statusStrings["COB"] = state.iob ? "COB " + state.cob : "COB ???";
+    statusStrings["BWP"] = state.iob ? "BWP " + state.bwp : "BWP ???";
+    statusStrings["Steps"] = "Steps " + today.local.steps;
+    statusStrings["Heart rate"] = "HR " + latestHR;
 
-  const s1 = settings.statusLine1 || "IOB";
-  const s2 = settings.statusLine2 || "COB";
+    const s1 = settings.statusLine1 || "IOB";
+    const s2 = settings.statusLine2 || "COB";
 
-  UI_statusLine1.text = statusStrings[s1] || "";
-  UI_statusLine2.text = statusStrings[s2] || "";
+    UI_statusLine1.text = statusStrings[s1] || "";
+    UI_statusLine2.text = statusStrings[s2] || "";
 
-  // LARGE UPDATE
-  // CPU intensive work is done less frequently
+    // LARGE UPDATE
+    // CPU intensive work is done less frequently
 
-  if (!runBigUpdate) { return; }
-  if (debug()) console.log('Running big update');
-  lastBigUpdate = Date.now();
+    if (!runBigUpdate) { return; }
+    if (debug()) console.log('Running big update');
+    lastBigUpdate = Date.now();
 
-  // Update the graph
-  myGraph.update(data, settings);
+    // Update the graph
+    myGraph.update(data, settings);
 
-  if (data.boluses) {
-    myGraph.updateTreatments(data.boluses, settings);
-  }
-  if (data.basals) {
-    myGraph.updateBasals(data.basals, settings);
+    if (data.boluses) {
+      myGraph.updateTreatments(data.boluses, settings);
+    }
+    if (data.basals) {
+      myGraph.updateBasals(data.basals, settings);
+    }
+  } catch (err) {
+    // should do something here
+    console.log('Graph update crashed', err);
   }
 }
 
@@ -359,64 +388,68 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep
 // The updater is used to update the screen every 1 minute
 function updateClock () {
 
-  if (debug()) console.log('Clock update: ' + Date.now());
+  try {
 
-  const nowDate = new Date();
-  const hours = nowDate.getHours();
-  const mins = nowDate.getMinutes();
-  const m = month ? month : monthNames[nowDate.getMonth()];;
-  const day = nowDate.getDate();
+    if (debug()) console.log('Clock update: ' + Date.now());
 
-  if (mins < 10) { mins = `0${mins}`; }
+    const nowDate = new Date();
+    const hours = nowDate.getHours();
+    const mins = nowDate.getMinutes();
+    const m = month ? month : monthNames[nowDate.getMonth()];;
+    const day = nowDate.getDate();
 
-  const dateText = `${m} ${day} `;
+    if (mins < 10) { mins = `0${mins}`; }
 
-  const ampm = hours < 12 ? "AM" : "PM";
+    const dateText = `${m} ${day} `;
 
-  if (preferences.clockDisplay === "12h") {
-    UI_time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
-  } else {
-    UI_time.text = dateText + `${hours}:${mins}`;
-  }
+    const ampm = hours < 12 ? "AM" : "PM";
 
-  UI_batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
-
-  // battery icon
-
-  let b = 0;
-  if (battery.chargeLevel > 25) b = 1;
-  if (battery.chargeLevel > 50) b = 2;
-  if (battery.chargeLevel > 75) b = 3;
-  if (battery.chargeLevel > 90) b = 4;
-
-  for (let i = 0; i < 5; i++) {
-    const bImage = document.getElementById('b' + i);
-    if (i == b) {
-      bImage.style.visibility = 'visible';
+    if (preferences.clockDisplay === "12h") {
+      UI_time.text = dateText + `${hours%12 ? hours%12 : 12}:${mins} ${ampm}`;
     } else {
-      bImage.style.visibility = 'hidden';
+      UI_time.text = dateText + `${hours}:${mins}`;
     }
+
+    UI_batteryLabel.text = Math.floor(battery.chargeLevel) + "%";
+
+    // battery icon
+
+    let b = 0;
+    if (battery.chargeLevel > 25) b = 1;
+    if (battery.chargeLevel > 50) b = 2;
+    if (battery.chargeLevel > 75) b = 3;
+    if (battery.chargeLevel > 90) b = 4;
+
+    for (let i = 0; i < 5; i++) {
+      const bImage = document.getElementById('b' + i);
+      if (i == b) {
+        bImage.style.visibility = 'visible';
+      } else {
+        bImage.style.visibility = 'hidden';
+      }
+    }
+
+    let minsAgo = Math.round((Date.now() - lastGlucoseDate) / 60000);
+    UI_age.style.fill = 'green';
+
+    if (minsAgo > 15) {
+      UI_sgv.text = '--';
+      UI_delta.text = '--';
+      UI_noise.text = '';
+      UI_sgv.style.fill = 'red';
+      UI_age.style.fill = 'red';
+    }
+
+    UI_age.text = minsAgo > 30 ? ">30 mins ago" : `${minsAgo} mins ago`;
+
+    UI_oldData.style.visibility = 'hidden';
+
+    if (minsAgo > 30) {
+      UI_oldData.style.visibility = 'visible';
+    }
+  } catch (err) {
+    console.log("Clock update failed: ", err);
   }
-
-  let minsAgo = Math.round((Date.now() - lastGlucoseDate) / 60000);
-  UI_age.style.fill = 'green';
-
-  if (minsAgo > 15) {
-    UI_sgv.text = '--';
-    UI_delta.text = '--';
-    UI_noise.text = '';
-    UI_sgv.style.fill = 'red';
-    UI_age.style.fill = 'red';
-  }
-
-  UI_age.text = minsAgo > 30 ? ">30 mins ago" : `${minsAgo} mins ago`;
-
-  UI_oldData.style.visibility = 'hidden';
-
-  if (minsAgo > 30) {
-    UI_oldData.style.visibility = 'visible';
-  }
-
 }
 
 // Have clock ping the Compantion to keep it alive
@@ -440,7 +473,7 @@ function checkNeedForPing () {
   }
 }
 
-setInterval(() => {
+const timer = setInterval(() => {
   checkNeedForPing();
   readSGVFile(false);
 }, 5000);
@@ -453,5 +486,5 @@ clock.ontick = () => updateClock();
 // Listen for the onerror event
 messaging.peerSocket.onerror = function(err) {
   // Handle any errors
-  if (debug()) console.log("Connection error: " + err.code + " - " + err.message);
+  console.log("Connection error: " + err.code + " - " + err.message);
 };

@@ -8,11 +8,13 @@ import Settings from './settings.js';
 import dataProcessor from './dataprocessing.js';
 import { settingsStorage } from "settings";
 import { locale } from "user-settings";
+import isEqual from 'lodash.isequal';
 
 // Let's abuse some Globals
 
 let lastKnownRecordDate = 0;
 let lastFetch = 0;
+let lastDataPackage = {};
 
 let settings = Settings.parseSettings();
 
@@ -27,10 +29,10 @@ settingsStorage.onchange = function(evt) {
   updateDataToClient();
 }
 
-function getRequesttOptions () {
+function getRequesttOptions (xdrip) {
   const options = {};
   let apisecret = settings.apiSecret;
-  if (settings.offline && settings.apiSecret) {
+  if (xdrip && settings.apiSecret) {
     //sha1 the API secret as thats required for xdrip if using API secret
     apisecret = sha1(settings.apiSecret);
   }
@@ -43,210 +45,203 @@ function getRequesttOptions () {
   return options;
 }
 
-function queryBGD () {
+async function queryBGD () {
 
   const url = settings.sgvURL;
   if (debug()) console.log('Fetching SGVs from', url);
 
-  const options = getRequesttOptions();
+  const response = await fetch(url, getRequesttOptions());
 
-  return fetch(url, options)
-    .then(function(response) {
-      return response.json()
-        .then(function(data) {
-          if (debug()) console.log('data0: ' + JSON.stringify(data[0]));
+  if (!response.ok) {
+    console.log('Error fetching blood glucose data, trying xDrip');
+    const response = await fetch('http://127.0.0.1:17580/sgv.json?count=48', getRequesttOptions(true));
 
-          // throw out MBG entries
+    if (!response.ok) {
+      return;
+    }
+  }
 
-          const dataCap = settings.cgmHours * (60 / 5);
+  let data = await response.json();
+  if (debug()) console.log('data0: ' + JSON.stringify(data[0]));
 
-          data = data.filter(function(bg) {
-            return (bg.sgv && bg.type !== 'mbg' && bg.date);
-          }).slice(0, dataCap);
+  // throw out MBG entries
 
-          let currentBgDate = data[0].date;
+  const dataCap = settings.cgmHours * (60 / 5);
 
-          if (debug()) console.log('currentBgDate: ' + currentBgDate);
+  data = data.filter(function(bg) {
+    return (bg.sgv && bg.type !== 'mbg' && bg.date);
+  }).slice(0, dataCap);
 
-          // move to a separate function to avoid globals
-          if (currentBgDate > lastKnownRecordDate) {
-            lastKnownRecordDate = currentBgDate;
-          }
+  let currentBgDate = data[0].date;
 
-          let bgData = [];
-          let lastBG = null;
+  if (debug()) console.log('currentBgDate: ' + currentBgDate);
 
-          data.forEach(function(bg) {
+  // move to a separate function to avoid globals
+  if (currentBgDate > lastKnownRecordDate) {
+    lastKnownRecordDate = currentBgDate;
+  }
 
-            const last = lastBG || bg.sgv;
+  let bgData = [];
+  let lastBG = null;
 
-            bgData.push({
-              sgv: bg.sgv
-              , direction: bg.direction
-              , date: bg.date
-              , noise: bg.noise
-            });
+  data.forEach(function(bg) {
 
-            lastBG = bg.sgv;
+    const last = lastBG || bg.sgv;
 
-          });
-
-          lastFetch = Date.now();
-
-          //This is rather yuck as xdrip broadcasts anything in the first 1st value of sgv values
-          //but better than not having anything
-          //the AAPS localbroadcast looks like:
-          //"aaps":"0% 3.47U(5.35|-1.88) -0.63 40g"
-          //"aaps-ts":1572681179398
-
-          //Lets do some stuff with the AAPS broadcast if we have it
-          let aapsdata = {};
-
-          //if aaps exists in the broadcast then aaps-ts key will have a date
-          if (data[0].aaps) {
-            let iob = [];
-            if (debug()) console.log("split it" + JSON.stringify(data[0].aaps.split(" ")));
-            let aapsdataraw = data[0].aaps.split(" ");
-            //"-1.34U(0.15|-1.49) +2.27 0g".split(" ");
-            //"90% -0.66U +0.18 0g".split(" ");
-            //"60% -0.51U(0.61|-1.12) +0.90 0g".split(" ");
-            //"-0.66U +0.18 0g".split(" ");
-            //OK we have some data
-            //but it can change depending on AAPS settings
-            //One way is
-            //[0] => Temporary basal
-            //[1] => Insulin on Board Total(BolusIOB|BasalIOB)
-            //[2] => BGI
-            //[3] => COB
-            //OR
-            //[0] => Insulin on Board Total(BolusIOB|BasalIOB)
-            //[1] => BGI
-            //[2] => COB
-
-            //difine the indexs where data should be
-            //overide if needed
-            let iobindx = 0;
-            let bgiindex = 1;
-            let cobindx = 2;
-            //check what dataset we have
-            if (aapsdataraw.length == 4) {
-              iobindx = 1;
-              bgiindex = 2;
-              cobindx = 3;
-            }
-
-            //lets do some cleaning on the IOB
-            //some hairy parsing....real hairy.
-
-            let iobtotal = 0;
-
-            aapsdata.iob = {};
-            aapsdata.iob.bolus = '???';
-            aapsdata.iob.basal = '???';
-            aapsdata.iob.total = '???';
-            //check if detailed iob is being broadcast
-            if (aapsdataraw[iobindx].indexOf('|') > -1 || aapsdataraw[iobindx + 1].indexOf('|') > -1) {
-              if (debug()) console.log('Detailed IOB found....');
-              let iobraw = aapsdataraw[iobindx].split("(");
-              let iobraw1 = iobraw[1].split("|");
-
-              iobtotal = iobraw[0];
-              aapsdata.iob.bolus = iobraw1[0];
-              aapsdata.iob.basal = iobraw1[1].split(")")[0];
-            } else {
-              if (debug()) console.log('Detailed IOB NOT found....');
-              iobtotal = aapsdataraw[iobindx];
-            }
-            //get rid of the Units from IOB
-            aapsdata.iob.total = iobtotal.split('U')[0];
-            aapsdata.cob = aapsdataraw[cobindx];
-            //we dont need a + sign for IOB, check for it and remove it.
-            if (aapsdataraw[cobindx].indexOf('+') > -1) {
-              aapsdata.cob = aapsdataraw[cobindx].split("+")[0];
-            }
-            aapsdata.bgi = aapsdataraw[bgiindex];
-
-            bgData.aaps = { 'cob': aapsdata.cob, 'iob': aapsdata.iob.total, 'bgi': aapsdata.bgi };
-          }
-
-          // Send the data to the device
-          return bgData;
-        });
-    })
-    .catch(function(err) {
-      if (debug()) console.log("Error fetching glucose data: " + err);
+    bgData.push({
+      sgv: bg.sgv
+      , direction: bg.direction
+      , date: bg.date
+      , noise: bg.noise
     });
+
+    lastBG = bg.sgv;
+
+  });
+
+  lastFetch = Date.now();
+
+  //This is rather yuck as xdrip broadcasts anything in the first 1st value of sgv values
+  //but better than not having anything
+  //the AAPS localbroadcast looks like:
+  //"aaps":"0% 3.47U(5.35|-1.88) -0.63 40g"
+  //"aaps-ts":1572681179398
+
+  //Lets do some stuff with the AAPS broadcast if we have it
+  let aapsdata = {};
+
+  //if aaps exists in the broadcast then aaps-ts key will have a date
+  if (data[0].aaps) {
+    let iob = [];
+    if (debug()) console.log("split it" + JSON.stringify(data[0].aaps.split(" ")));
+    let aapsdataraw = data[0].aaps.split(" ");
+    //"-1.34U(0.15|-1.49) +2.27 0g".split(" ");
+    //"90% -0.66U +0.18 0g".split(" ");
+    //"60% -0.51U(0.61|-1.12) +0.90 0g".split(" ");
+    //"-0.66U +0.18 0g".split(" ");
+    //OK we have some data
+    //but it can change depending on AAPS settings
+    //One way is
+    //[0] => Temporary basal
+    //[1] => Insulin on Board Total(BolusIOB|BasalIOB)
+    //[2] => BGI
+    //[3] => COB
+    //OR
+    //[0] => Insulin on Board Total(BolusIOB|BasalIOB)
+    //[1] => BGI
+    //[2] => COB
+
+    //difine the indexs where data should be
+    //overide if needed
+    let iobindx = 0;
+    let bgiindex = 1;
+    let cobindx = 2;
+    //check what dataset we have
+    if (aapsdataraw.length == 4) {
+      iobindx = 1;
+      bgiindex = 2;
+      cobindx = 3;
+    }
+
+    //lets do some cleaning on the IOB
+    //some hairy parsing....real hairy.
+
+    let iobtotal = 0;
+
+    aapsdata.iob = {};
+    aapsdata.iob.bolus = '???';
+    aapsdata.iob.basal = '???';
+    aapsdata.iob.total = '???';
+    //check if detailed iob is being broadcast
+    if (aapsdataraw[iobindx].indexOf('|') > -1 || aapsdataraw[iobindx + 1].indexOf('|') > -1) {
+      if (debug()) console.log('Detailed IOB found....');
+      let iobraw = aapsdataraw[iobindx].split("(");
+      let iobraw1 = iobraw[1].split("|");
+
+      iobtotal = iobraw[0];
+      aapsdata.iob.bolus = iobraw1[0];
+      aapsdata.iob.basal = iobraw1[1].split(")")[0];
+    } else {
+      if (debug()) console.log('Detailed IOB NOT found....');
+      iobtotal = aapsdataraw[iobindx];
+    }
+    //get rid of the Units from IOB
+    aapsdata.iob.total = iobtotal.split('U')[0];
+    aapsdata.cob = aapsdataraw[cobindx];
+    //we dont need a + sign for IOB, check for it and remove it.
+    if (aapsdataraw[cobindx].indexOf('+') > -1) {
+      aapsdata.cob = aapsdataraw[cobindx].split("+")[0];
+    }
+    aapsdata.bgi = aapsdataraw[bgiindex];
+
+    bgData.aaps = { 'cob': aapsdata.cob, 'iob': aapsdata.iob.total, 'bgi': aapsdata.bgi };
+  }
+
+  // Send the data to the device
+  return bgData;
 }
 
-function queryTreatments () {
+async function queryTreatments () {
 
   const url = settings.treatmentURL;
   if (debug()) console.log('Fetching treatments from', url);
 
-  return fetch(url)
-    .then(function(response) {
-      return response.json()
-        .then(function(data) {
+  const options = getRequesttOptions();
+  const response = await fetch(url, options);
 
-          const tempBasals = data.filter(function(t) {
-            return (t.eventType == 'Temp Basal');
-          });
+  if (!response.ok) {
+    console.log('Error fetching treatment data: ', response.statusText);
+    return;
+  }
 
-          const carbArray = [];
-          const bolusArray = [];
+  let data = await response.json();
 
-          data.forEach(function(t) {
+  const tempBasals = data.filter(function(t) {
+    return (t.eventType == 'Temp Basal');
+  });
 
-            if (t.eventType == 'Temp Basal') return;
+  const carbArray = [];
+  const bolusArray = [];
 
-            const carbs = isNaN(t.carbs) ? 0 : Number(t.carbs);
-            const insulin = isNaN(t.insulin) ? 0 : Number(t.insulin);
-            const d = new Date(t.created_at).getTime();
+  data.forEach(function(t) {
 
-            if (carbs) carbArray.push({
-              carbs
-              , date: d
-            });
+    if (t.eventType == 'Temp Basal') return;
 
-            if (insulin) bolusArray.push({
-              insulin
-              , date: d
-            });
+    const carbs = isNaN(t.carbs) ? 0 : Number(t.carbs);
+    const insulin = isNaN(t.insulin) ? 0 : Number(t.insulin);
+    const d = new Date(t.created_at).getTime();
 
-          });
-
-          return {
-            tempBasals: tempBasals.slice(0, 40).reverse()
-            , carbs: carbArray.slice(0, 40)
-            , boluses: bolusArray.slice(0, 40)
-          }
-        });
-    })
-    .catch(function(err) {
-      if (debug()) console.log("Error fetching treatment data: " + err);
+    if (carbs) carbArray.push({
+      carbs
+      , date: d
     });
+
+    if (insulin) bolusArray.push({
+      insulin
+      , date: d
+    });
+
+  });
+
+  return {
+    tempBasals: tempBasals.slice(0, 40).reverse()
+    , carbs: carbArray.slice(0, 40)
+    , boluses: bolusArray.slice(0, 40)
+  }
 }
 
-function queryJSONAPI (url) {
-  return fetch(url)
-    .then(function(response) {
-      return response.json()
-        .then(function(data) {
-          if (settings.prevsgvURL){
-            //reset SGV URL to original
-            settings.offline = false;
-            settings.sgvURL = settings.prevsgvURL;
-            delete settings.prevsgvURL;
-          }
-          return data;
-        });
-    })
-    .catch(function(err) {
-      if (debug()) console.log("Error fetching data from url: ", url, err);
-      settings.offline = true;
-      settings.prevsgvURL = settings.sgvURL;
-      settings.sgvURL = 'http://127.0.0.1:17580/sgv.json?count=48'
-    });
+async function queryJSONAPI (url) {
+
+  const options = getRequesttOptions();
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    console.log('Error fetching data from ', url);
+    return;
+  }
+
+  let data = await response.json();
+  return data;
 }
 
 // Send the BG data to the device
@@ -256,10 +251,10 @@ function queueFile (filename, data) {
   outbox.enqueue(filename, myFileInfo);
 }
 
-const TWO_MINUTES = 2 * 60 * 1000;
-const ONE_MINUTE = 60 * 1000;
+const TWO_MINUTES = 2 * 59 * 1000;
+const ONE_MINUTE = 58 * 1000;
 
-let dataCache = {};
+let dataCache = [];
 
 async function loadDataFromCloud () {
 
@@ -280,35 +275,28 @@ async function loadDataFromCloud () {
     loadFromCloud = false;
   }
 
+  lastFetch = Date.now();
+
   if (loadFromCloud) {
-    if (debug()) console.log("Fetching Data");
+    console.log("Fetching Data from Nightscout");
 
-    // eslint-disable-next-line no-unused-vars
-    const BGDPromise = new Promise(function(resolve, reject) {
-      resolve(queryBGD());
-    });
-
-    const TreatmentPromise = new Promise(function(resolve, reject) {
-      resolve(queryTreatments());
-    });
-
-    const ProfilePromise = new Promise(function(resolve, reject) {
-      resolve(queryJSONAPI(settings.profileURL));
-    });
-
-    const V2ApiPromise = new Promise(function(resolve, reject) {
-      resolve(queryJSONAPI(settings.v2APIURL));
-    });
+    const BGDPromise = queryBGD();
+    const TreatmentPromise = queryTreatments();
+    const ProfilePromise = queryJSONAPI(settings.profileURL);
+    const V2ApiPromise = queryJSONAPI(settings.v2APIURL);
 
     const values = await Promise.all([BGDPromise, TreatmentPromise, ProfilePromise, V2ApiPromise]);
-
     if (debug()) console.log('All promises resolved');
-    dataCache = values;
-    lastFetch = Date.now();
-    return values;
-  } else {
-    return dataCache;
+
+    // update whatever cached data we got
+
+    if (values[0]) dataCache[0] = values[0];
+    if (values[1]) dataCache[1] = values[1];
+    if (values[2]) dataCache[2] = values[2];
+    if (values[3]) dataCache[3] = values[3];
   }
+
+  return dataCache;
 }
 
 function clone (src) {
@@ -335,60 +323,79 @@ function treatmentTimeFilter (data, mills) {
 
 async function updateDataToClient () {
 
-  const values = await loadDataFromCloud();
+  try {
 
-  const treatments = values[1];
-  const profile = values[2];
-  let processedBasals = [];
+    const values = await loadDataFromCloud();
 
-  const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
-  if (!settings.offline) {
+    const treatments = values[1];
+    const profile = values[2];
+    let processedBasals = [];
+
+    const dataCap = Date.now() - (settings.cgmHours * 60 * 60 * 1000);
+    if (treatments && profile) {
+      try {
+        processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
+      } catch (err) {
+        if (debug()) console.log(err);
+      }
+    }
+
+    const v2data = values[3];
+
+    const state = v2data ? buildStateMessage(v2data) : [];
+
+    let mo = "";
+
     try {
-      processedBasals = dataProcessor.processTempBasals([profile, treatments.tempBasals], dataCap);
+      mo = new Date().toLocaleString(locale.language, { month: "short" });
     } catch (err) {
-      if (debug()) console.log(err);
-    }
-  }
-  const v2data = values[3];
-
-  const state = buildStateMessage(v2data);
-
-  const meta = {
-    phoneGenerationTime: Date.now()
-    , month: new Date().toLocaleString(locale.language, {month: "short"})
-  }
-
-  let dataToSend = {
-    'BGD': values[0]
-    , 'basals': []
-    , 'state': []
-    , 'settings': settings
-    , 'carbs': []
-    , 'boluses': []
-    , 'meta': meta
-  };
-
-  if (values[0] != null) {
-    //if AAPS locally broadcasted data is available
-    if (values[0].aaps) {
-      //override blank values with locally broadcasted AAPS ones
-      dataToSend.state = {
-        'cob': values[0].aaps.cob
-        , 'iob': values[0].aaps.iob
-        , 'bgi': values[0].aaps.bgi
-        , 'bwp': '???'
-      };
+       mo = new Date().toLocaleString("en-EN", { month: "short" });
+       console.log("Failed to use locale ", locale.language, ", reverting to en-EN, err:",  err);
     }
 
-    if (!settings.offline) {
+    const meta = {
+      phoneGenerationTime: Date.now()
+      , month: mo
+    }
+
+    let dataToSend = {
+      'BGD': values[0]
+      , 'basals': []
+      , 'state': []
+      , 'settings': settings
+      , 'carbs': []
+      , 'boluses': []
+      , 'meta': meta
+    };
+
+    if (values[0] != null) {
+      //if AAPS locally broadcasted data is available
+      if (values[0].aaps) {
+        //override blank values with locally broadcasted AAPS ones
+        dataToSend.state = {
+          'cob': values[0].aaps.cob
+          , 'iob': values[0].aaps.iob
+          , 'bgi': values[0].aaps.bgi
+          , 'bwp': '???'
+        };
+      }
+
       dataToSend.state = state;
       dataToSend.basals = processedBasals.reverse();
-      dataToSend.carbs = treatmentTimeFilter(treatments.carbs, dataCap);
-      dataToSend.boluses = treatmentTimeFilter(treatments.boluses, dataCap);
+      dataToSend.carbs = treatments ? treatmentTimeFilter(treatments.carbs, dataCap) : [];
+      dataToSend.boluses = treatments ? treatmentTimeFilter(treatments.boluses, dataCap) : [];
     }
-  }
 
-  queueFile('data.cbor', dataToSend);
+    if (!isEqual(lastDataPackage, dataToSend)) {
+      lastDataPackage = dataToSend;
+      queueFile('data.cbor', dataToSend);
+    } else {
+      console.log('Data not changed, skipping cbor sending');
+    }
+
+  } catch (err) {
+    console.log("Error compiling data update to client: ", err);
+  }
 
 }
 

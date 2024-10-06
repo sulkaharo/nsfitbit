@@ -1,6 +1,6 @@
 {
   "name": "NightscoutMonitor",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "private": false,
   "license": "LGPL-2.1",
   "repository": {
@@ -17,7 +17,7 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^6.6.0",
     "jshint": "^2.10.3",
-    "mocha": "^6.2.2",
+    "mocha": "^10.7.3",
     "should": "^13.2.3"
   },
   "fitbit": {
@@ -54,5 +54,8 @@
     "presets": [
       "@babel/preset-env"
     ]
+  },
+  "dependencies": {
+    "lodash.isequal": "^4.5.0"
   }
 }
