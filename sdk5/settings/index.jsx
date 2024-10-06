@@ -138,6 +138,12 @@ function mySettings(props) {
         onChange={value => props.settingsStorage.getItem('offOnNight', value ? 'yes' : 'no')}
         />
 
+<Toggle
+        settingsKey="alarmOffBody"
+        label={`Disable alarms when watch not worn: ${props.settingsStorage.getItem('alarmOffBody') === 'true' ? 'yes' : 'no'}`}
+        onChange={value => props.settingsStorage.getItem('alarmOffBody', value ? 'yes' : 'no')}
+        />
+
 </Section>
 
 <Section

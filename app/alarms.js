@@ -10,6 +10,7 @@ export default class Alarms {
     this._snoozes = {};
     ui.init(this);
     this._ui = ui;
+    this._bodyPresence = settings.bodyPrecense;
   }
 
   removeSnooze(type) {
@@ -54,7 +55,7 @@ export default class Alarms {
     const fileAge = Date.now() - fileGenerationTime;
     const deltaMins = Math.floor(fileAge / 1000 / 60);
 
-    if (fileAge > 10*60*1000) {
+    if (fileAge > 10 * 60 * 1000) {
 
       const messageTime = deltaMins > 30 ? ">30" : deltaMins;
 
@@ -105,8 +106,8 @@ export default class Alarms {
 
       let deltaDivisor = 1;
 
-      if ((entry.date - prevEntry.date) > 10*60*1000) {
-        deltaDivisor = Math.floor((entry.date - prevEntry.date) / (5*60*1000)) + 1;
+      if ((entry.date - prevEntry.date) > 10 * 60 * 1000) {
+        deltaDivisor = Math.floor((entry.date - prevEntry.date) / (5 * 60 * 1000)) + 1;
       }
 
       // use interpolated delta when readings are missed
@@ -165,8 +166,9 @@ export default class Alarms {
 
     const hour = new Date().getHours();
     const nightTimeOff = (hour >= 21 || hour <= 7) && settings.alarmsOffDuringNight;
+    const bodyOff = settings.alarmOffBody && this._bodyPresence && !this._bodyPresence.present;
 
-    if (!this._settings.enableAlarms || nightTimeOff) {
+    if (!this._settings.enableAlarms || nightTimeOff || bodyOff) {
       return;
     }
 
@@ -175,7 +177,7 @@ export default class Alarms {
 
     const a = this.checkAlarms(entry, prevEntry, fileGenerationTime);
     const alarms = this.snoozeFilterAlarms(a);
-    
+
     if (alarms.length > 0) {
       // Show whatever is the latest highest priority alarm
       this._activeAlarm = alarms[0];
