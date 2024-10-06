@@ -339,13 +339,23 @@ async function updateDataToClient () {
         if (debug()) console.log(err);
       }
     }
+
     const v2data = values[3];
 
     const state = v2data ? buildStateMessage(v2data) : [];
 
+    let mo = "";
+
+    try {
+      mo = new Date().toLocaleString(locale.language, { month: "short" });
+    } catch (err) {
+       mo = new Date().toLocaleString("en-EN", { month: "short" });
+       console.log("Failed to use locale ", locale.language, ", reverting to en-EN, err:",  err);
+    }
+
     const meta = {
       phoneGenerationTime: Date.now()
-      , month: new Date().toLocaleString(locale.language, { month: "short" })
+      , month: mo
     }
 
     let dataToSend = {
