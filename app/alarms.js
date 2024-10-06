@@ -1,7 +1,6 @@
 const ALARM_BG = 'BG';
 const ALARM_PRED = 'PRED_BG';
 const ALARM_STALE = 'STALE_DATA';
-import { BodyPresenceSensor } from "body-presence";
 
 export default class Alarms {
 
@@ -11,15 +10,7 @@ export default class Alarms {
     this._snoozes = {};
     ui.init(this);
     this._ui = ui;
-    this._bodyPresence = false;
-
-    if (BodyPresenceSensor) {
-      console.log("This device has a BodyPresenceSensor!");
-      this._bodyPresence = new BodyPresenceSensor();
-      this._bodyPresence.start();
-    } else {
-      console.log("This device does NOT have a BodyPresenceSensor!");
-    }
+    this._bodyPresence = settings.bodyPrecense;
   }
 
   removeSnooze(type) {

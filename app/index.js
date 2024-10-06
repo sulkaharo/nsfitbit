@@ -16,6 +16,7 @@ import AlarmUI from "./alert-ui.js";
 //import Tracking from "./tracking.js";
 import { memory } from "system";
 import { me as device } from "device";
+import { BodyPresenceSensor } from "body-presence";
 
 if (!device.screen) device.screen = { width: 348, height: 250 };
 
@@ -64,10 +65,11 @@ UI_docGraph.width = device.screen.width;
 let myGraph = new Graph(UI_docGraph);
 
 let settings = {};
-
 let latestHR = 0;
 
 let month;
+
+settings.bodyPrecense = _bodyPresence;
 
 const alarmsUI = new AlarmUI();
 const alarms = new Alarms(settings, alarmsUI);
@@ -119,6 +121,18 @@ function noiseCodeToDisplay (mgdl, noise) {
       break;
   }
   return display;
+}
+
+// Body Presence API
+
+let _bodyPresence = false;
+
+if (BodyPresenceSensor) {
+  console.log("This device has a BodyPresenceSensor!");
+  _bodyPresence = new BodyPresenceSensor();
+  _bodyPresence.start();
+} else {
+  console.log("This device does NOT have a BodyPresenceSensor!");
 }
 
 //----------------------------------------------------------
